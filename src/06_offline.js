@@ -81,7 +81,7 @@ const Offline = {
   drawHook(ctx, hook, t) {
     const T = this.HOOK_T, a = t < 0.25 ? t / 0.25 : t > T - 0.4 ? Math.max(0, (T - t) / 0.4) : 1;
     if (a <= 0) return;
-    const pop = t < 0.35 ? 0.82 + 0.18 * Math.sin((t / 0.35) * Math.PI / 2) : 1, W = Renderer.canvas.width, y = 610;
+    const pop = t < 0.35 ? 0.82 + 0.18 * Math.sin((t / 0.35) * Math.PI / 2) : 1, W = Renderer.canvas.width, y = hook.y || 610;
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = a;
     ctx.fillStyle = 'rgba(6,9,15,0.86)'; ctx.fillRect(0, y - 175, W, 350);
     ctx.fillStyle = hook.color || '#FFD54F'; ctx.fillRect(0, y - 175, W, 10); ctx.fillRect(0, y + 165, W, 10);
@@ -105,6 +105,13 @@ const Offline = {
     if (!M) throw new Error(`no ${ch} match in this slot`);
     if (!App.load(M.s)) throw new Error(M.s.err || 'match could not be set up');
     const s = App.setup, total = this.countFrames(s.opts, rdt);
+    /* the banner never hides the match about to start on the intro screen (its row, laid out like LeagueTable.matches) */
+    if (hook) {
+      const list = App.intro && App.intro.matches ? App.intro.matches.filter(x => x.a && x.b) : [], n = list.length, k = list.findIndex(x => x.status === 'now');
+      const rh = Math.min(170, (1300 - 14 * Math.max(0, n - 1)) / Math.max(1, n)), y0 = 345 + Math.max(0, (1300 - (n * rh + (n - 1) * 14)) / 2);
+      const top = y0 + k * (rh + 14), bot = top + rh;
+      hook = Object.assign({}, hook, { y: k >= 0 && bot > 610 - 185 && top < 610 + 185 ? (top > 1060 ? 610 : 1480) : 610 });
+    }
     AudioSys.initOffline(total / fps + 2);
     App.running = true; App.paused = false;
     let i = 0, whistle = 0;
