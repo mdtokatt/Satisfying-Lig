@@ -575,6 +575,28 @@ console.log(`${N} lig maçı + ${N} eleme maçı (1'e 1) + sezon fikstürü, Mat
     ok(P.League.data.liveCount > 20 && JSON.stringify(P.League.data.history) === JSON.stringify(S.League.data.history) && P.Live.hash() === S.Live.hash(),
       `Yayındaki sayfanın kendi koduyla ilerletilen lig (${P.League.data.liveCount} maç), kaynaktan yüklenen motorla birebir aynı`);
   }
+  /* 3c'') languages (src/09_i18n.js): every text in every language, with the same {placeholders}; every page renders in every
+     language without a missing text, a leftover placeholder or a Turkish word outside Turkish */
+  {
+    const L = loadLive(), { I18N, LivePages, StatsPages, Live } = L, n = I18N.LANGS.length, bad = [];
+    for (const [k, v] of Object.entries(I18N.S)) {
+      const ph = (s) => [...new Set(String(s).match(/\{\w+\}/g) || [])].sort().join();
+      if (!Array.isArray(v) || v.length !== n || v.some(s => typeof s !== 'string' || !s.trim())) bad.push(`${k}: ${Array.isArray(v) ? v.length : '?'} dil`);
+      else if (v.some(s => ph(s) !== ph(v[0]) && !(k === 'fatePl' || k === 'fatePlNow' || k === 'clubRank' || k === 'ccTipRank' || k === 'ccBest' || k === 'evDown'))) bad.push(`${k}: yer tutucular farklı`);
+    }
+    await L.Live.catchUp(0, () => L.Live.slot(40) + 1);
+    const lv = Live.liveMap(Live.slot(40) + 1), club = L.League.data.teams[0].id, poolClub = L.League.data.reserve[0].id, pages = [];
+    for (const [lang] of I18N.LANGS) {
+      I18N.use(lang);
+      const html = [LivePages.division('table', 'table', lv), LivePages.division('table', 'fixture', lv), LivePages.division('promo', 'table', lv), LivePages.division('promo', 'fixture', lv),
+        LivePages.live(Live.slot(40) + 1), LivePages.history(), StatsPages.page(), StatsPages.club(club), StatsPages.club(poolClub)].join('\n');
+      pages.push(html.length);
+      if (/undefined|NaN|\{\w+\}/.test(html.replace(/\{[^}]*;[^}]*\}/g, ''))) bad.push(`${lang}: eksik metin ya da yer tutucu`);
+      if (lang !== 'tr' && /\b(Sezon|Hafta|Takım|Puan|maç|Fikstür|Yükselme)\b/.test(html)) bad.push(`${lang}: Türkçe kelime kaldı (${html.match(/\b(Sezon|Hafta|Takım|Puan|maç|Fikstür|Yükselme)\b/)[0]})`);
+    }
+    I18N.use('tr');
+    ok(!bad.length && pages.every(x => x > 5000), `Diller: ${n} dil × ${Object.keys(I18N.S).length} metin eksiksiz; bütün sayfalar her dilde çiziliyor${bad.length ? ' — ' + bad.slice(0, 6).join(' · ') : ''}`);
+  }
   /* 3d) every league match fits its 2-minute slot; a playoff match that runs over only delays the next few matches */
   if (QUICK) console.log('9 saatlik takvim koşusu atlandı (--quick) ⏭');
   else {

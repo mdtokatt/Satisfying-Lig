@@ -9,28 +9,45 @@
   4) Tabloyu yedekleme: "⬇ Tabloyu dışa aktar" JSON indirir; "⬆ Tabloyu içe aktar" ile geri yüklenir. Veriler localStorage'da (arenaLeague_v2) da tutulur.
   5) Deneme maçları için "Test maçı" kutusunu işaretleyin — sonuç tabloya yazılmaz. "⚖️ Denge testi" 100 maçı çizimsiz simüle eder.
 -->
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satisfying Lig</title>
-<meta name="description" content="Kendi kendine oynayan canlı futbol ligi: her 3 dakikada bir lig ve yükselme ligi maçı aynı anda başlar, 90 saniye sürer; herkes aynı maçı aynı anda izler. Fikstür, lig tablosu, yükselme ligi ve elemesi, geçmiş sezonlar.">
+<meta name="description" content="A live football league that plays itself: every 3 minutes a league match and a promotion league match kick off together and last 90 seconds; everyone watches the same match at the same moment. Fixtures, tables, promotion playoff, history and stats in 8 languages.">
 <meta name="theme-color" content="#0b0e14">
 <link rel="canonical" href="__SITE_URL__">
+<!-- the same page in every language (?lang=xx; without it: the browser's language, else English) -->
+<link rel="alternate" hreflang="x-default" href="__SITE_URL__">
+<link rel="alternate" hreflang="en" href="__SITE_URL__?lang=en">
+<link rel="alternate" hreflang="tr" href="__SITE_URL__?lang=tr">
+<link rel="alternate" hreflang="es" href="__SITE_URL__?lang=es">
+<link rel="alternate" hreflang="pt" href="__SITE_URL__?lang=pt">
+<link rel="alternate" hreflang="fr" href="__SITE_URL__?lang=fr">
+<link rel="alternate" hreflang="de" href="__SITE_URL__?lang=de">
+<link rel="alternate" hreflang="it" href="__SITE_URL__?lang=it">
+<link rel="alternate" hreflang="ar" href="__SITE_URL__?lang=ar">
 <!-- paylaşım kartı (WhatsApp, X, Telegram, Facebook…): mutlak adres gerekir, build.sh sitenin adresini (SITE_URL) yazar -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Satisfying Lig">
-<meta property="og:locale" content="tr_TR">
-<meta property="og:title" content="Satisfying Lig · canlı futbol ligi">
-<meta property="og:description" content="Her 3 dakikada iki ligden maç: lig ve yükselme ligi aynı anda. Herkes aynı maçı aynı anda izler.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:title" content="Satisfying Lig · the live football league">
+<meta property="og:description" content="A match from two leagues every 3 minutes, around the clock. Everyone watches the same match at the same moment.">
 <meta property="og:url" content="__SITE_URL__">
 <meta property="og:image" content="__SITE_URL__og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Satisfying Lig: dikey futbol sahasında oynanan canlı bir maç">
+<meta property="og:image:alt" content="Satisfying Lig: a live match on a vertical football pitch">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Satisfying Lig · canlı futbol ligi">
-<meta name="twitter:description" content="Her 3 dakikada iki ligden maç: lig ve yükselme ligi aynı anda. Herkes aynı maçı aynı anda izler.">
+<meta name="twitter:title" content="Satisfying Lig · the live football league">
+<meta name="twitter:description" content="A match from two leagues every 3 minutes, around the clock. Everyone watches the same match at the same moment.">
 <meta name="twitter:image" content="__SITE_URL__og.jpg">
 <!-- simge sayfaya gömülü (yerelde açılan index.html'de de görünür); manifest ve PNG simgeler public/ altında, yalnızca sitede -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,__ICON_SVG__">
@@ -282,6 +299,7 @@
   }
   @media (max-width: 430px) {
     #liveBar .lbl { display: none; }
+    #liveBar #liveLang { padding: 6px 8px; }
     #liveTabs { gap: 1px; padding: 3px; max-width: calc(100vw - 12px); }
     #liveTabs button { padding: 7px 7px; font-size: 12.5px; }
     #liveTabs .lg { display: none; } #liveTabs .sh { display: inline; }
@@ -291,6 +309,29 @@
     #stage { height: 82vh; }
     #panel { width: 100%; border-left: none; }
   }
+  /* the language menu (🌐 EN in the bar) */
+  #liveBar #liveLang { background: transparent; border-color: var(--border); }
+  #langMenu { position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%); z-index: 7; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 6px; background: rgba(10,14,22,.97); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.5); }
+  #langMenu button { border: none; background: transparent; border-radius: 9px; padding: 9px 14px; text-align: start; color: var(--text); }
+  #langMenu button:hover, #langMenu button[aria-checked="true"] { background: var(--surface2); }
+  #langMenu button[aria-checked="true"] { box-shadow: inset 0 0 0 1px var(--accent); }
+  /* right-to-left (العربية): the pages mirror; the canvas (the video's English texts) does not */
+  [dir="rtl"] th:nth-child(2), [dir="rtl"] td.tn, [dir="rtl"] th:first-child, [dir="rtl"] td:first-child { text-align: right; }
+  [dir="rtl"] th, [dir="rtl"] td { text-align: left; }
+  [dir="rtl"] .dot { margin: 0 0 0 7px; }
+  [dir="rtl"] .lv-card, [dir="rtl"] .lv-t.r { text-align: right; }
+  [dir="rtl"] .lv-t.r .dot { margin: 0 7px 0 0; }
+  [dir="rtl"] .fx-head .b { margin-left: 0; margin-right: auto; }
+  [dir="rtl"] .lv-st { margin-left: 0; margin-right: auto; }
+  [dir="rtl"] .fx-match ol.res li .pt { margin-left: 0; margin-right: auto; padding-left: 0; padding-right: 6px; }
+  [dir="rtl"] .fx-match ol.res li .fp { margin: 0 0 0 7px; }
+  [dir="rtl"] .lv-ball { margin-left: 0; margin-right: 6px; }
+  /* numbers keep their sign on the left (+9, −3) and the last results read left to right (newest on the right) */
+  [dir="rtl"] .lp-table td:not(.tn):not(:first-child) { direction: ltr; }
+  [dir="rtl"] .lp-table tr.rel td:first-child { box-shadow: inset -3px 0 0 var(--danger); }
+  [dir="rtl"] .lp-table tr.po td:first-child { box-shadow: inset -3px 0 0 var(--accent); }
+  [dir="rtl"] .lp-table tr.up td:first-child { box-shadow: inset -3px 0 0 #FFD54F; }
+  #liveBar, #liveTabs { direction: inherit; }
   @media (prefers-reduced-motion: reduce) { .rec, .lv-ball { animation: none; } }
 </style>
 </head>

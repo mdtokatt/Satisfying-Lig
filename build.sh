@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 OUT="${1:-index.html}"
 mkdir -p "$(dirname "$OUT")"
 # SITE_URL: the site's absolute address (share cards need it: og:image, og:url); the Pages workflow passes its own
-SITE_URL="${SITE_URL:-https://mindmash-mt.github.io/Satisfying-Lig/}"
+SITE_URL="${SITE_URL:-https://mdtokatt.github.io/Satisfying-Lig/}"
 # the favicon goes into the page as a data URI (it also shows in an index.html opened from disk)
 # fonts (public/fonts): next to a site build they are at fonts/; the repo's own index.html (opened from disk) reads public/fonts/
 OUTDIR=$(dirname "$OUT")
@@ -31,7 +31,7 @@ ICON=$(tr -d '\n' < public/icon.svg | sed -e 's/  */ /g' -e "s/\"/'/g" -e 's/#/%
   else
     echo 'const BUILD_START = null;'
   fi
-  for f in src/01_core.js src/02_sim.js src/03_fx_audio.js src/04_render.js src/05_app.js src/06_offline.js src/07_live.js src/08_stats.js; do cat "$f"; echo; done
+  for f in src/01_core.js src/02_sim.js src/03_fx_audio.js src/04_render.js src/05_app.js src/06_offline.js src/07_live.js src/08_stats.js src/09_i18n.js; do cat "$f"; echo; done
   printf '</script>\n</body>\n</html>\n'
 } > "$OUT"
 # a site build (e.g. dist/index.html) gets the static files next to the page: manifest, icons, share image, fonts

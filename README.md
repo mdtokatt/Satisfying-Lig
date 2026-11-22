@@ -7,13 +7,14 @@ Her maçta iki kulüp dikey bir futbol sahasında karşılaşır: her takımın 
 - Kurulum yok: `index.html` dosyasını Chrome'da açmanız yeterli.
 - Dikey 1080×1920 (9:16) video, 60 FPS, sesli kayıt.
 - Her maç, kurulurken üretilen rastgele bir **seed** (32 bit) ile oynanır; seed arayüzde ve dosya adlarında görünmez. Aynı seed + aynı takımlar + aynı ayarlar = birebir aynı maç; bu yüzden oynanan her maçın seed'i yalnızca maç geçmişinde (`league.json`) saklanır, sıradaki maçın seed'i hiçbir yere yazılmaz.
-- Videodaki tüm yazılar İngilizce (global kitle), kontrol paneli Türkçe.
+- **Global site, 8 dil:** English, Türkçe, Español, Português, Français, Deutsch, Italiano, العربية (bkz. [Diller](#diller)). Videodaki yazılar İngilizce, stüdyonun kontrol paneli Türkçe.
+- **Instagram:** her sabah bir önceki günün kritik maçlarından 2 Reels ve 3 Story videosu otomatik hazırlanır (bkz. [Instagram günlük görevi](#instagram-günlük-görevi)).
 
 ---
 
 ## Canlı lig (site)
 
-Site adresi: https://mindmash-mt.github.io/Satisfying-Lig/ — **hiç durmayan iki lig**: maçlar günün her saatinde arka arkaya, kendi kendine oynar. **Lig** (18 kulüp) ve **yükselme ligi** (havuzdaki 12 kulüp) paralel gider: iki ligin maçları aynı saatte başlar ve iki sezon aynı maç saatinde biter (bkz. [Yükselme ligi](#yükselme-ligi-canlı-lig)). Siteyi açan kişi şunları görür:
+Site adresi: https://mdtokatt.github.io/Satisfying-Lig/ — **hiç durmayan iki lig**: maçlar günün her saatinde arka arkaya, kendi kendine oynar. **Lig** (18 kulüp) ve **yükselme ligi** (havuzdaki 12 kulüp) paralel gider: iki ligin maçları aynı saatte başlar ve iki sezon aynı maç saatinde biter (bkz. [Yükselme ligi](#yükselme-ligi-canlı-lig)). Siteyi açan kişi şunları görür:
 
 - **Açılış: Fikstür.** Site artık doğrudan yayınla değil, **ligin fikstürüyle** açılır (**Lig tablosu › Fikstür**, bu haftaya kaydırılmış). Fikstürler ayrı bir sekme değil, tabloların altında birer alt sekmedir: **Lig tablosu** ve **Yükselme ligi** sekmelerinin üstündeki **Tablo / Fikstür** düğmesiyle (sayfa aşağı kaydırılınca da sekmelerin hemen altında görünür kalır) tabloya ya da o ligin fikstürüne (yükselme ligi: 22 hafta + eleme) geçilir. O an oynanan maçın yanında **⚽ CANLI · İzle** düğmesi vardır.
 - **⚽ Canlı:** o an **oynanmakta olan maçlar** (iki ligden birer tane) ve **10 dakikadan kısa süre sonra başlayacak maçlar** (geri sayımlı) kart kart listelenir. Kullanıcı istediği maça dokunur ve onu izler. Geç gelen kişi maçı baştan değil, **kaldığı yerden** izler; herkes aynı anda aynı maçı görür. Maçtan önce `WEEK 5 MATCHES` (yükselme liginde `PROMO WEEK 5 MATCHES`) ekranı, maçtan sonra o ligin animasyonlu tablosu gelir; maç bitince **aynı ligin sıradaki maçı** aynı ekranda başlar (aradaki sürede o ligin tablosu ve sıradaki maça geri sayım). Başlamasına birkaç dakika olan bir maçı seçen kişi önce geri sayımı görür. Alttaki **‹ Maçlar** (ya da yeniden **⚽ Canlı** sekmesi) listeye döner.
@@ -24,6 +25,28 @@ Site adresi: https://mindmash-mt.github.io/Satisfying-Lig/ — **hiç durmayan i
 - **Maç bağlantısı (tekrar):** fikstürlerde ve eleme tablolarında biten her maçın yanında **▶ İzle** vardır. Bağlantıyı açan kişi o maçı baştan, tek başına izler (sekmeler gizlenir; üstte `▶ Tekrar · 3. hafta 5. maç · RMA–BAR · 4 Kasım 22:09`, altta **↻ Baştan** ve **⚽ Canlıya dön**). Bkz. [Maç bağlantıları](#maç-bağlantıları).
 - **Paylaşım kartı ve simge:** sayfada açıklama, Open Graph / Twitter kartı (`og.jpg`, 1200×630, gerçek bir maç karesiyle), site simgesi ve web uygulaması manifesti vardır; bağlantı WhatsApp, X, Telegram gibi yerlerde önizlemeli görünür, telefonda "Ana ekrana ekle" ile uygulama gibi açılır (tam ekran, simgeli). Bkz. [Paylaşım dosyaları](#paylaşım-dosyaları).
 - **Sekme başlığı:** maçlar arasında sıradaki maça geri sayım (`⏱ 0:42 · RMA–BAR · Satisfying Lig`), maç oynanırken sağa sola giden bir top (`··⚽···· RMA–BAR · CANLI`; izlenen maçın, yoksa ligin maçının kodları). Kullanıcı başka bir sekmedeyken de işler: tarayıcılar arka plandaki sekmelerin zamanlayıcılarını yavaşlattığı (Chrome 5 dakikadan sonra dakikada bire indirir) için başlığı küçük bir Web Worker'ın saniyede 4 kez gönderdiği sinyal günceller; başlık yalnızca saate göre hesaplanır (maçın kendisi sayfa görünürken ilerler, skor başlıkta gösterilmez).
+
+### Diller
+
+Sitenin bütün metinleri 8 dildedir: English (varsayılan), Türkçe, Español, Português, Français, Deutsch, Italiano ve العربية. Bunlar sekmeler, tablolar, fikstür, Canlı listesi, Geçmiş, İstatistik, kulüp sayfaları, alt çubuk, sekme başlığı ve ekran okuyucu duyurularıdır.
+
+- **Dil seçimi:** sırayla şu kaynaklara bakılır:
+  1. bağlantıdaki `?lang=xx` (ör. `?lang=es`),
+  2. ziyaretçinin daha önce seçtiği dil (tarayıcıda saklanır),
+  3. tarayıcının dili.
+  
+  Hiçbiri listede yoksa **İngilizce** açılır. Alt çubuktaki **🌐 EN** düğmesi dil menüsünü açar. Seçilen dil hemen uygulanır; sayfa yeniden yüklenmez, izlenen maç kesilmez.
+- **Saat ve tarih:** maç saatleri ve günler ziyaretçinin **kendi saat diliminde** ve kendi dilinin biçiminde gösterilir (`Intl`). Örneğin İngilizce (ABD) tarayıcıda `9:03 PM`, Almanca tarayıcıda `21:03`. Sayfadaki geri sayım ekranında da yerel saat gösterilir.
+- **Arapça** sağdan sola gösterilir (`dir="rtl"`). Maç yayınının (canvas) yazıları ise her dilde İngilizce ve soldan sağadır.
+- Sayfa başlığı, açıklama ve paylaşım kartı İngilizcedir. `hreflang` bağlantıları arama motorlarına her dilin adresini söyler.
+- Metinler `src/09_i18n.js` dosyasındadır. Her metin 8 dilde tek satırdır: `[en, tr, es, pt, fr, de, it, ar]`. Kodda `tx('anahtar', { parametre })` ile kullanılır. `{n}` gibi yer tutucular parametreyle değiştirilir; `"1 match|2 matches"` biçimindeki metinlerde çoğul biçim sayıya göre seçilir.
+- `node tools/live-check.js` şunları denetler:
+  - her metin 8 dilde var mı ve her dilde aynı yer tutucuları taşıyor mu,
+  - bütün sayfalar her dilde eksiksiz çiziliyor mu,
+  - Türkçe dışındaki dillerde Türkçe kelime kalmış mı.
+  
+  Node araçları ve testler sayfaları Türkçe çizer (`LIVE_LANG` ile değiştirilebilir).
+- Diller simülasyona dokunmaz: parmak izi aynı kalır, lig dondurulmaz ve sıfırlanmaz. Stüdyo (`?studio`) Türkçe kalır.
 
 ### Maç takvimi
 
@@ -142,7 +165,7 @@ Biten bir maç yalnızca seed'i, kulüpleri (ev sahibi önce) ve temasıyla beli
 
 ### Paylaşım dosyaları
 
-`public/` altındaki dosyalar (`manifest.webmanifest`, `icon.svg`, `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `og.jpg`, `fonts/`) site derlemesinde sayfanın yanına kopyalanır (`./build.sh dist/index.html`). Sekme simgesi sayfaya gömülüdür, yerelde açılan `index.html`'de de görünür. Paylaşım kartı mutlak adres ister: `build.sh` sitenin adresini `SITE_URL` ile alır (Pages iş akışı kendi adresini verir; varsayılan `https://mindmash-mt.github.io/Satisfying-Lig/`).
+`public/` altındaki dosyalar (`manifest.webmanifest`, `icon.svg`, `icon-192.png`, `icon-512.png`, `icon-maskable-512.png`, `apple-touch-icon.png`, `og.jpg`, `fonts/`) site derlemesinde sayfanın yanına kopyalanır (`./build.sh dist/index.html`). Sekme simgesi sayfaya gömülüdür, yerelde açılan `index.html`'de de görünür. Paylaşım kartı mutlak adres ister: `build.sh` sitenin adresini `SITE_URL` ile alır (Pages iş akışı kendi adresini verir; varsayılan `https://mdtokatt.github.io/Satisfying-Lig/`).
 
 Simge ya da görünüm değişirse PNG'ler ve `og.jpg` yeniden üretilir (Playwright + Chromium): `npm run assets` (ya da `node tools/make-assets.js <derlenmiş sayfa> [geçmiş bir an]`; görseldeki maç karesi o anda oynanan maçtır). Servis çalışanı (çevrimdışı önbellek) bilerek yoktur: canlı lig her an güncel `live-state.json`'u okumalı.
 
@@ -263,6 +286,50 @@ Sezonun son haftası (17) oynanınca **tabloda 1. olan takım şampiyon** olur v
 
 ---
 
+## Instagram günlük görevi
+
+Her sabah zamanlanmış bir görev, canlı ligin **bir önceki gününden** (İstanbul saatiyle 00:00–24:00, ~900 maç) kritik maçları seçer. Ürettiği dosyalar Claude uygulamasına gönderilir:
+
+| İçerik | Ne |
+|---|---|
+| **2 Reels** (`reel-1.mp4`, `reel-2.mp4`) | Tam maç, ~105 sn: haftanın maçları, 90 sn'lik maç, animasyonlu lig tablosu |
+| **3 Story** (`story-1.mp4` … `story-3.mp4`) | Aynı maçın ≤ 50 sn'lik kesiti: giriş, önemli goller (beraberlik ve öne geçme golleri önce, son gol her zaman), son düdük ve tablo |
+| `captions.txt` | Her video için İngilizce ve Türkçe açıklama metni, hashtag'ler ve maçın tekrar bağlantısı (`?tekrar=…`) |
+
+Videolar 1080×1920, 60 FPS, H.264 + AAC formatındadır. Her videonun ilk ~3 saniyesinde maçın neden kritik olduğunu söyleyen bir **kanca yazısı** çıkar (`NEW LEADER!`, `16 GOALS!`, `EPIC COMEBACK`, `LAST-SECOND DRAMA` …). Bu yazı sonucu söylemez.
+
+**Kritik maç ölçütleri** (`tools/instagram.js` → `KRITIK`, puanlar toplanır):
+
+| Ölçüt | Koşul | Puan |
+|---|---|---:|
+| Şampiyonluğu belirleyen maç | Lider artık yakalanamıyor (ya da ligin son maçı) ve şampiyon bu maçta oynadı; başka bir maçın sonucu belirlediyse 40 | 100 |
+| Yükselme finali | Yükselme elemesinin finali | 70 |
+| Lider değişti | Maçtan sonra 1. sıra el değiştirdi (yükselme liginde 30) | 60 |
+| Geriden gelme | Kazanan 2+ gol geriden geldi (her ek gol +12); 3+ geriden gelip beraberlik 20 | 25+ |
+| Penaltılar / altın gol | Eleme maçı | 30 / 20 |
+| Son saniye golü | Normal sürenin son 10 sn'sinde galibiyet ya da beraberlik golü | 25 |
+| Farklı skor | 5+ gol fark (her ek gol +8) | 20+ |
+| Çok gollü | 14+ gol (her ek gol +5; ortalama ~9) | 20+ |
+| Zirve maçı | İlk 3'teki iki takımın maçı | 15 |
+| Sürpriz | 8+ sıra aşağıdaki takım kazandı | 15 |
+
+Yükselme ligi maçlarının puanı ×0,85 ile çarpılır. **Çeşitlilik:** bir kulüp en fazla 2 içerikte yer alır. Aynı türden ikinci maçın puanı ×0,75 olur. En yüksek iki maç Reels, sonraki üçü Story olur.
+
+**Nasıl çalışıyor:**
+
+- Maçlar **yayındaki sitenin kendi koduyla** hesaplanır (`index.html` indirilir, `tools/live-node.js` → `loadPage`). Videolar repodaki kodla, sitenin oynattığı maçın aynısı olarak kare kare çizilir (`Offline.renderLive`, `src/06_offline.js`). Önce simülasyon parmak izlerinin aynı olduğu denetlenir; sonra skorun sitedekiyle tuttuğu doğrulanır.
+- Günün başındaki lig durumu `instagram-data` dalında saklanır (`data/instagram/state.json`, günlük özetler `data/instagram/days/`). Görev oradan başlar ve bir günü ~1 dakikada hesaplar. Durum yoksa sitenin tabanından hesaplanır; bu her eksik gün için ~1 dakika daha sürer.
+- Bir gün yaklaşık 20–30 dakikada işlenir. Bu sürenin büyük kısmı video çizimidir (maç başına ~3,5 dk).
+
+```bash
+node tools/instagram.js                       # dün (İstanbul): seçim + 2 Reels + 3 Story + açıklamalar → out/instagram/<tarih>/
+node tools/instagram.js --date 2026-11-21     # belirli bir gün
+node tools/instagram.js --no-render           # yalnızca seçim ve açıklama metinleri (summary.json, captions.txt)
+sh tools/instagram-save.sh 2026-11-21         # günün sonundaki lig durumunu instagram-data dalına kaydeder
+```
+
+**Zamanlanmış görev:** görevin talimatı depodadır: [`tools/instagram-gorev.md`](tools/instagram-gorev.md). Görevin kendi metni yalnızca "bu dosyayı oku ve uygula" der. Talimatı değiştirmek için o dosyayı düzenlemek yeterlidir. Görev `main` dalını okur.
+
 ## Otomatik günlük maç günü
 
 > Canlı lig (site) videosuz çalışır. Bu bölüm stüdyo ligi için video üretimini anlatır ve isteğe bağlıdır.
@@ -357,6 +424,7 @@ src/
   06_offline.js     Ekransız video üretimi (kare kare çizim, WebCodecs H.264, OfflineAudioContext)
   07_live.js        Canlı lig: maç takvimi, iki lig (lig + yükselme ligi) aynı saatlerde, seed türetme, geçmiş maçları hesaplama, saate senkron oynatma, Canlı listesi ve maç seçimi, geri sayım ekranı, sekmeler (fikstür, tablolar, ⚽), maç bağlantıları (tekrar), ekran okuyucu duyuruları
   08_stats.js       İstatistik sekmesi ve kulüp sayfaları (tüm zamanlar tablosu, rekorlar, seriler, ikili karşılaşma, grafikler)
+  09_i18n.js        Diller: sitenin 8 dildeki bütün metinleri (tx), tarih / saat biçimleri, dil seçimi
   types.d.ts        Yalnızca tip denetimi için (sayfaya girmez)
 tools/
   balance.js        Terminalden denge testi (Node.js)
@@ -367,6 +435,9 @@ tools/
   live-fingerprint.js  Simülasyon parmak izi (build.sh → BUILD_SIM_HASH)
   live-node.js      Canlı lig motorunu tarayıcısız (Node) yükler: kaynaktan ya da derlenmiş bir sayfadan (loadPage)
   daily.js          Stüdyo ligi: maçları oynatır, MP4 üretir, lig verisini günceller
+  instagram.js      Instagram günü: önceki günün kritik maçlarını seçer, 2 Reels + 3 Story videosu ve açıklama metinleri üretir
+  instagram-save.sh Günün sonundaki lig durumunu instagram-data dalına kaydeder
+  instagram-gorev.md  Zamanlanmış Instagram görevinin talimatı
   make-assets.js    public/ altındaki PNG simgeleri ve paylaşım görselini (og.jpg) üretir
 public/             Site derlemesinde sayfanın yanına kopyalanan dosyalar: manifest, simgeler, og.jpg, fonts/ (yazı tipleri ve lisansları)
 package.json        Komut kısayolları (npm test, npm run typecheck …); bağımlılık yok
