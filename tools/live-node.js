@@ -5,7 +5,7 @@
   (vm sandbox'ı kullanılmaz: orada global erişimler birkaç kat yavaş.)
 */
 const fs = require('fs'), path = require('path');
-const FILES = ['01_core.js', '02_sim.js', '03_fx_audio.js', '04_render.js', '05_app.js', '06_offline.js', '07_live.js', '08_stats.js'];
+const FILES = ['01_core.js', '02_sim.js', '03_fx_audio.js', '04_render.js', '05_app.js', '06_offline.js', '07_live.js', '08_stats.js', '09_i18n.js'];
 
 /* the small DOM stand-ins the engine needs outside a browser */
 function env() {
@@ -14,7 +14,8 @@ function env() {
   return {
     location: { search: '', protocol: 'node:' },
     localStorage: { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k) },
-    document: stub(), window: stub(), navigator: {}, requestAnimationFrame: () => 0,
+        /* the pages' language (09_i18n.js): Turkish unless LIVE_LANG says otherwise (the tests read the Turkish texts) */
+    document: stub(), window: stub(), navigator: { languages: [process.env.LIVE_LANG || 'tr'] }, requestAnimationFrame: () => 0,
   };
 }
 /* the live engine of a BUILT page (e.g. the site that is live now, with its own rules, base and start): its inline script.
@@ -34,7 +35,7 @@ function loadLive({ simHash, base, start } = {}) {
   const code = (simHash ? `const BUILD_SIM_HASH = ${JSON.stringify(simHash)};\n` : '') + `const BUILD_BASE = ${JSON.stringify(base || null)};\n` +
     `const BUILD_START = ${JSON.stringify(start || null)};\n` +
     FILES.map(f => fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8')).join('\n') +
-    '\nreturn { Live, League, App, CONFIG, Game, DT, RNG, planRoundRobin, fixtureStats, DM, LivePages, LiveStats, StatsPages, Music };';
+    '\nreturn { Live, League, App, CONFIG, Game, DT, RNG, planRoundRobin, fixtureStats, DM, LivePages, LiveStats, StatsPages, Music, I18N };';
   const L = new Function(...Object.keys(env_), code)(...Object.values(env_));
   L.Live.adopt(base && base.data ? L.Live.baseState() : null);
   return L;

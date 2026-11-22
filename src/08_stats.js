@@ -109,11 +109,11 @@ const LiveStats = {
       return best;
     };
     const seasonRecs = recs.length ? [
-      { label: 'En çok puan', r: seasonRec(x => x[2], (a, b) => a > b), unit: 'puan' },
-      { label: 'En az puan', r: seasonRec(x => x[2], (a, b) => a < b), unit: 'puan' },
-      { label: 'En çok galibiyet', r: seasonRec(x => x[3], (a, b) => a > b), unit: 'galibiyet' },
-      { label: 'En çok gol atan', r: seasonRec(x => x[6], (a, b) => a > b), unit: 'gol' },
-      { label: 'En az gol yiyen', r: seasonRec(x => x[7], (a, b) => a < b), unit: 'gol' },
+      { label: 'srMostPts', r: seasonRec(x => x[2], (a, b) => a > b), unit: 'uPts' },
+      { label: 'srLeastPts', r: seasonRec(x => x[2], (a, b) => a < b), unit: 'uPts' },
+      { label: 'srMostW', r: seasonRec(x => x[3], (a, b) => a > b), unit: 'uWins' },
+      { label: 'srMostGF', r: seasonRec(x => x[6], (a, b) => a > b), unit: 'uGoals' },
+      { label: 'srLeastGA', r: seasonRec(x => x[7], (a, b) => a < b), unit: 'uGoals' },
     ] : [];
     const tot = (lg) => (lg ? { n: lg.n || 0, g: lg.rows.reduce((s, x) => s + x[6], 0), dr: lg.rows.reduce((s, x) => s + x[4], 0) / 2 } : { n: 0, g: 0, dr: 0 });
     const perSeason = recs.concat([cur]).map(r => {
@@ -132,13 +132,13 @@ const LiveStats = {
     if (!c || !c.draw.includes(id)) return '';
     const ms = League.cupMatchesOf(c).filter(m => m.res && (m.res.winner === id || m.res.loser === id));
     const last = ms[ms.length - 1];
-    if (cupDirect(c).includes(id)) return 'Doğrudan yükseldi';
-    if (!last) return c.draw.length > PO_SIZE && c.draw.slice(0, 4).includes(id) ? 'Elemede (1. turu bay geçti)' : 'Elemede';
+    if (cupDirect(c).includes(id)) return tx('fateDirect');
+    if (!last) return tx(c.draw.length > PO_SIZE && c.draw.slice(0, 4).includes(id) ? 'fateBye' : 'fateIn');
     const won = last.res.winner === id;
-    if (last.k === 'FIN') return won ? 'Eleme birincisi' : 'Eleme finalisti';
-    if (last.k === '3RD') return won ? 'Eleme üçüncüsü' : 'Eleme dördüncüsü';
-    if (!won) return ['1. turda elendi', 'Çeyrek finalde elendi', 'Yarı finalde elendi'][last.r] || 'Elendi';
-    return 'Elemede';
+    if (last.k === 'FIN') return tx(won ? 'fate1' : 'fate2');
+    if (last.k === '3RD') return tx(won ? 'fate3' : 'fate4');
+    if (!won) return tx(last.r >= 0 && last.r <= 2 ? 'fateOut' + last.r : 'fateOut');
+    return tx('fateIn');
   },
   /* every season of a club, oldest first: in the league (rank, table row) or in the pool (playoff), and what came of it */
   seasonsOf(id) {
@@ -153,7 +153,7 @@ const LiveStats = {
       else if (r.pl && r.pl.rows.some(x => x[0] === id)) {
         /* the promotion league: its place, and the playoff for its top 4 */
         const k = r.pl.rows.findIndex(x => x[0] === id), cf = r.cup ? this.cupFate(LivePages.cupOf(r), id) : '';
-        out.push({ season: r.season, pool: true, pl: true, rank: k + 1, row: r.pl.rows[k], pts: r.pl.rows[k][2], played: r.pl.rows[k][1], cf, up, fate: `Yükselme ligi ${k + 1}.${cf ? ' · ' + cf : ''}`, champ: false, down: false });
+        out.push({ season: r.season, pool: true, pl: true, rank: k + 1, row: r.pl.rows[k], pts: r.pl.rows[k][2], played: r.pl.rows[k][1], cf, up, fate: `${tx('fatePl', { n: k + 1, o: I18N.ord(k + 1) })}${cf ? ' · ' + cf : ''}`, champ: false, down: false });
       } else if (up || (r.cup && r.cup.draw.includes(id))) out.push({ season: r.season, pool: true, up, fate: r.cup ? this.cupFate(LivePages.cupOf(r), id) : '', champ: false, down: false });
     }
     const pos = S.cur.rows.findIndex(x => x[0] === id);
@@ -163,58 +163,59 @@ const LiveStats = {
       if (League.promoOn()) {
         const k = League.promoRanking().findIndex(x => x.t.id === id), r = League.rowOf(d.promo.table, id);
         out.push({ season: d.season, cur: true, pool: true, pl: true, cf, rank: k + 1, row: [id, r.played, r.pts, r.w, r.d, r.l, r.gf, r.ga], pts: r.pts, played: r.played,
-          up: false, champ: false, down: false, fate: `Yükselme ligi ${k + 1}. sırada (${r.played} maç, ${r.pts} puan)${cf ? ' · ' + cf : ''}` });
-      } else out.push({ season: d.season, cur: true, pool: true, up: false, champ: false, down: false, fate: cf || 'Lig maçları bitince eleme oynar' });
+          up: false, champ: false, down: false, fate: `${tx('fatePlNow', { n: k + 1, o: I18N.ord(k + 1), p: r.played, pts: r.pts })}${cf ? ' · ' + cf : ''}` });
+      } else out.push({ season: d.season, cur: true, pool: true, up: false, champ: false, down: false, fate: cf || tx('fateWait') });
     }
     return out;
   },
 };
 
-/* ---- HTML: the "İstatistik" tab and the club pages (Turkish, like the rest of the site's controls) ---- */
+/* ---- HTML: the "Statistics" tab and the club pages (in the viewer's language: 09_i18n.js) ---- */
 const StatsPages = {
   /* charts are drawn in the pane's own width (in px), so their text stays readable on a phone */
   chartW() { const w = typeof window !== 'undefined' && typeof window.innerWidth === 'number' ? window.innerWidth : 0; return w ? Math.round(Math.min(700, Math.max(280, w - 46))) : 640; },
   team(id) { return LivePages.anyTeam(id) || { id, name: id, code: '?', c1: '#888888', c2: '#ffffff' }; },
   name(id) { return LivePages.tlink(this.team(id)); },
-  /* "Sezon 3 · 5. hafta" ("Yükselme ligi · Sezon 3 · 5. hafta") */
-  when(m) { return `${m.dv === 'promo' ? 'Yükselme ligi · ' : ''}Sezon ${m.s} · ${m.w}. hafta`; },
+  /* "Season 3 · week 5" ("Promotion league · Season 3 · week 5") */
+  when(m) { return `${m.dv === 'promo' ? tx('promo') + ' · ' : ''}${tx('season', { s: m.s })} · ${tx('weekLc', { w: m.w })}`; },
   /* a match as "Real Madrid 5–1 Barcelona" (home first, the winner bold) */
   score(m) {
     const w = m.hs > m.as ? 'h' : m.hs < m.as ? 'a' : '';
     return `<span class="${w === 'h' ? 'win' : ''}">${this.name(m.h)}</span> <b class="sc">${m.hs}–${m.as}</b> <span class="${w === 'a' ? 'win' : ''}">${this.name(m.a)}</span>`;
   },
   list(items, empty) { return items.length ? `<ol class="st-list">${items.map(x => `<li>${x}</li>`).join('')}</ol>` : `<div class="st-empty">${empty}</div>`; },
-  streakTxt(s) { return `${this.name(s.id)} <b class="sc">${s.len} maç</b> <span class="mut">${this.when(s.from)} – ${s.to.s === s.from.s ? `${s.to.w}. hafta` : this.when(s.to)}${s.on ? ' · <em class="on">sürüyor</em>' : ''}</span>`; },
+  streakTxt(s) { return `${this.name(s.id)} <b class="sc">${tx('matches', { n: s.len })}</b> <span class="mut">${this.when(s.from)} – ${s.to.s === s.from.s ? tx('weekLc', { w: s.to.w }) : this.when(s.to)}${s.on ? ` · <em class="on">${tx('ongoing')}</em>` : ''}</span>`; },
   card(title, body) { return `<section class="st-card"><h4>${title}</h4>${body}</section>`; },
   /* the "İstatistik" tab */
   page() {
-    const S = LiveStats.get(), d = League.data, head = '<h2>İstatistik</h2>';
-    if (!S.allTime.length) return `${head}<div class="lp-sub">Henüz maç oynanmadı. İlk maçtan sonra tüm zamanlar tablosu ve rekorlar burada görünür.</div>`;
-    const span = S.recs.length ? `Sezon ${S.first}–${d.season}` : `Sezon ${d.season}`;
-    const sub = `<div class="lp-sub">${span} · biten ${S.recs.length} sezon ve sürmekte olan sezon · lig ve yükselme ligi maçları · kulüp adına dokunun: kulüp sayfası (ikili karşılaşmalar orada)</div>`;
-    const note = S.lost && S.since > S.first ? `<div class="lp-legend">Maç rekorları (farklı galibiyet, seriler) yalnızca Sezon ${S.since} ve sonrasını kapsar; tablolar ve gol ortalamaları bütün sezonları kapsar.</div>` : '';
+    const S = LiveStats.get(), d = League.data, head = `<h2>${tx('tabStats')}</h2>`;
+    if (!S.allTime.length) return `${head}<div class="lp-sub">${tx('stNone')}</div>`;
+    const span = S.recs.length ? tx('stSpan', { a: S.first, b: d.season }) : tx('season', { s: d.season });
+    const sub = `<div class="lp-sub">${tx('stSub', { span, n: S.recs.length })}</div>`;
+    const note = S.lost && S.since > S.first ? `<div class="lp-legend">${tx('stNote', { s: S.since })}</div>` : '';
+    const th = (a, t, opt) => LivePages.th(a, t, opt);
     /* all-time table */
     const rows = S.allTime.map((x, i) => {
       const av = x.gf - x.ga;
       return `<tr><td>${i + 1}</td><td class="tn">${LivePages.dot(this.team(x.id))}${this.name(x.id)}</td><td>${x.seasons}</td><td class="opt">${x.pl}</td><td>${x.played}</td><td class="opt">${x.w}</td><td class="opt">${x.d}</td><td class="opt">${x.l}</td>`
         + `<td class="opt">${x.gf}</td><td class="opt">${x.ga}</td><td>${av > 0 ? '+' : ''}${av}</td><td><b>${x.pts}</b></td><td>${x.titles ? `🏆 ${x.titles}` : ''}</td></tr>`;
     }).join('');
-    const table = `<h3 class="lp-h3">Tüm zamanlar tablosu</h3><table class="lp-table"><caption class="sr-only">Tüm zamanlar tablosu</caption><thead><tr><th scope="col">#</th><th scope="col">Takım</th><th scope="col" title="Ligde oynadığı sezon">Sz</th><th scope="col" class="opt" title="Yükselme liginde oynadığı sezon">YL</th><th scope="col" title="Oynanan (lig + yükselme ligi)">O</th>`
-      + `<th scope="col" class="opt" title="Galibiyet">G</th><th scope="col" class="opt" title="Beraberlik">B</th><th scope="col" class="opt" title="Mağlubiyet">M</th><th scope="col" class="opt" title="Atılan gol">AG</th><th scope="col" class="opt" title="Yenilen gol">YG</th>`
-      + `<th scope="col" title="Averaj">AV</th><th scope="col" title="Puan">P</th><th scope="col" title="Şampiyonluk"><span aria-hidden="true">🏆</span><span class="sr-only">Şampiyonluk</span></th></tr></thead><tbody>${rows}</tbody></table>`
-      + `<div class="lp-legend">Bütün sezonların toplamı (sürmekte olan sezon dahil): lig ve yükselme ligi maçları birlikte; puanlar her sezonun kendi puanlamasıyla. Sz: ligde, YL: yükselme liginde geçen sezon. Sıralama: puan → averaj → atılan gol.</div>`;
+    const table = `<h3 class="lp-h3">${tx('stAllTime')}</h3><table class="lp-table"><caption class="sr-only">${tx('stAllTime')}</caption><thead><tr><th scope="col">#</th><th scope="col">${tx('thTeam')}</th>${th(tx('thSz'), tx('thSzT'))}${th(tx('thYl'), tx('thYlT'), 1)}${th(tx('thP'), tx('thPAllT'))}`
+      + `${th(tx('thW'), tx('thWT'), 1)}${th(tx('thD'), tx('thDT'), 1)}${th(tx('thL'), tx('thLT'), 1)}${th(tx('thGF'), tx('thGFT'), 1)}${th(tx('thGA'), tx('thGAT'), 1)}`
+      + `${th(tx('thGD'), tx('thGDT'))}${th(tx('thPts'), tx('thPtsT'))}<th scope="col" title="${esc(tx('titlesW'))}"><span aria-hidden="true">🏆</span><span class="sr-only">${tx('titlesW')}</span></th></tr></thead><tbody>${rows}</tbody></table>`
+      + `<div class="lp-legend">${tx('stAllLegend', { sz: tx('thSz'), yl: tx('thYl') })}</div>`;
     /* titles */
-    const titles = `<h3 class="lp-h3">Şampiyonluklar</h3>` + (S.titles.length
-      ? `<ol class="lp-champs">${S.titles.map(t => `<li><b>${this.name(t.id)}</b><span>${t.n} şampiyonluk</span><span>Sezon ${t.seasons.join(', ')}</span></li>`).join('')}</ol>`
-      : '<div class="st-empty">İlk sezon bitince şampiyonlar burada listelenir.</div>');
+    const titles = `<h3 class="lp-h3">${tx('stTitles')}</h3>` + (S.titles.length
+      ? `<ol class="lp-champs">${S.titles.map(t => `<li><b>${this.name(t.id)}</b><span>${tx('titlesN', { n: t.n })}</span><span>${tx('season', { s: t.seasons.join(', ') })}</span></li>`).join('')}</ol>`
+      : `<div class="st-empty">${tx('stTitlesNone')}</div>`);
     /* records */
     const top = (a) => a.slice(0, 5);
-    const recs = `<h3 class="lp-h3">Rekorlar</h3><div class="st-grid">`
-      + this.card('En farklı galibiyetler', this.list(top(S.big).map(m => `${this.score(m)} <span class="mut">${this.when(m)}</span>`), 'Henüz galibiyet yok.'))
-      + this.card('En gollü maçlar', this.list(top(S.goals).map(m => `${this.score(m)} <span class="mut">${m.hs + m.as} gol · ${this.when(m)}</span>`), 'Henüz maç yok.'))
-      + this.card('En uzun galibiyet serileri', this.list(top(S.streaks.w).map(s => this.streakTxt(s)), 'Henüz art arda iki galibiyet yok.'))
-      + this.card('En uzun yenilmezlik serileri', this.list(top(S.streaks.u).map(s => this.streakTxt(s)), 'Henüz seri yok.'))
-      + (S.seasonRecs.length ? this.card('Sezon rekorları (lig)', `<ol class="st-list">${S.seasonRecs.filter(x => x.r).map(x => `<li><span class="mut">${x.label}:</span> ${this.name(x.r.id)} <b class="sc">${x.r.v} ${x.unit}</b> <span class="mut">Sezon ${x.r.season}</span></li>`).join('')}</ol>`) : '')
+    const recs = `<h3 class="lp-h3">${tx('stRecords')}</h3><div class="st-grid">`
+      + this.card(tx('stBig'), this.list(top(S.big).map(m => `${this.score(m)} <span class="mut">${this.when(m)}</span>`), tx('stBigNone')))
+      + this.card(tx('stGoals'), this.list(top(S.goals).map(m => `${this.score(m)} <span class="mut">${tx('goalsN', { n: m.hs + m.as })} · ${this.when(m)}</span>`), tx('stGoalsNone')))
+      + this.card(tx('stW'), this.list(top(S.streaks.w).map(s => this.streakTxt(s)), tx('stWNone')))
+      + this.card(tx('stU'), this.list(top(S.streaks.u).map(s => this.streakTxt(s)), tx('stUNone')))
+      + (S.seasonRecs.length ? this.card(tx('stSeasonRecs'), `<ol class="st-list">${S.seasonRecs.filter(x => x.r).map(x => `<li><span class="mut">${tx(x.label)}:</span> ${this.name(x.r.id)} <b class="sc">${x.r.v} ${tx(x.unit)}</b> <span class="mut">${tx('season', { s: x.r.season })}</span></li>`).join('')}</ol>`) : '')
       + '</div>';
     return `${head}${sub}${note}${table}${titles}${recs}${this.goalsSection(S)}`;
   },
@@ -224,22 +225,22 @@ const StatsPages = {
     if (!P.length) return '';
     const W = this.chartW(), H = 190, L = 34, R = 10, T = 16, B = 26, pw = W - L - R, ph = H - T - B;
     const max = Math.max(1, Math.ceil(Math.max(...P.map(x => x.avg)))), step = pw / P.length, bw = Math.max(3, Math.min(34, step * 0.62));
-    const y = (v) => T + ph - (v / max) * ph, fmt = (v) => v.toFixed(2).replace('.', ',');
+    const y = (v) => T + ph - (v / max) * ph, fmt = (v) => I18N.num(v, 2), pct = (v) => tx('pct', { n: Math.round(v * 100) });
     const ticks = [0, max / 2, max].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="gr"/><text x="${L - 6}" y="${y(v) + 4}" class="ax" text-anchor="end">${Number.isInteger(v) ? v : fmt(v)}</text>`).join('');
     const hi = P.reduce((a, x) => (x.avg > a.avg ? x : a), P[0]), lab = new Set([hi, P[P.length - 1]]);
     const every = Math.ceil(P.length / 12);
     const bars = P.map((x, i) => {
       const cx = L + step * (i + 0.5), top = y(x.avg), h = Math.max(0, T + ph - top), r = Math.min(4, bw / 2, h);
       const path = `M${cx - bw / 2},${T + ph}V${top + r}Q${cx - bw / 2},${top} ${cx - bw / 2 + r},${top}H${cx + bw / 2 - r}Q${cx + bw / 2},${top} ${cx + bw / 2},${top + r}V${T + ph}Z`;
-      const tip = `Sezon ${x.season}${x.cur ? ' (sürüyor)' : ''}: maç başına ${fmt(x.avg)} gol, ${x.n} maç${x.pn ? ` (${x.pn} yükselme ligi)` : ''}, ${x.goals} gol, beraberlik %${Math.round(x.draws * 100)}`;
+      const tip = tx('gsTip', { s: x.season, cur: x.cur ? tx('gsCur') : '', avg: fmt(x.avg), n: x.n, pn: x.pn ? tx('gsPn', { n: x.pn }) : '', g: x.goals, d: pct(x.draws) });
       return `<g class="hit"><title>${tip}</title><rect x="${cx - step / 2}" y="${T}" width="${step}" height="${ph}" fill="transparent"/><path d="${path}" class="bar${x.cur ? ' cur' : ''}"/>`
         + (lab.has(x) ? `<text x="${cx}" y="${top - 5}" class="vl" text-anchor="middle">${fmt(x.avg)}</text>` : '')
         + (i % every === 0 || i === P.length - 1 ? `<text x="${cx}" y="${H - 8}" class="ax" text-anchor="middle">${x.season}</text>` : '') + '</g>';
     }).join('');
-    const svg = `<svg class="st-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Sezon başına maç başı gol ortalaması: en yüksek Sezon ${hi.season}, ${fmt(hi.avg)} gol">${ticks}${bars}</svg>`;
-    const rows = P.slice().reverse().map(x => `<tr><td>Sezon ${x.season}${x.cur ? ' <em class="on">sürüyor</em>' : ''}</td><td>${x.n}</td><td>${x.goals}</td><td><b>${fmt(x.avg)}</b></td><td>%${Math.round(x.draws * 100)}</td></tr>`).join('');
-    return `<h3 class="lp-h3">Sezon başına gol ortalaması</h3><div class="st-box">${svg}<div class="lp-legend" style="margin:4px 0 0">Maç başına gol, lig ve yükselme ligi maçları (çubuğun üstüne gelince ayrıntı) · soluk çubuk: sürmekte olan sezon</div></div>`
-      + `<details class="st-det"><summary>Tablo olarak göster</summary><table class="lp-table"><thead><tr><th scope="col">Sezon</th><th scope="col">Maç</th><th scope="col">Gol</th><th scope="col">Maç başı</th><th scope="col">Beraberlik</th></tr></thead><tbody>${rows}</tbody></table></details>`;
+    const svg = `<svg class="st-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(tx('gsAria', { s: hi.season, avg: fmt(hi.avg) }))}">${ticks}${bars}</svg>`;
+    const rows = P.slice().reverse().map(x => `<tr><td>${tx('season', { s: x.season })}${x.cur ? ` <em class="on">${tx('ongoing')}</em>` : ''}</td><td>${x.n}</td><td>${x.goals}</td><td><b>${fmt(x.avg)}</b></td><td>${pct(x.draws)}</td></tr>`).join('');
+    return `<h3 class="lp-h3">${tx('gsTitle')}</h3><div class="st-box">${svg}<div class="lp-legend" style="margin:4px 0 0">${tx('gsLegend')}</div></div>`
+      + `<details class="st-det"><summary>${tx('gsAsTable')}</summary><table class="lp-table"><thead><tr><th scope="col">${tx('gsThS')}</th><th scope="col">${tx('gsThM')}</th><th scope="col">${tx('gsThG')}</th><th scope="col">${tx('gsThA')}</th><th scope="col">${tx('gsThD')}</th></tr></thead><tbody>${rows}</tbody></table></details>`;
   },
   /* the opponent a club's head-to-head opens with: its next match's (league or promotion league), else its last match's,
      else the first club in the list */
@@ -256,28 +257,28 @@ const StatsPages = {
   },
   /* a club's head-to-head with an opponent picked from every club the league knows (opp: the picked one, '' = defaultOpp) */
   clubH2h(id, opp) {
-    const d = League.data, clubs = d.teams.concat(d.reserve).filter(t => t.id !== id).sort((x, y) => x.name.localeCompare(y.name, 'tr'));
+    const d = League.data, clubs = d.teams.concat(d.reserve).filter(t => t.id !== id).sort((x, y) => x.name.localeCompare(y.name, I18N.lang));
     if (!clubs.length) return '';
     const b = opp && clubs.some(t => t.id === opp) ? opp : this.defaultOpp(id, clubs), me = this.team(id), op = this.team(b);
-    const sel = `<select class="h2h-sel" aria-label="Rakip kulüp">${clubs.map(t => `<option value="${esc(t.id)}"${t.id === b ? ' selected' : ''}>${esc(t.name)}</option>`).join('')}</select>`;
+    const sel = `<select class="h2h-sel" aria-label="${esc(tx('h2hOpp'))}">${clubs.map(t => `<option value="${esc(t.id)}"${t.id === b ? ' selected' : ''}>${esc(t.name)}</option>`).join('')}</select>`;
     const pick = `<div class="h2h-bar"><b class="h2h-me">${LivePages.dot(me)}${esc(me.name)}</b><span aria-hidden="true">vs</span>${sel}</div>`;
     const ms = LiveStats.h2h(id, b), cnt = { W: 0, D: 0, L: 0 };
     let ga = 0, gb = 0;
     for (const m of ms) { cnt[LiveStats.res(m, id)]++; ga += m.h === id ? m.hs : m.as; gb += m.h === b ? m.hs : m.as; }
     const tile = (v, l) => `<div class="st-tile"><b>${v}</b><span>${l}</span></div>`;
-    const sum = ms.length ? `<div class="st-tiles">${tile(cnt.W, `${esc(me.code)} galibiyeti`)}${tile(cnt.D, 'beraberlik')}${tile(cnt.L, `${esc(op.code)} galibiyeti`)}${tile(`${ga}–${gb}`, 'goller')}</div>` : '';
-    const list = this.list(ms.slice().reverse().slice(0, 20).map(m => `${this.score(m)} <span class="mut">${this.when(m)}</span>`), 'Bu iki kulüp henüz karşılaşmadı.');
-    return `<h3 class="lp-h3">İkili karşılaşma</h3>${pick}<div aria-live="polite">${sum}${list}</div><div class="lp-legend" style="margin:4px 0 0">Lig ve yükselme ligi maçları · rakibi listeden seçin</div>`;
+    const sum = ms.length ? `<div class="st-tiles">${tile(cnt.W, tx('h2hWins', { code: esc(me.code) }))}${tile(cnt.D, tx('h2hDraws'))}${tile(cnt.L, tx('h2hWins', { code: esc(op.code) }))}${tile(`${ga}–${gb}`, tx('h2hGoals'))}</div>` : '';
+    const list = this.list(ms.slice().reverse().slice(0, 20).map(m => `${this.score(m)} <span class="mut">${this.when(m)}</span>`), tx('h2hNone'));
+    return `<h3 class="lp-h3">${tx('h2hTitle')}</h3>${pick}<div aria-live="polite">${sum}${list}</div><div class="lp-legend" style="margin:4px 0 0">${tx('h2hLegend')}</div>`;
   },
   /* ---- a club's page ---- */
   club(id, opp = '') {
-    const t = LivePages.anyTeam(id), back = '<button type="button" class="tm-back" data-back="1">‹ Geri</button>';
-    if (!t) return `${back}<h2>Kulüp bulunamadı</h2>`;
+    const t = LivePages.anyTeam(id), back = `<button type="button" class="tm-back" data-back="1">${tx('back')}</button>`;
+    if (!t) return `${back}<h2>${tx('clubNotFound')}</h2>`;
     const S = LiveStats.get(), d = League.data, list = LiveStats.seasonsOf(id), cur = list.find(x => x.cur);
     const A = S.allTime.find(x => x.id === id), atRank = S.allTime.indexOf(A) + 1, T = S.titles.find(x => x.id === id);
-    const status = !cur ? 'Bu sezon ligde değil' : cur.pool ? `Sezon ${d.season} · havuzda: ${cur.fate}` : `Sezon ${d.season} · ${cur.rank}. sırada · ${cur.played} maç, ${cur.pts} puan`;
+    const status = !cur ? tx('clubOut') : cur.pool ? tx('clubPool', { s: d.season, fate: cur.fate }) : tx('clubRank', { s: d.season, r: cur.rank, o: I18N.ord(cur.rank), p: cur.played, pts: cur.pts });
     const tile = (v, l) => `<div class="st-tile"><b>${v}</b><span>${l}</span></div>`;
-    const tiles = `<div class="st-tiles">${tile(T ? T.n : 0, 'şampiyonluk')}${tile(list.filter(x => !x.pool && !x.old).length, 'ligde sezon')}${tile(A ? `${atRank}.` : '—', 'tüm zamanlar')}${tile(A ? A.pts : 0, 'toplam puan')}</div>`;
+    const tiles = `<div class="st-tiles">${tile(T ? T.n : 0, tx('tileTitles'))}${tile(list.filter(x => !x.pool && !x.old).length, tx('tileSeasons'))}${tile(A ? I18N.ord(atRank) : '—', tx('tileAllTime'))}${tile(A ? A.pts : 0, tx('tilePts'))}</div>`;
     const head = `${back}<div class="tm-head"><span class="tm-badge" style="background:${esc(t.c1)};border-color:${esc(t.c2)}" aria-hidden="true">${esc(t.code)}</span><div><h2 tabindex="-1" id="tmTitle">${esc(t.name)}</h2><div class="lp-sub" style="margin:0">${status}</div></div></div>`;
     return head + tiles + this.clubForm(id) + this.clubH2h(id, opp) + this.clubChart(list) + this.clubSeasons(list) + this.clubEvents(list) + this.clubRecords(id);
   },
@@ -287,9 +288,9 @@ const StatsPages = {
     const d = League.data, promo = !d.teams.some(t => t.id === id);
     if (promo && !(League.promoOn() && d.reserve.some(t => t.id === id))) return '';
     const dv = promo ? 'promo' : 'main', all = LiveStats.current(dv), ms = all.filter(m => m.h === id || m.a === id);
-    const title = `Sezon ${d.season} formu${promo ? ' · yükselme ligi' : ''}`;
-    if (!ms.length) return `<h3 class="lp-h3">${title}</h3><div class="st-empty">Bu sezon henüz maçı yok.</div>`;
-    const lastList = () => `<h3 class="lp-h3">Son maçlar</h3><ol class="st-list">${ms.slice(-10).reverse().map(m => { const r = LiveStats.res(m, id); return `<li><i class="fp f${r}">${FORM_TR[r]}</i>${this.score(m)} <span class="mut">${promo ? 'Yükselme ligi · ' : ''}${m.w}. hafta</span></li>`; }).join('')}</ol>`;
+    const title = `${tx('cfTitle', { s: d.season })}${promo ? ' · ' + tx('promoLc') : ''}`;
+    if (!ms.length) return `<h3 class="lp-h3">${title}</h3><div class="st-empty">${tx('cfNone')}</div>`;
+    const lastList = () => `<h3 class="lp-h3">${tx('cfLast')}</h3><ol class="st-list">${ms.slice(-10).reverse().map(m => { const r = LiveStats.res(m, id); return `<li><i class="fp f${r}">${formL(r)}</i>${this.score(m)} <span class="mut">${promo ? tx('promo') + ' · ' : ''}${tx('weekLc', { w: m.w })}</span></li>`; }).join('')}</ol>`;
     if (ms.length < 2) return lastList();                       // a line needs two matches
     const pts = (r) => (r === 'W' ? d.points[0] : r === 'D' ? d.points[1] : d.points[2]);
     const cum = (tid) => { let s = 0; return all.filter(m => m.h === tid || m.a === tid).map(m => (s += pts(LiveStats.res(m, tid)))); };
@@ -299,16 +300,16 @@ const StatsPages = {
     const max = Math.max(3, ...me, ...(lead || [0])), x = (k) => L + (n > 1 ? (k / (n - 1)) * pw : pw / 2), y = (v) => T + ph - (v / max) * ph;
     const line = (a) => a.map((v, k) => `${k ? 'L' : 'M'}${x(k).toFixed(1)},${y(v).toFixed(1)}`).join('');
     const yt = [0, Math.round(max / 2), max].map(v => `<line x1="${L}" x2="${L + pw}" y1="${y(v)}" y2="${y(v)}" class="gr"/><text x="${L - 6}" y="${y(v) + 4}" class="ax" text-anchor="end">${v}</text>`).join('');
-    const xt = [0, Math.floor((n - 1) / 2), n - 1].map(k => `<text x="${x(k)}" y="${H - 8}" class="ax" text-anchor="middle">${k + 1}. maç</text>`).join('');
+    const xt = [0, Math.floor((n - 1) / 2), n - 1].map(k => `<text x="${x(k)}" y="${H - 8}" class="ax" text-anchor="middle">${esc(tx('matchNo', { n: k + 1 }))}</text>`).join('');
     const dots = ms.map((m, k) => {
       const r = LiveStats.res(m, id);
-      return `<g class="hit"><title>${m.w}. hafta: ${esc(this.team(m.h).code)} ${m.hs}–${m.as} ${esc(this.team(m.a).code)} (${FORM_TR[r]}) · ${me[k]} puan</title><circle cx="${x(k)}" cy="${y(me[k])}" r="12" fill="transparent"/><circle cx="${x(k)}" cy="${y(me[k])}" r="4.5" class="pt-${r}"/></g>`
+      return `<g class="hit"><title>${tx('week', { w: m.w })}: ${esc(this.team(m.h).code)} ${m.hs}–${m.as} ${esc(this.team(m.a).code)} (${formL(r)}) · ${tx('pts', { n: me[k] })}</title><circle cx="${x(k)}" cy="${y(me[k])}" r="12" fill="transparent"/><circle cx="${x(k)}" cy="${y(me[k])}" r="4.5" class="pt-${r}"/></g>`
     }).join('');
     const tag = (a, cls, label) => `<text x="${x(a.length - 1) + 8}" y="${y(a[a.length - 1]) + 4}" class="${cls}">${label}</text>`;
-    const svg = `<svg class="st-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Sezon ${d.season}: ${me.length} maçta ${me[me.length - 1]} puan${lead ? `, lider ${esc(this.team(leadId).name)} ${lead[lead.length - 1]} puan` : ''}">${yt}${xt}`
-      + (lead ? `<path d="${line(lead)}" class="ln lead"/>${tag(lead, 'dl mut', `Lider ${esc(this.team(leadId).code)}`)}` : '')
+    const svg = `<svg class="st-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(tx('cfAria', { s: d.season, n: me.length, pts: me[me.length - 1], lead: lead ? tx('cfAriaLead', { name: this.team(leadId).name, pts: lead[lead.length - 1] }) : '' }))}">${yt}${xt}`
+      + (lead ? `<path d="${line(lead)}" class="ln lead"/>${tag(lead, 'dl mut', esc(tx('leader', { code: this.team(leadId).code })))}` : '')
       + `<path d="${line(me)}" class="ln"/>${dots}${tag(me, 'dl', esc(this.team(id).code))}</svg>`;
-    return `<h3 class="lp-h3">${title}</h3><div class="st-box">${svg}<div class="lp-legend" style="margin:4px 0 0">Her maçtan sonraki toplam puan · noktalar: <b class="k-W">G</b> galibiyet, <b class="k-D">B</b> beraberlik, <b class="k-L">M</b> mağlubiyet</div></div>`
+    return `<h3 class="lp-h3">${title}</h3><div class="st-box">${svg}<div class="lp-legend" style="margin:4px 0 0">${tx('cfLegend', { W: `<b class="k-W">${formL('W')}</b>`, D: `<b class="k-D">${formL('D')}</b>`, L: `<b class="k-L">${formL('L')}</b>` })}</div></div>`
       + lastList();
   },
   /* the finishing position season by season (this league; the pool below the table) */
@@ -321,44 +322,47 @@ const StatsPages = {
     const yPool = y(rows), rel = CONFIG.RELEGATE_COUNT;
     const band = `<rect x="${L}" y="${y(size - rel + 0.5)}" width="${pw}" height="${y(size + 0.5) - y(size - rel + 0.5)}" class="relband"/>`;
     const yt = [1, Math.round(size / 2), size].map(r => `<line x1="${L}" x2="${L + pw}" y1="${y(r)}" y2="${y(r)}" class="gr"/><text x="${L - 6}" y="${y(r) + 4}" class="ax" text-anchor="end">${r}.</text>`).join('')
-      + `<text x="${L - 6}" y="${yPool + 4}" class="ax" text-anchor="end">Havuz</text>`;
+      + `<text x="${L - 6}" y="${yPool + 4}" class="ax" text-anchor="end">${tx('pool')}</text>`;
     const every = Math.ceil(L0.length / 10);
     const xt = L0.map((s, k) => (k % every === 0 || k === L0.length - 1 ? `<text x="${x(k)}" y="${H - 6}" class="ax" text-anchor="middle">S${s.season}</text>` : '')).join('');
     let path = '';
     L0.forEach((s, k) => { if (!s.pool) path += `${k && !L0[k - 1].pool ? 'L' : 'M'}${x(k).toFixed(1)},${y(s.rank).toFixed(1)}`; });
     const dots = L0.map((s, k) => {
       const cy = s.pool ? yPool : y(s.rank), cls = s.pool ? (s.up ? 'pt-up' : 'pt-pool') : s.champ ? 'pt-champ' : s.down ? 'pt-L' : 'pt-pos';
-      const tip = `Sezon ${s.season}${s.cur ? ' (sürüyor)' : ''}: ${s.pool ? `havuzda${s.fate ? ' · ' + s.fate : ''}${s.up ? ' · yükseldi' : ''}` : `${s.rank}. sıra, ${s.pts} puan${s.champ ? ' · şampiyon' : ''}${s.down ? ' · düştü' : ''}`}`;
+      const cur = s.cur ? tx('gsCur') : '';
+      const tip = s.pool ? tx('ccTipPool', { s: s.season, cur, fate: s.fate ? ' · ' + s.fate : '', up: s.up ? tx('ccUp') : '' })
+        : tx('ccTipRank', { s: s.season, cur, r: s.rank, o: I18N.ord(s.rank), pts: s.pts, champ: s.champ ? tx('ccChamp') : '', down: s.down ? tx('ccDown') : '' });
       return `<g class="hit"><title>${tip}</title><circle cx="${x(k)}" cy="${cy}" r="12" fill="transparent"/><circle cx="${x(k)}" cy="${cy}" r="${s.champ ? 6 : 4.5}" class="${cls}${s.cur ? ' cur' : ''}"/></g>`;
     }).join('');
     const best = L0.filter(s => !s.pool && !s.cur).reduce((a, s) => (!a || s.rank < a.rank ? s : a), null);
-    return `<h3 class="lp-h3">Sezon sezon sırası</h3><div class="st-box"><svg class="st-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Sezon sonu sıraları${best ? `: en iyi ${best.rank}. sıra (Sezon ${best.season})` : ''}">${band}${yt}${xt}<path d="${path}" class="ln"/>${dots}</svg>`
-      + `<div class="lp-legend" style="margin:4px 0 0">Sezon sonundaki sıra (1 en üstte) · kırmızı bant: düşme hattı · altın: şampiyon · alttaki sıra: havuzda geçen sezonlar (yeşil: yükseldi) · halka: sürmekte olan sezon</div></div>`;
+    return `<h3 class="lp-h3">${tx('ccTitle')}</h3><div class="st-box"><svg class="st-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(tx('ccAria', { best: best ? tx('ccBest', { r: best.rank, o: I18N.ord(best.rank), s: best.season }) : '' }))}">${band}${yt}${xt}<path d="${path}" class="ln"/>${dots}</svg>`
+      + `<div class="lp-legend" style="margin:4px 0 0">${tx('ccLegend')}</div></div>`;
   },
   outcome(s) {
-    return [s.champ ? '<span class="tg champ">🏆 Şampiyon</span>' : '', s.down ? '<span class="tg down">🔻 Düştü</span>' : '', s.up ? '<span class="tg up">🔺 Yükseldi</span>' : '',
-      s.pool && (s.pl ? s.cf : s.fate) ? `<span class="mut">${esc(s.pl ? s.cf : s.fate)}</span>` : '', s.cur ? '<span class="tg cur">Sürüyor</span>' : ''].filter(Boolean).join(' ');
+    return [s.champ ? `<span class="tg champ">${tx('tgChamp')}</span>` : '', s.down ? `<span class="tg down">${tx('tgDown')}</span>` : '', s.up ? `<span class="tg up">${tx('tgUp')}</span>` : '',
+      s.pool && (s.pl ? s.cf : s.fate) ? `<span class="mut">${esc(s.pl ? s.cf : s.fate)}</span>` : '', s.cur ? `<span class="tg cur">${tx('tgCur')}</span>` : ''].filter(Boolean).join(' ');
   },
   clubSeasons(list) {
     if (!list.length) return '';
     const rows = list.slice().reverse().map(s => {
-      const nm = `${s.old ? 'Eski lig · ' : ''}Sezon ${s.season}`;
-      if (s.pool && !s.pl) return `<tr><td>${nm}</td><td class="tn mut">Havuz</td><td>—</td><td>—</td><td class="opt">—</td><td>—</td><td class="tn">${this.outcome(s)}</td></tr>`;
+      const nm = `${s.old ? tx('oldLeague') : ''}${tx('season', { s: s.season })}`;
+      if (s.pool && !s.pl) return `<tr><td>${nm}</td><td class="tn mut">${tx('pool')}</td><td>—</td><td>—</td><td class="opt">—</td><td>—</td><td class="tn">${this.outcome(s)}</td></tr>`;
       const r = s.row, gd = r ? r[6] - r[7] : 0;
-      return `<tr><td>${nm}</td><td class="tn${s.pl ? ' mut' : ''}">${s.pl ? 'Yükselme ligi' : 'Lig'}</td><td><b>${s.rank}.</b></td><td>${s.played}</td><td class="opt">${r ? `${r[3]}-${r[4]}-${r[5]}` : '—'}</td><td>${r ? `${gd > 0 ? '+' : ''}${gd}` : '—'}</td><td class="tn"><b>${s.pts}</b> <span class="mut">puan</span> ${this.outcome(s)}</td></tr>`;
+      return `<tr><td>${nm}</td><td class="tn${s.pl ? ' mut' : ''}">${tx(s.pl ? 'promo' : 'league')}</td><td><b>${I18N.ord(s.rank)}</b></td><td>${s.played}</td><td class="opt">${r ? `${r[3]}-${r[4]}-${r[5]}` : '—'}</td><td>${r ? `${gd > 0 ? '+' : ''}${gd}` : '—'}</td><td class="tn"><b>${s.pts}</b> <span class="mut">${tx('uPts')}</span> ${this.outcome(s)}</td></tr>`;
     }).join('');
-    return `<h3 class="lp-h3">Sezon geçmişi</h3><table class="lp-table st-seasons"><caption class="sr-only">Sezon geçmişi</caption><thead><tr><th scope="col">Sezon</th><th scope="col">Nerede</th><th scope="col">Sıra</th><th scope="col" title="Oynanan">O</th><th scope="col" class="opt" title="Galibiyet-beraberlik-mağlubiyet">G-B-M</th><th scope="col" title="Averaj">AV</th><th scope="col">Puan · sonuç</th></tr></thead><tbody>${rows}</tbody></table>`;
+    const th = (a, t, opt) => LivePages.th(a, t, opt);
+    return `<h3 class="lp-h3">${tx('csTitle')}</h3><table class="lp-table st-seasons"><caption class="sr-only">${tx('csTitle')}</caption><thead><tr><th scope="col">${tx('gsThS')}</th><th scope="col">${tx('csWhere')}</th><th scope="col">${tx('csRank')}</th>${th(tx('thP'), tx('thPT'))}${th(`${tx('thW')}-${tx('thD')}-${tx('thL')}`, tx('csWdlT'), 1)}${th(tx('thGD'), tx('thGDT'))}<th scope="col">${tx('csPts')}</th></tr></thead><tbody>${rows}</tbody></table>`;
   },
   /* titles, relegations and promotions in order */
   clubEvents(list) {
     const ev = [];
     for (const s of list) {
-      const nm = `${s.old ? 'Eski lig · ' : ''}Sezon ${s.season}`;
-      if (s.champ) ev.push(`<span class="tg champ">🏆</span> ${nm} şampiyonu (${s.pts} puan)`);
-      if (s.down) ev.push(`<span class="tg down">🔻</span> ${nm} sonunda ${s.rank}. sırayla ligden düştü`);
-      if (s.up) ev.push(`<span class="tg up">🔺</span> ${nm} sonunda lige yükseldi${s.fate ? ` (${esc(s.fate)})` : ''}`);
+      const nm = `${s.old ? tx('oldLeague') : ''}${tx('season', { s: s.season })}`;
+      if (s.champ) ev.push(`<span class="tg champ">🏆</span> ${tx('evChamp', { x: nm, pts: s.pts })}`);
+      if (s.down) ev.push(`<span class="tg down">🔻</span> ${tx('evDown', { x: nm, r: s.rank, o: I18N.ord(s.rank) })}`);
+      if (s.up) ev.push(`<span class="tg up">🔺</span> ${tx('evUp', { x: nm, fate: s.fate ? ` (${esc(s.fate)})` : '' })}`);
     }
-    return `<h3 class="lp-h3">Şampiyonluk, düşme ve yükselme</h3>` + (ev.length ? `<ol class="st-list">${ev.reverse().map(x => `<li>${x}</li>`).join('')}</ol>` : '<div class="st-empty">Henüz şampiyonluk, düşme ya da yükselme yok.</div>');
+    return `<h3 class="lp-h3">${tx('evTitle')}</h3>` + (ev.length ? `<ol class="st-list">${ev.reverse().map(x => `<li>${x}</li>`).join('')}</ol>` : `<div class="st-empty">${tx('evNone')}</div>`);
   },
   clubRecords(id) {
     const S = LiveStats.get(), mine = S.ms.filter(m => m.h === id || m.a === id);
@@ -367,9 +371,9 @@ const StatsPages = {
     const pick = (f) => mine.reduce((a, m) => (f(m) > f(a) ? m : a), mine[0]);
     const win = pick(margin), loss = pick(m => -margin(m));
     const ws = S.streaks.w.find(s => s.id === id), us = S.streaks.u.find(s => s.id === id);
-    const items = [margin(win) > 0 ? `<span class="mut">En farklı galibiyet:</span> ${this.score(win)} <span class="mut">${this.when(win)}</span>` : '',
-      margin(loss) < 0 ? `<span class="mut">En ağır yenilgi:</span> ${this.score(loss)} <span class="mut">${this.when(loss)}</span>` : '',
-      ws ? `<span class="mut">En uzun galibiyet serisi:</span> ${this.streakTxt(ws)}` : '', us ? `<span class="mut">En uzun yenilmezlik serisi:</span> ${this.streakTxt(us)}` : ''].filter(Boolean);
-    return items.length ? `<h3 class="lp-h3">Kulüp rekorları</h3><ol class="st-list">${items.map(x => `<li>${x}</li>`).join('')}</ol>` : '';
+    const items = [margin(win) > 0 ? `<span class="mut">${tx('crBigWin')}:</span> ${this.score(win)} <span class="mut">${this.when(win)}</span>` : '',
+      margin(loss) < 0 ? `<span class="mut">${tx('crBigLoss')}:</span> ${this.score(loss)} <span class="mut">${this.when(loss)}</span>` : '',
+      ws ? `<span class="mut">${tx('crW')}:</span> ${this.streakTxt(ws)}` : '', us ? `<span class="mut">${tx('crU')}:</span> ${this.streakTxt(us)}` : ''].filter(Boolean);
+    return items.length ? `<h3 class="lp-h3">${tx('crTitle')}</h3><ol class="st-list">${items.map(x => `<li>${x}</li>`).join('')}</ol>` : '';
   },
 };

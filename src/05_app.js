@@ -32,13 +32,14 @@ const cupShape = (c) => { const n = c && Array.isArray(c.draw) ? c.draw.length :
 /* the clubs of a draw that went up without playing (the promotion league's top PO_DIRECT) */
 const cupDirect = (c) => (cupShape(c) === PO_SHAPE ? c.draw.slice(0, PO_DIRECT) : []);
 const CUP_ROUNDS = ['FIRST ROUND', 'QUARTER-FINALS', 'SEMI-FINALS', 'FINAL'];
-const CUP_ROUNDS_TR = ['1. tur', 'Çeyrek final', 'Yarı final', 'Final'];
-/* a match's name: [video (English), panel (Turkish)] */
+/* the pages' round names (the viewer's language, 09_i18n.js) */
+const cupRound = (r) => tx('r' + r);
+/* a match's name: [video (English), page (the viewer's language; the studio: Turkish)] */
 const cupName = (k) => {
-  if (k === 'FIN') return ['FINAL', 'Final'];
-  if (k === '3RD') return ['THIRD PLACE', '3.lük maçı'];
+  if (k === 'FIN') return ['FINAL', tx('cFIN')];
+  if (k === '3RD') return ['THIRD PLACE', tx('c3RD')];
   const n = k.slice(-1);
-  return k[0] === 'R' ? ['FIRST ROUND ' + n, '1. tur ' + n + '. maç'] : k[0] === 'Q' ? ['QUARTER-FINAL ' + n, 'Çeyrek final ' + n] : ['SEMI-FINAL ' + n, 'Yarı final ' + n];
+  return k[0] === 'R' ? ['FIRST ROUND ' + n, tx('cR', { n })] : k[0] === 'Q' ? ['QUARTER-FINAL ' + n, tx('cQF', { n })] : ['SEMI-FINAL ' + n, tx('cSF', { n })];
 };
 
 /* ---- the league's data format (League.data; the studio's export file and the live league's saved states use the same).
@@ -433,12 +434,13 @@ const League = {
     }
   },
 };
-/* panel: last-results badges (empty slots as dashes), e.g. G B M */
-const FORM_TR = { W: 'G', D: 'B', L: 'M' };
+/* last-results badges (empty slots as dashes), e.g. W D L */
+/* W / D / L in the viewer's language (G B M in Turkish) */
+const formL = (r) => (r === 'W' || r === 'D' || r === 'L' ? tx('f' + r) : r);
 function formHtml(form) {
   const pad = Array(Math.max(0, CONFIG.FORM_COUNT - form.length)).fill('<i class="fp fe">–</i>');
   /* results (W / D / L → G / B / M); a finished season of the old group-match league keeps its places (1st 2nd …) */
-  return pad.concat(form.map(p => typeof p === 'string' ? `<i class="fp f${p}">${FORM_TR[p] || p}</i>` : `<i class="fp f${Math.min(p, 5)}">${ordinal(p).toLowerCase()}</i>`)).join('');
+  return pad.concat(form.map(p => typeof p === 'string' ? `<i class="fp f${p}">${formL(p)}</i>` : `<i class="fp f${Math.min(p, 5)}">${ordinal(p).toLowerCase()}</i>`)).join('');
 }
 function validColor(c, def) { return /^#[0-9a-fA-F]{6}$/.test(String(c || '')) ? String(c).toUpperCase() : def; }
 /* every match gets its own random 32-bit seed (never shown, never stored ahead of the match; played matches keep theirs in the history) */
@@ -1133,6 +1135,7 @@ function fitCanvas() {
 async function boot() {
   Renderer.init($('c'));
   if (Live.on) return Live.boot();             // the public site: the live league plays itself on schedule (07_live.js)
+  I18N.use('tr');                              // the studio's panel is Turkish
   League.load();
   UI.init();
   League.save();
