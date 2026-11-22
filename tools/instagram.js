@@ -44,7 +44,8 @@ const log = (...a) => console.log(`[${new Date().toISOString().slice(11, 19)}]`,
 /* --- what makes a match critical --------------------------------------------------------------------------------------------
    every tag: weight (w), the hook on the video (title, color) and a line for the caption (en, tr). The hook never gives away the result. */
 const KRITIK = {
-  title:    { w: () => 100, title: 'TITLE DECIDER', color: '#FFD54F' },
+  title:    { w: () => 100, title: 'TITLE DECIDER', color: '#FFD54F' },     // the champion played this match
+  titleBy:  { w: () => 40, title: 'TITLE DECIDED', color: '#FFD54F' },      // this result made another club champion
   promoFin: { w: () => 70, title: 'PROMOTION FINAL', color: '#00E676' },
   leader:   { w: () => 60, title: 'NEW LEADER!', color: '#FFD54F' },
   promoLdr: { w: () => 30, title: 'NEW LEADER!', color: '#00E676' },
@@ -108,7 +109,7 @@ const KRITIK = {
         winner: g.winner, pens: g.pens ? [H.pen, A.pen] : null, golden: !!res.golden && !g.pens, goals: g.__goals || [],
         before: { rank: rb.map(x => x.t.id), pts: rb.map(x => x.r.pts), played: rb.map(x => x.r.played) },
         after: { rank: ra.map(x => x.t.id), pts: ra.map(x => x.r.pts), played: ra.map(x => x.r.played) },
-        clinch: !cb && ca, champion: !cb && ca ? League.ranking()[0].t.name : null,
+        clinch: !cb && ca, champion: !cb && ca ? League.ranking()[0].t.name : null, championId: !cb && ca ? League.ranking()[0].t.id : null,
         state: before, inDay: M.start >= dayStart });
     }
     Live.closeMatch(m);
@@ -123,7 +124,7 @@ const KRITIK = {
   for (const r of recs) {
     const tags = [], add = (k, x) => tags.push({ k, x, w: KRITIK[k].w(x) });
     const tot = r.hs + r.as, mar = Math.abs(r.hs - r.as), win = r.winner;      // winner: 0 home, 1 away, -1 draw
-    if (r.clinch) add('title');
+    if (r.clinch) add(r.championId === r.home.id || r.championId === r.away.id ? 'title' : 'titleBy');
     if (r.div === 'promo' && r.cup === 'FIN') add('promoFin');
     const lb = r.before.rank[0], la = r.after.rank[0];
     if (!r.cup && lb && la && lb !== la && r.before.played[0] > 0) add(r.div === 'main' ? 'leader' : 'promoLdr');
@@ -199,8 +200,12 @@ const KRITIK = {
         execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-fflags', '+genpts', '-r', '60', '-f', 'h264', '-i', vPath, '-i', aPath,
           '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-movflags', '+faststart', full]);
         const dst = path.join(outDir, r.file);
-        if (r.kind === 'reel') fs.renameSync(full, dst);
-        else { cutStory(full, dst, v); fs.rmSync(full); }
+        if (r.kind === 'reel') {
+          /* the encoder's 10 Mbps stream → x264 (CRF 20): the same picture at a size a phone uploads easily (~40 MB instead of ~130 MB) */
+          execFileSync('ffmpeg', ['-y', '-hide_banner', '-loglevel', 'error', '-i', full, '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p',
+            '-r', '60', '-g', '120', '-c:a', 'copy', '-movflags', '+faststart', dst]);
+        } else cutStory(full, dst, v);
+        fs.rmSync(full);
         const secs = +execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', dst]).toString().trim();
         log(`✅ ${r.file} · ${secs.toFixed(1)} sn · ${(fs.statSync(dst).size / 1048576).toFixed(1)} MB · ${((Date.now() - t2) / 1000).toFixed(0)} sn'de üretildi`);
         videos.push({ file: r.file, seconds: +secs.toFixed(1) });
@@ -243,6 +248,7 @@ function caption(r, lang) {
     const x = t.x;
     const s = {
       title: en ? `🏆 ${r.champion} are the Season ${r.season} champions!` : `🏆 ${r.champion} Sezon ${r.season} şampiyonluğunu ilan etti!`,
+      titleBy: en ? `🏆 This result hands ${r.champion} the Season ${r.season} title!` : `🏆 Bu sonuç Sezon ${r.season} şampiyonluğunu ${r.champion} takımına getirdi!`,
       promoFin: en ? `🔺 ${W} win the final and go up to the league!` : `🔺 ${W} finali kazandı ve lige yükseldi!`,
       leader: en ? `👑 ${leaderName(r.after.rank[0])} take over at the top!` : `👑 ${leaderName(r.after.rank[0])} zirveye yerleşti!`,
       promoLdr: en ? `👑 ${leaderName(r.after.rank[0])} lead the promotion league!` : `👑 ${leaderName(r.after.rank[0])} yükselme liginde zirvede!`,

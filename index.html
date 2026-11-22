@@ -326,6 +326,11 @@
   [dir="rtl"] .fx-match ol.res li .pt { margin-left: 0; margin-right: auto; padding-left: 0; padding-right: 6px; }
   [dir="rtl"] .fx-match ol.res li .fp { margin: 0 0 0 7px; }
   [dir="rtl"] .lv-ball { margin-left: 0; margin-right: 6px; }
+  /* numbers keep their sign on the left (+9, −3) and the last results read left to right (newest on the right) */
+  [dir="rtl"] .lp-table td:not(.tn):not(:first-child) { direction: ltr; }
+  [dir="rtl"] .lp-table tr.rel td:first-child { box-shadow: inset -3px 0 0 var(--danger); }
+  [dir="rtl"] .lp-table tr.po td:first-child { box-shadow: inset -3px 0 0 var(--accent); }
+  [dir="rtl"] .lp-table tr.up td:first-child { box-shadow: inset -3px 0 0 #FFD54F; }
   #liveBar, #liveTabs { direction: inherit; }
   @media (prefers-reduced-motion: reduce) { .rec, .lv-ball { animation: none; } }
 </style>

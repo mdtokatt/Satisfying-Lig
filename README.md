@@ -302,7 +302,7 @@ Videolar 1080×1920, 60 FPS, H.264 + AAC formatındadır. Her videonun ilk ~3 sa
 
 | Ölçüt | Koşul | Puan |
 |---|---|---:|
-| Şampiyonluğu belirleyen maç | Lider artık yakalanamıyor (ya da ligin son maçı) | 100 |
+| Şampiyonluğu belirleyen maç | Lider artık yakalanamıyor (ya da ligin son maçı) ve şampiyon bu maçta oynadı; başka bir maçın sonucu belirlediyse 40 | 100 |
 | Yükselme finali | Yükselme elemesinin finali | 70 |
 | Lider değişti | Maçtan sonra 1. sıra el değiştirdi (yükselme liginde 30) | 60 |
 | Geriden gelme | Kazanan 2+ gol geriden geldi (her ek gol +12); 3+ geriden gelip beraberlik 20 | 25+ |
