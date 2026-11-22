@@ -1,6 +1,6 @@
 # Satisfying Lig ⚽
 
-Kendi kendine oynayan, **hiç durmayan canlı bir "satisfying" futbol ligi**: günün her saatinde **her 3 dakikada bir maç saati** vardır; her saatte ligin bir maçı ve aynı anda **yükselme liginin** (havuzdaki 12 kulübün kendi ligi) bir maçı başlar, her maç **90 saniye** sürer; siteye giren herkes istediği maçı, herkesle aynı anda izler. Tek dosyalık bir tarayıcı uygulamasıdır; sunucu gerekmez. Ayrıca Reels/TikTok/Shorts videosu üreten bir **stüdyo** modu vardır (`?studio`).
+Kendi kendine oynayan, **hiç durmayan canlı bir "satisfying" futbol ligi**: **her gün bir sezon** oynanır. Her gün **07:00–23:59** arası **3 dakika 15 saniyede bir maç saati** vardır; her saatte ligin bir maçı ve aynı anda **yükselme liginin** (havuzdaki 18 kulübün kendi ligi) bir maçı başlar, her maç **90 saniye** sürer. Gece maç oynanmaz; siteye giren herkes istediği maçı, herkesle aynı anda izler. Tek dosyalık bir tarayıcı uygulamasıdır; sunucu gerekmez. Ayrıca Reels/TikTok/Shorts videosu üreten bir **stüdyo** modu vardır (`?studio`).
 
 Her maçta iki kulüp dikey bir futbol sahasında karşılaşır: her takımın bir kalecisi ve sahada 4 oyuncusu vardır (2 defans, orta sahada kaptan, 1 forvet); her oyuncu sahanın kendi üçte birinde dolaşır ve topa dokununca onu rakip kaleye doğru gönderir. Top duvarlara çarptıkça hızlanır, kaleciler topu takip eder. 90 saniyenin sonunda **çok gol atan kazanır**; berabere biterse beraberliktir. Sonuç kalıcı bir **lig tablosuna** işlenir (galibiyet 3, beraberlik 1 puan).
 
@@ -14,14 +14,15 @@ Her maçta iki kulüp dikey bir futbol sahasında karşılaşır: her takımın 
 
 ## Canlı lig (site)
 
-Site adresi: https://mdtokatt.github.io/Satisfying-Lig/ — **hiç durmayan iki lig**: maçlar günün her saatinde arka arkaya, kendi kendine oynar. **Lig** (18 kulüp) ve **yükselme ligi** (havuzdaki 12 kulüp) paralel gider: iki ligin maçları aynı saatte başlar ve iki sezon aynı maç saatinde biter (bkz. [Yükselme ligi](#yükselme-ligi-canlı-lig)). Siteyi açan kişi şunları görür:
+Site adresi: https://mdtokatt.github.io/Satisfying-Lig/ — **hiç durmayan iki lig**: maçlar her gün 07:00'den gece yarısına kadar arka arkaya, kendi kendine oynar ve **her gün bir sezon** biter. **Lig** (18 kulüp, rövanşlı) ve **yükselme ligi** (havuzdaki 18 kulüp, rövanşlı) paralel gider: iki ligin maçları aynı saatte başlar; iki lig aynı maç saatinde biter, ardından günün son 3 maçı yükselme elemesidir (bkz. [Yükselme ligi](#yükselme-ligi-canlı-lig)). Siteyi açan kişi şunları görür:
 
-- **Açılış: Fikstür.** Site artık doğrudan yayınla değil, **ligin fikstürüyle** açılır (**Lig tablosu › Fikstür**, bu haftaya kaydırılmış). Fikstürler ayrı bir sekme değil, tabloların altında birer alt sekmedir: **Lig tablosu** ve **Yükselme ligi** sekmelerinin üstündeki **Tablo / Fikstür** düğmesiyle (sayfa aşağı kaydırılınca da sekmelerin hemen altında görünür kalır) tabloya ya da o ligin fikstürüne (yükselme ligi: 22 hafta + eleme) geçilir. O an oynanan maçın yanında **⚽ CANLI · İzle** düğmesi vardır.
+- **Açılış: Fikstür.** Site artık doğrudan yayınla değil, **ligin fikstürüyle** açılır (**Lig tablosu › Fikstür**, bu haftaya kaydırılmış). Fikstürler ayrı bir sekme değil, tabloların altında birer alt sekmedir: **Lig tablosu** ve **Yükselme ligi** sekmelerinin üstündeki **Tablo / Fikstür** düğmesiyle (sayfa aşağı kaydırılınca da sekmelerin hemen altında görünür kalır) tabloya ya da o ligin fikstürüne (34 hafta; yükselme ligi: 34 hafta + eleme) geçilir. O an oynanan maçın yanında **⚽ CANLI · İzle** düğmesi vardır.
+- **Dünün maçları:** fikstürün üstündeki **Bugün / Dün** düğmesiyle bir önceki günün (son biten sezonun) fikstürü açılır: ligin 306 maçı, yükselme liginin 306 maçı ve yükselme elemesi, skorlarıyla. **Her maçın yanında ▶ İzle** vardır; maç baştan, tek başına izlenir (bkz. [Maç bağlantıları](#maç-bağlantıları)). Gece 00:00–07:00 arasında "Dün", az önce biten sezondur.
 - **⚽ Canlı:** o an **oynanmakta olan maçlar** (iki ligden birer tane) ve **10 dakikadan kısa süre sonra başlayacak maçlar** (geri sayımlı) kart kart listelenir. Kullanıcı istediği maça dokunur ve onu izler. Geç gelen kişi maçı baştan değil, **kaldığı yerden** izler; herkes aynı anda aynı maçı görür. Maçtan önce `WEEK 5 MATCHES` (yükselme liginde `PROMO WEEK 5 MATCHES`) ekranı, maçtan sonra o ligin animasyonlu tablosu gelir; maç bitince **aynı ligin sıradaki maçı** aynı ekranda başlar (aradaki sürede o ligin tablosu ve sıradaki maça geri sayım). Başlamasına birkaç dakika olan bir maçı seçen kişi önce geri sayımı görür. Alttaki **‹ Maçlar** (ya da yeniden **⚽ Canlı** sekmesi) listeye döner.
 - **⚽ işaretleri:** fikstürde oynanmakta olan maçın yanında, **lig tablosunda ve yükselme ligi tablosunda** o an maçı olan takımların yanında **⚽** vardır; dokununca o canlı maç açılır. Maç bitince (son düdük) işaret kalkar, sonuç tabloya işlenir.
 - Üstteki sekmeler: **⚽ Canlı**, **Lig tablosu** (O, G, B, M, AG, YG, AV, P, son 3 maç; düşme hattındaki son 3 takım kırmızı çizgili; son şampiyonlar; **Fikstür** alt sekmesi: sezonun bütün haftaları ve her maçın saati, oynananlar skorlarıyla, geciken maç `ertelendi` etiketiyle), **Yükselme ligi** (havuz kulüplerinin tablosu, doğrudan yükselen ilk 2 sarı, elemeye kalan 3.–6. yeşil çizgili; yükselme elemesi: yarı finaller, final, skorlar, altın gol / penaltılar; **Fikstür** alt sekmesi), **Geçmiş** (biten sezonların lig tablosu, yükselme ligi tablosu ve eleme sonuçları; eski 6'lı grup formatındaki ligin sezonları da; bkz. [Geçmiş sezonlar](#geçmiş-sezonlar)) ve **İstatistik** (tüm zamanlar tablosu, şampiyonluklar, rekorlar, sezon başına gol ortalaması; bkz. [İstatistik ve kulüp sayfaları](#i̇statistik-ve-kulüp-sayfaları)). Tablolarda ve maç listelerinde bir kulübün adına dokununca **kulüp sayfası** açılır (ikili karşılaşmalar orada). Sekmeler açıkken izlenen maç arka planda saate göre ilerler; izlenmeyen maçlar da son düdükte ligine işlenir.
 - **Arka plan müziği:** ses açıkken maç oynanmayan bütün ekranlarda (sekmeler, Canlı listesi, geri sayımlı tablo, maçın giriş ve bitiş ekranları) fonda müzik çalar; maç başlayınca kısılır, son düdükten sonra geri gelir. 7 farklı parça vardır (Gece Lo-fi, Neon Gece, Tribün Funk, 8-Bit Marş, Tropik Akşam, Soyunma Odası, Stadyum Rock): her biri yaklaşık 1,5 dakika çalar, sonra bir başkasına geçilir; müzik her yeniden başladığında da yeni bir parça seçilir. Her parça bir kez çalmadan tekrar gelmez, aynı parça art arda çalmaz. Parçalar ses efektleri gibi Web Audio ile tarayıcıda üretilir (dosya indirilmez) ve aynı ses seviyesine ayarlıdır (maç efektlerinin altında). İzlenen maç sürerken başka bir sekmeye geçilirse maçın sesleri susar, müzik çalar. Video çıktısına müzik girmez.
-- Alttaki çubuk: ses düğmesi (tarayıcı kuralları gereği kapalı başlar; müziği de açar/kapatır), izlenen maç / "Her 3 dk'da maç · sıradaki 21:03", maç izlenirken **‹ Maçlar** ve **🔗 Paylaş** (o maçın bağlantısı; telefonda paylaşım menüsü açılır, masaüstünde panoya kopyalanır).
+- Alttaki çubuk: ses düğmesi (tarayıcı kuralları gereği kapalı başlar; müziği de açar/kapatır), izlenen maç / "3 dk 15 sn arayla maç · sıradaki 21:03", maç izlenirken **‹ Maçlar** ve **🔗 Paylaş** (o maçın bağlantısı; telefonda paylaşım menüsü açılır, masaüstünde panoya kopyalanır).
 - **Maç bağlantısı (tekrar):** fikstürlerde ve eleme tablolarında biten her maçın yanında **▶ İzle** vardır. Bağlantıyı açan kişi o maçı baştan, tek başına izler (sekmeler gizlenir; üstte `▶ Tekrar · 3. hafta 5. maç · RMA–BAR · 4 Kasım 22:09`, altta **↻ Baştan** ve **⚽ Canlıya dön**). Bkz. [Maç bağlantıları](#maç-bağlantıları).
 - **Paylaşım kartı ve simge:** sayfada açıklama, Open Graph / Twitter kartı (`og.jpg`, 1200×630, gerçek bir maç karesiyle), site simgesi ve web uygulaması manifesti vardır; bağlantı WhatsApp, X, Telegram gibi yerlerde önizlemeli görünür, telefonda "Ana ekrana ekle" ile uygulama gibi açılır (tam ekran, simgeli). Bkz. [Paylaşım dosyaları](#paylaşım-dosyaları).
 - **Sekme başlığı:** maçlar arasında sıradaki maça geri sayım (`⏱ 0:42 · RMA–BAR · Satisfying Lig`), maç oynanırken sağa sola giden bir top (`··⚽···· RMA–BAR · CANLI`; izlenen maçın, yoksa ligin maçının kodları). Kullanıcı başka bir sekmedeyken de işler: tarayıcılar arka plandaki sekmelerin zamanlayıcılarını yavaşlattığı (Chrome 5 dakikadan sonra dakikada bire indirir) için başlığı küçük bir Web Worker'ın saniyede 4 kez gönderdiği sinyal günceller; başlık yalnızca saate göre hesaplanır (maçın kendisi sayfa görünürken ilerler, skor başlıkta gösterilmez).
@@ -50,7 +51,18 @@ Sitenin bütün metinleri 8 dildedir: English (varsayılan), Türkçe, Español,
 
 ### Maç takvimi
 
-Günün her saatinde **her 3 dakikada bir maç saati**: günde **480 maç saati**. Her saatte ligin bir maçı başlar, çoğu saatte aynı anda yükselme liginin bir maçı da (günde ~900 maç). Bir maç 3 dakikalık aralıkta şöyle geçer:
+Her gün **07:00–23:59** arası (İstanbul saati) **3 dakika 15 saniyede bir maç saati**: günde 314 maç saati. **Her gün bir sezon** oynanır:
+
+| Saat | Ne oynanır |
+|---|---|
+| 07:00 | Sezonun ilk maç saati: ligin 1. haftasının 1. maçı ve yükselme liginin 1. haftasının 1. maçı aynı anda |
+| 07:00–23:31 | 306 maç saati: her saatte **iki maç**, biri ligin (34 hafta × 9), biri yükselme liginin (34 hafta × 9) |
+| ~23:31 | İki ligin son maçları: ligin şampiyonu ve düşen 3 takım, yükselme liginin doğrudan çıkan ilk 2'si belli olur |
+| ~23:34 · ~23:38 | Yükselme elemesinin yarı finalleri (3.–6., 4.–5.), tek başına |
+| **~23:41** | **Yükselme finali, günün son maçı** (~23:43'te biter; altın gol ve penaltıyla ~23:45) |
+| 23:44–07:00 | Maç yok: sitede tablolar ve "ilk maç 07:00" geri sayımı. Yeni sezon ertesi sabah **07:00**'de başlar |
+
+Bir maç saatinde ekranda şunlar olur:
 
 | Süre | Ekranda |
 |---|---|
@@ -59,21 +71,29 @@ Günün her saatinde **her 3 dakikada bir maç saati**: günde **480 maç saati*
 | ~13 sn | `FULL TIME` + animasyonlu lig tablosu (+3 / +1 / +0, ▲▼, son 3 maç) |
 | ~70 sn | Lig tablosu, sıradaki maç ve geri sayım |
 
-Bir sezon 17 hafta × 9 maç = **153 maç saatidir** ≈ **7 saat 39 dakika** (günde ~3,1 sezon). Her saatte bir lig maçı oynanır; aynı saatlerde yükselme ligi 132 maçını (22 hafta × 6) bu 153 saate eşit aralıkla yayar (18 saatte yükselme ligi maçı yoktur) ve **son 3 saatte** 3.–6. takımların **yükselme elemesi** oynanır: yarı finaller ve **final, ligin son maçıyla aynı anda** (bkz. [Yükselme ligi](#yükselme-ligi-canlı-lig)). Böylece iki sezon aynı anda biter: şampiyon belirlenir, ligin son 3 takımı düşer, yükselme liginin ilk 2'si ve elemenin galibi lige çıkar ve iki lig de bir sonraki maç saatinde yeni sezona başlar. Ligde her takım 27 dakikada bir sahaya çıkar. Şampiyonlar listesinde son 50 sezon tutulur.
+Ligde her takım 3 dk 15 sn'de bir değil, haftada bir (9 maç saatinde bir, ~29 dakikada bir) sahaya çıkar. Şampiyonlar listesinde son 50 sezon tutulur.
 
-**Başlangıç:** yeni bir lig, `CONFIG.LIVE.start` yayın anında henüz gelmemiş bir saatse **tam o saatte**, değilse ilk yayınından **birkaç dakika sonra** kendiliğinden başlar (`tools/live-start.js`, bkz. [Nasıl çalışıyor](#nasıl-çalışıyor-sunucusuz-ücretsiz)). Başlangıç saati o yayında bir kez belirlenir ve sonraki her yayında aynen korunur. Şu anki lig (`satisfying-lig-live-3`) **8 Kasım 2026 13:00**'te sıfırdan başladı: önceki ligin tabloları, sezonları, şampiyonları ve istatistikleri taşınmadı.
+**Sezon = gün (`daily`):** her sezon bir günün ilk maç saatinde (07:00) başlar. Bir sezonun 309 maç saati bitince günün kalan maç saatleri (23:44–23:57) boş geçer ve yeni sezon ertesi sabah 07:00'de başlar (`Live.alignSeason`). Bu yüzden bir maç uzasa bile sezon başlangıcı kaymaz.
 
-**Taşma kuralı (kilitlenme olmaz):** bir maç saatinin maçları (en uzunu), ekranları dahil sıradaki maç saatine kadar bitmezse sıradaki saatin maçları önceki bitince 5 sn sonra başlar (`gap`). Lig maçları ekranlarıyla ~124 sn (en fazla ~133 sn), altın gole ya da penaltıya giden eleme maçları en fazla ~2,8 dakika sürer; hepsi 3 dakikaya sığar. 48 saatlik testte 960 maçta hiç gecikme olmadı; kural yalnızca güvence için var. `node tools/live-check.js` aralığı zorla 1 dakikaya indirip maçların üst üste binmediğini ve takvimin kendini toparladığını test eder.
+**Başlangıç:** yeni bir lig, `CONFIG.LIVE.start` yayın anında henüz gelmemiş bir saatse **tam o saatte**, değilse ilk yayınından **birkaç dakika sonra** kendiliğinden başlar (`tools/live-start.js`, bkz. [Nasıl çalışıyor](#nasıl-çalışıyor-sunucusuz-ücretsiz)). Günlük takvimde ilk sezon, başlangıçtan sonraki ilk sabah 07:00'de başlar. Başlangıç saati o yayında bir kez belirlenir ve sonraki her yayında aynen korunur. Şu anki lig (`satisfying-lig-live-3`) **8 Kasım 2026 13:00**'te sıfırdan başladı: önceki ligin tabloları, sezonları, şampiyonları ve istatistikleri taşınmadı.
+
+**Taşma kuralı (kilitlenme olmaz):** bir maç saatinin maçları (en uzunu), ekranları dahil sıradaki maç saatine kadar bitmezse sıradaki saatin maçları önceki bitince 5 sn sonra başlar (`gap`). Lig maçları ekranlarıyla ortalama ~123 sn (1.200 maçlık ölçümde en fazla ~134 sn), altın gole ya da penaltıya giden eleme maçları ~2,5–3 dakika sürer; hepsi 3 dk 15 sn'ye (195 sn) sığar. Tam bir günlük testte 309 maç saatinin hiçbiri gecikmedi; kural yalnızca güvence için var. `node tools/live-check.js` aralığı zorla 1 dakikaya indirip maçların üst üste binmediğini ve takvimin kendini toparladığını test eder.
 
 Ayar `src/01_core.js` dosyasındaki `CONFIG.LIVE`:
 
 ```js
 LIVE: {
   start: '2026-11-08T13:00',   // yeni ligin başlama saati (yayın anında geçmişse ilk yayından birkaç dk sonra; BUILD_START)
-  bands: [{ from: '00:00', every: 3 }],
+  bands: [{ from: '07:00', to: '23:59', every: 3.25 }],   // 07:00–23:59 arası 3 dk 15 sn'de bir; gece maç yok
+  daily: true, seasonLength: 34, pool: 18,               // her sezon 07:00'de başlar; rövanşlı lig; 18 kulüplük havuz
   utcOffset: 3, gap: 5, salt: 'satisfying-lig-live-3', keepChampions: 50,
 },
 ```
+
+- `bands`: her bant `from`'dan kendi `to`'suna (yoksa sonraki banda) kadar `every` dakikada bir maç saati açar; `every` kesirli olabilir (3.25 = 3 dk 15 sn). Bant dışında maç oynanmaz. Günün başlangıcı ilk bandın `from`'udur.
+- `daily`: her sezon günün ilk maç saatinde başlar; sezondan sonra kalan maç saatleri boş geçer.
+- `seasonLength`: canlı ligin sezon uzunluğu (hafta). 34 = 18 takımla rövanşlı lig. Stüdyo kendi `CONFIG.SEASON_LENGTH` (17) değerini kullanır.
+- `pool`: yükselme liginin kulüp sayısı. Havuz, sezon başında `RESERVE_TEAMS` listesinden bu sayıya tamamlanır (hiç küçülmez).
 
 `start` ya da `salt` değişirse canlı lig **yeni bir lig** olarak baştan kurulur; bütün tarayıcılar kayıtlı durumu bırakır. **Takvimi (`bands`, `gap`) değiştirmek ligi sıfırlamaz:** lig o anki hâliyle dondurulur ve yeni takvim, son oynanan maçın bitişinden sonraki ilk aralıkta başlar (kural değişikliği gibi, bkz. aşağıda). Yeni bir lig başlatmanın doğru yolu `salt`'ı değiştirmektir (istenirse `start`'a ileri bir saat yazılır): yeni lig **sıfırdan** başlar; eski ligin tabloları, şampiyonları, biten sezonları ve istatistikleri taşınmaz. (`salt` ve `start` ligin kimliğidir. **Simülasyonu değiştirmek ligi sıfırlamaz**, bkz. aşağıdaki [Kural değişikliği ligi sıfırlamaz](#kural-değişikliği-ligi-sıfırlamaz).)
 
@@ -81,7 +101,7 @@ LIVE: {
 
 **Geçmiş** sekmesi biten sezonları gösterir. Sekmeye tıklayınca **en son biten sezonun** lig tablosu açılır; altında o sezonun yükselme eleme sonuçları (turlar, skorlar, altın gol / penaltılar, bay geçenler, yükselenler) durur. Üstteki seçiciden (ya da ‹ › düğmelerinden) önceki sezonlar seçilir; **yalnızca seçilen sezon çizilir**, diğerleri sayfaya hiç yüklenmez. Sekmeyi yeniden açınca yine en son sezonla başlar. Tabloda sezonun puanlaması, son 3 maç ve sezon sonunda düşen (kırmızı çizgili) takımlar görünür.
 
-Biten her sezon, sezon geçişinde kompakt bir kayıt olarak lig durumuna eklenir (`seasons`; sezon başına ~2,7 KB, en yeni `CONFIG.LIVE.keepChampions` = 50 sezon): son tablo, düşenler, yükselenler, eleme kurası/sonuçları, lig maçlarının skorları (`m`: maç başına 4 karakter, ev sahibi · deplasman · goller; İstatistik sekmesi ve kulüp sayfaları için) ve yükselme liginin tablosu ile skorları (`pl`). Geçmiş sekmesinde sezonun lig tablosunun altında yükselme ligi tablosu (elemeye kalan ilk 4 yeşil çizgili) ve yükselme elemesi görünür; yükselme liginden önceki sezonlarda eski 12 kulüplük eleme. Maçların seed'i ve ayrıntısı tutulmaz. Kayıt, tablonun sezonun bittiği andaki hâlidir; sonradan puanlama değişse de yeniden yazılmaz. Kural değişikliklerinde taban bu arşivi de taşır.
+Biten her sezon, sezon geçişinde kompakt bir kayıt olarak lig durumuna eklenir (`seasons`; rövanşlı iki ligle sezon başına ~4,4 KB, en yeni `CONFIG.LIVE.keepChampions` = 50 sezon): son tablo, düşenler, yükselenler, eleme kurası/sonuçları, lig maçlarının skorları (`m`: maç başına 4 karakter, ev sahibi · deplasman · goller; İstatistik sekmesi, kulüp sayfaları ve dünün maçları için), yükselme liginin tablosu ile skorları (`pl`; maç saati düzeni `S`, `per`) ve tekrar için sezonun ilk maç saati (`n0`) ile maçların oynandığı kurallar (`sim`, `simFrom`). Geçmiş sekmesinde sezonun lig tablosunun altında yükselme ligi tablosu (elemeye kalan ilk 4 yeşil çizgili) ve yükselme elemesi görünür; yükselme liginden önceki sezonlarda eski 12 kulüplük eleme. Maçların seed'i tutulmaz: seed ve tema sezon / hafta / maç numarasından yeniden hesaplanır (dünün maçlarının tekrarı böyle çalışır). Kayıt, tablonun sezonun bittiği andaki hâlidir; sonradan puanlama değişse de yeniden yazılmaz. Kural değişikliklerinde taban bu arşivi de taşır.
 
 **Eski lig (6'lı grup maçları):** sayfa, `live-start.json`'da bir `legacy` arşivi varsa onu Geçmiş seçicisinde `Eski lig · Sezon N` olarak, kendi sütunlarıyla gösterebilir. 8 Kasım 2026'daki sıfırlamadan beri yeni ligler eski ligin arşivini taşımaz (`legacy: null`), bu yüzden Geçmiş ve İstatistik yalnızca sürmekte olan ligin sezonlarını gösterir.
 
@@ -91,7 +111,7 @@ Biten her sezon, sezon geçişinde kompakt bir kayıt olarak lig durumuna ekleni
 
 - **Tüm zamanlar tablosu:** her kulübün ligde (Sz) ve yükselme liginde (YL) oynadığı sezon sayısı, O, G, B, M, AG, YG, AV, puan (lig + yükselme ligi; her sezonun kendi puanlamasıyla) ve şampiyonlukları. Sıralama: puan → averaj → atılan gol.
 - **Şampiyonluklar:** kulüp başına şampiyonluk sayısı ve sezonları.
-- **Rekorlar:** en farklı galibiyetler, en gollü maçlar (yükselme ligi maçları `Yükselme ligi · Sezon N` etiketiyle), en uzun galibiyet ve yenilmezlik serileri (lig ve yükselme ligi maçları; düşen ya da yükselen kulübün serisi sürer, yalnızca maç oynamadığı bir sezon (eski havuz) keser; süren seri `sürüyor` etiketiyle) ve ligin sezon rekorları (en çok / en az puan, en çok galibiyet, en çok gol atan, en az gol yiyen).
+- **Rekorlar:** en farklı galibiyetler, en gollü maçlar (yükselme ligi maçları `Yükselme ligi · Sezon N` etiketiyle), en uzun galibiyet ve yenilmezlik serileri (lig ve yükselme ligi maçları; düşen ya da yükselen kulübün serisi sürer, yalnızca maç oynamadığı bir sezon (eski havuz) keser; süren seri `sürüyor` etiketiyle) ve ligin sezon rekorları (en çok / en az puan, en çok galibiyet, en çok gol atan, en az gol yiyen). Sezon rekorları yalnızca en son biten sezonla **aynı uzunluktaki** sezonları karşılaştırır (34 maçlık bir sezonun puanı 17 maçlık bir sezonunkiyle yarışmaz; kartta "Takım başına 34 maçlık sezonlar" yazar).
 - **Sezon başına gol ortalaması** (lig + yükselme ligi): çubuk grafik (üstüne gelince maç, gol, beraberlik oranı) ve aynı sayılar tablo olarak.
 
 **Kulüp sayfası** (bir kulübün adına dokununca; **‹ Geri** ya da `Esc` ile kapanır): kulübün şu anki durumu (havuzdaysa yükselme ligindeki sırası), şampiyonluk sayısı, ligde geçirdiği sezonlar, tüm zamanlar sırası; bu sezonki **form grafiği** (her maçtan sonraki toplam puan, liderle karşılaştırmalı; havuz kulübünde yükselme ligindeki formu) ve son 10 maçı; **ikili karşılaşma** (rakip listeden seçilir, varsayılan: sıradaki rakibi; galibiyet / beraberlik, goller ve lig ile yükselme ligindeki bütün maçları); **sezon sezon sıra grafiği** (düşme hattı, şampiyonluklar, havuzda geçen sezonlar); **sezon geçmişi** tablosu (sıra, G-B-M, averaj, puan, şampiyon / düştü / yükseldi; havuzdaysa yükselme ligindeki sırası, G-B-M, averajı, puanı ve elemede nereye kadar geldiği); **şampiyonluk, düşme ve yükselme geçmişi** ve kulüp rekorları (en farklı galibiyet, en ağır yenilgi, en uzun seriler). Tüm zamanlar tablosu, rekorlar ve seriler lig ve yükselme ligi maçlarından hesaplanır.
@@ -112,7 +132,7 @@ Simülasyon deterministiktir: aynı seed + aynı takımlar = birebir aynı maç.
 2. O an oynanan maçların sonucu da önceden hesaplanır; izlenen maç saate göre ileri sarılır ve oradan gerçek zamanlı oynar, izlenmeyen maç son düdük anında ligine işlenir.
 3. Hesaplanan lig tarayıcıda saklanır (`localStorage`, `arenaLive_v3`); bir sonraki ziyarette yalnızca yeni maçlar hesaplanır. Kayıtlı durumun hash'i `<kural>:<lig kimliği>[@<taban>]` biçimindedir; başka kurala ya da tabana ait durum geçersiz sayılır.
 4. **Checkpoint:** GitHub Pages iş akışı her yayında ve **15 dakikada bir** (zamanlanmış) ligin o anki durumunu `live-state.json` olarak yayınlar (`tools/live-state.js`). Tarayıcısız çalışır (Node) ve sitede yayında olan son checkpoint'ten devam eder; süre lig yaşlandıkça uzamaz. **Not:** GitHub zamanlanmış iş akışlarını garanti etmez; bu repoda pratikte günde birkaç kez çalışıyor. Bu durumda siteye ilk girenler son checkpoint'ten bu yana oynanan maçları kendileri hesaplar (bir maç ~0,07 sn; saatlerce eski bir checkpoint bile birkaç saniye sürer). Checkpoint yalnızca hızlandırır; yoksa tarayıcı aynı sonucu kendisi hesaplar (kural değişmişse tabandan). Hesaplama başarısız olursa yayındaki son checkpoint aynen yeniden yayınlanır.
-5. **Başlangıç (`live-start.json`):** iş akışı her yayında önce `tools/live-start.js`'i çalıştırır. Yayındaki `live-start.json` bu `salt`'a aitse aynen taşınır. Yoksa ve yayındaki checkpoint bu `salt`'ın ligine aitse başlangıç onun lig kimliğinden geri okunur (dosya kaybolsa bile lig yeniden başlamaz). İkisi de yoksa bu `salt` ilk kez yayınlanıyordur: başlangıç = `CONFIG.LIVE.start` yayından sonraysa o saat, değilse **şimdi + 4 dakika** (İstanbul saati, dakikaya yuvarlanmış; ilk maç ondan sonraki ilk 3 dakikalık aralıkta). Eski ligin hiçbir verisi taşınmaz. `build.sh` dosyayı sayfaya gömer (`BUILD_START`). Yayındaki dosyalar okunamazsa (404 dışında bir hata) yayın durur.
+5. **Başlangıç (`live-start.json`):** iş akışı her yayında önce `tools/live-start.js`'i çalıştırır. Yayındaki `live-start.json` bu `salt`'a aitse aynen taşınır. Yoksa ve yayındaki checkpoint bu `salt`'ın ligine aitse başlangıç onun lig kimliğinden geri okunur (dosya kaybolsa bile lig yeniden başlamaz). İkisi de yoksa bu `salt` ilk kez yayınlanıyordur: başlangıç = `CONFIG.LIVE.start` yayından sonraysa o saat, değilse **şimdi + 4 dakika** (İstanbul saati, dakikaya yuvarlanmış; günlük takvimde (`daily`) ilk maç ondan sonraki ilk sabahın 07:00 maç saatinde). Eski ligin hiçbir verisi taşınmaz. `build.sh` dosyayı sayfaya gömer (`BUILD_START`). Yayındaki dosyalar okunamazsa (404 dışında bir hata) yayın durur.
 6. **Yeni site:** açık bir sayfa 10 dakikada bir yayındaki checkpoint'e bakar; site başka bir lig ya da başka kurallarla yeniden yayınlanmışsa kendini yeniler (en fazla 10 dakikada bir).
 7. **Cihaz saati:** telefonun saati yanlışsa site, GitHub Pages yanıtındaki saate göre düzeltir.
 8. **Sekme uyursa:** sekme 1 dakikadan uzun arka planda kalıp geri gelince lig en yeni kayıtlı durumdan yeniden kurulur ve o anki maça katılır.
@@ -156,8 +176,9 @@ Biten bir maç yalnızca seed'i, kulüpleri (ev sahibi önce) ve temasıyla beli
 - `w5m2`: ligin 5. haftası 2. maçı, `p5m2`: yükselme liginin, `cFIN` / `cSF-1` …: eleme maçı.
 - Bağlantı yalnızca **aynı kurallarla** (aynı `BUILD_SIM_HASH`) oynatılır: kurallar değiştiyse aynı seed başka bir maç oynar, bu yüzden site "Bu maç eski kurallarla oynandı, tekrarı gösterilemiyor" der ve canlı yayına geçer.
 - Henüz bitmemiş (ya da geleceğe ait) bir maçın bağlantısı tekrar oynatılmaz, canlı yayın açılır: sonuç canlı izleyenlerden önce görülmesin. Paylaş düğmesi maç sürerken de bağlantı verir; bağlantıyı açan kişi maç bitmemişse onu canlı izler, bittiyse baştan.
-- Kulüp kimlikleri (`t1` … `t30`) her canlı ligde aynıdır. Tekrar hiçbir lig verisine dokunmaz.
-- Geçmiş sekmesindeki eski sezonların maçları arşivde seed'siz tutulduğu için onlarda bağlantı yoktur.
+- Kulüp kimlikleri (`t1` … `t36`) her canlı ligde aynıdır. Tekrar hiçbir lig verisine dokunmaz.
+- **Dünün maçları** (Fikstür › Dün): son biten sezonun her maçında bağlantı vardır. Arşivde maçın seed'i tutulmaz; seed ve tema maç oynanırken nasıl türetildiyse (sezon / hafta / maç numarasından) öyle yeniden hesaplanır, kulüpler ve skor arşivden (`m`), başlama saati sezonun ilk maç saatinden (`n0`) gelir. Geçmiş sekmesindeki daha eski sezonlarda bağlantı gösterilmez.
+- **Kural değişikliğinden önceki maçlar:** kurallar değişince (yeni `BUILD_SIM_HASH`) o ana kadar oynanmış maçlar yeni kurallarla aynı oynanmaz. Lig, maçların hangi kurallarla hangi maç saatinden itibaren oynandığını tutar (`liveSim`: `{ sim, from }`); bu sezonun fikstüründe ve dünün maçlarında yalnızca bu yayının kurallarıyla oynanmış maçlara **▶ İzle** konur.
 
 **Geçmişi izleme:** `index.html?now=2026-11-04T12:00:30+03:00` siteyi geçmişteki o anki hâliyle gösterir (yalnızca o tarayıcıda; lig değişmez). Gelecek bir an verilirse yok sayılır, aksi halde sonuçlar maçtan önce görülebilirdi.
 
@@ -228,12 +249,14 @@ Otomatik (rastgele) veya elle seçilir: **Classic**, **Snow** (top %10 hızlı),
 ### Takımlar
 Dünyanın önde gelen 18 kulübü, kendi renkleriyle: Real Madrid, Barcelona, Atlético Madrid, Manchester City, Liverpool, Arsenal, Chelsea, Manchester United, Bayern München, Borussia Dortmund, Bayer Leverkusen, Paris Saint-Germain, Inter, AC Milan, Juventus, Fenerbahçe, Beşiktaş, Galatasaray.
 
+**Havuz (yükselme ligi, canlı lig):** 18 kulüp: Napoli, Roma, Atalanta, Tottenham, Aston Villa, Benfica, Porto, Ajax, Sevilla, Marseille, Sporting CP, Trabzonspor, **RB Leipzig, Newcastle, Lyon, Lazio, Feyenoord, Celtic** (son 6'sı havuz 18 kulübe çıkarılırken eklendi) + sonradan düşenler. Stüdyonun havuzu ilk 12 kulüptür (12 kulüplük eleme).
+
 Ad, 3 harfli kod ve renkler panelden **✏️ Takımları düzenle** ile değiştirilebilir; takım eklenip silinebilir. Her hafta her takım bir maç oynasın diye **takım sayısı çift olmalıdır**; başka bir sayı kaydedilmez, içe aktarılan dosya da reddedilir. Takımlar yalnızca **sezon başında** (hiç maç oynanmadan) değiştirilebilir.
 
-### Sezon fikstürü (tek devreli lig)
+### Sezon fikstürü (canlı lig: rövanşlı, stüdyo: tek devreli)
 - 18 takım, her maçta 2 takım → **haftada 9 maç**. Her takım her hafta tam bir kez oynar ve 17 haftada **her takımla tam bir kez** karşılaşır (`planRoundRobin`: seed'li sırayla daire yöntemi).
-- Ev sahipliği dengelidir: her takım 8 ya da 9 maçta ev sahibi, en fazla 2 maç üst üste aynı tarafta. Haftanın maç sırası da kurayla belirlenir.
-- Sezon uzunluğu 17 haftadan uzun ayarlanırsa (stüdyo) lig ev sahibi ve deplasman yer değiştirerek tekrarlanır (34 hafta = çift devre).
+- **Canlı lig rövanşlıdır** (`CONFIG.LIVE.seasonLength` = 34): ikinci devrede aynı eşleşmeler ev sahibi ve deplasman yer değiştirerek oynanır. Her takım **17 maçta ev sahibi, 17 maçta deplasmanda**; her ikili bir kez iç sahada, bir kez deplasmanda karşılaşır. Rövanş en az 16 hafta sonradır. Stüdyo 17 haftalık tek devreyle oynar (`CONFIG.SEASON_LENGTH`).
+- Ev sahipliği dengelidir: tek devrede her takım 8 ya da 9 maçta ev sahibi; **en fazla 2 maç üst üste aynı tarafta** (devre geçişinde de). İkinci devre ilk devrenin haftalarını bir hafta kaydırarak başlar (ilk devrenin 2. haftasının tersiyle); böylece daire yönteminin son haftası ile ters çevrilmiş ilk haftası art arda gelmez ve hiçbir takım 3 maç üst üste aynı tarafta oynamaz. Haftanın maç sırası da kurayla belirlenir.
 - **Fikstür sezon başında bir kez oluşturulur ve sezon bitene kadar değişmez.** Lig verisinde (`seasonPlan`) saklanır.
 - Başlıkta `WEEK 3 · MATCH 2` yazar. Haftanın son maçı kaydedilince hafta kendiliğinden ilerler. **📅 Yeni hafta** ile elle de geçilebilir; haftada oynanmamış maç varsa uyarı çıkar ve onay istenir.
 - Sezonun son haftası bitince lig maçı kurulmaz: önce yükselme elemesi oynanır, o da bitince yeni sezon başlar.
@@ -248,12 +271,14 @@ Tablo sıralaması: **Puan → averaj (AV) → atılan gol (AG) → aralarındak
 90 saniyelik 1000 maçlık testte (varsayılan ayarlar): maç başına ortalama **9,3 gol**, **%14 beraberlik**; en sık skorlar 5–4, 5–3, 6–4, 4–3, 6–3. (Gollerden sonra saatin durması, eşit kaleciler, topa yönelen oyuncular ve forvetin nişanı gol ortalamasını 7,2'den 9,3'e çıkardı; düşürmek için `FINAL_GOAL_FRAC` küçültülebilir.)
 
 ### Yükselme ligi (canlı lig)
-Sitedeki canlı ligde havuzdaki 12 kulüp (Napoli, Roma, Atalanta, Tottenham, Aston Villa, Benfica, Porto, Ajax, Sevilla, Marseille, Sporting CP, Trabzonspor + sonradan düşenler) **yükselmeyi beklerken kendi ligini oynar** ve bu lig ana ligle **paralel** gider:
+Sitedeki canlı ligde havuzdaki **18 kulüp** (Napoli, Roma, Atalanta, Tottenham, Aston Villa, Benfica, Porto, Ajax, Sevilla, Marseille, Sporting CP, Trabzonspor, RB Leipzig, Newcastle, Lyon, Lazio, Feyenoord, Celtic + sonradan düşenler) **yükselmeyi beklerken kendi ligini oynar** ve bu lig ana ligle **paralel** gider:
 
-- **Fikstür:** çift devreli lig: 22 hafta × 6 maç = 132 maç; her ikili iki kez karşılaşır (bir iç saha, bir deplasman), her kulüp 11 maçta ev sahibi. Fikstür ve eşitlik kurası sezon başında sezonun seed'iyle çekilir (`promo` lig verisinde).
-- **Saatler:** her yükselme ligi maçı ligin bir maçıyla **aynı saatte** başlar. 132 maç, sezonun ilk 150 maç saatine eşit aralıkla yayılır (`League.promoSlot`); sezonun **son 3 maç saati** elemenindir.
-- **Doğrudan yükselme:** lig bitince tablonun **ilk 2 takımı doğrudan lige yükselir** (`PO_DIRECT`): 132 maçlık ligi önde bitirmenin karşılığı kesindir.
-- **Yükselme elemesi (son yer):** **3.–6. takımlar** tek maçlık eleme oynar: **yarı finaller 3.–6. ve 4.–5.** (ev sahibi üst sıradaki), sonra **final**. Berabere biten maç en fazla 20 sn altın gol, sonra penaltılarla biter. **Final galibi lige yükselir.** Final, ligin son maçıyla aynı anda oynanır: iki sezon aynı anda biter.
+- **Fikstür:** rövanşlı lig, ana ligle aynı boyda: 34 hafta × 9 maç = 306 maç; her ikili iki kez karşılaşır (bir iç saha, bir deplasman), her kulüp 17 maçta ev sahibi. Fikstür ve eşitlik kurası sezon başında sezonun seed'iyle çekilir (`promo` lig verisinde).
+- **Saatler:** iki lig aynı haftayı aynı anda oynar: **her maç saatinde iki maç**, biri ligin, biri yükselme liginin (306 = 306). Yükselme elemesi, iki ligin son maçından sonraki **3 maç saatinde tek başına** oynanır: yarı final, yarı final, **final (günün son maçı, ~23:41)**. Sezon 309 maç saatidir (`League.seasonSlots`).
+- Havuz 18'den az kulüpse (eski sezonlar, testler) yükselme ligi çift devresini sezonun maç saatlerine eşit aralıkla yayar ve eleme sezonun son 3 maç saatinde, final ligin son maçıyla aynı anda oynanır (`Live.promoNew`, `League.promoSlot`).
+- **Doğrudan yükselme:** lig bitince tablonun **ilk 2 takımı doğrudan lige yükselir** (`PO_DIRECT`): 306 maçlık ligi önde bitirmenin karşılığı kesindir.
+- **Yükselme elemesi (son yer):** **3.–6. takımlar** tek maçlık eleme oynar: **yarı finaller 3.–6. ve 4.–5.** (ev sahibi üst sıradaki), sonra **final**. Berabere biten maç en fazla 20 sn altın gol, sonra penaltılarla biter. **Final galibi lige yükselir.**
+- **18 kulübe geçiş:** havuz 12 kulüpken başlamış sezon 12 kulüple biter; 6 yeni kulüp bir sonraki sezonun başında, sıfır geçmişle havuza katılır (`Live.topUpPool`). Lig sıfırlanmaz.
 - **Önceki format:** ilk sürümde ilk 4 takım eleme oynuyor (1.–4., 2.–3., 3.lük maçı, final) ve elemenin ilk 3'ü yükseliyordu; lig birincisi dördüncüyle aynı şansa sahipti. O formatla başlamış bir sezon o formatla biter (`promo.direct` yok), yeni format bir sonraki sezonla başlar; Geçmiş sekmesi iki formatı da gösterir.
 - Puanlama ve sıralama ligle aynıdır (galibiyet 3, beraberlik 1; puan → averaj → atılan gol → aralarındaki maç → kura). Maçlar videodaki şeritte `PROMO · WEEK 5 · MATCH 3` başlığını taşır; bitiş ekranı yükselme ligi tablosudur (ilk 2 altın, `PROMOTION` çizgisi; 3.–6. yeşil, `PLAYOFFS` çizgisi).
 - **Geçiş:** yükselme ligi bir sezonun başında kurulur. Bu özellik yayınlandığında sürmekte olan sezon (eski formatla başladığı için) eski kuralla, lig maçlarından sonra 12 kulübün elemesiyle biter; yükselme ligi bir sonraki sezonla başlar. Lig sıfırlanmaz (bkz. [Kural değişikliği ligi sıfırlamaz](#kural-değişikliği-ligi-sıfırlamaz)).
@@ -288,7 +313,7 @@ Sezonun son haftası (17) oynanınca **tabloda 1. olan takım şampiyon** olur v
 
 ## Instagram günlük görevi
 
-Her sabah zamanlanmış bir görev, canlı ligin **bir önceki gününden** (İstanbul saatiyle 00:00–24:00, ~900 maç) kritik maçları seçer. Ürettiği dosyalar Claude uygulamasına gönderilir:
+Her sabah zamanlanmış bir görev, canlı ligin **bir önceki gününden** (İstanbul saatiyle 00:00–24:00; 07:00–23:44 arası 309 maç saatinde 615 maç, yani her gün tam bir sezon: şampiyonluk, düşme ve yükselme finali dahil) kritik maçları seçer. Ürettiği dosyalar Claude uygulamasına gönderilir:
 
 | İçerik | Ne |
 |---|---|
@@ -405,7 +430,7 @@ Varsayılan ayarlarla 90 saniyelik 1000 maçlık testte (`node tools/balance.js 
 | `INTRO_DURATION` / `END_DURATION` | 5 / 9 | Maç öncesi ve maç sonu ekranlarının süresi (sn) |
 | `FORM_COUNT` | 3 | Lig tablosunun en sağındaki son maç sayısı (`LAST 3`) |
 | `RELEGATE_COUNT` / `CUP_SIZE` | 3 / 12 | Sezon sonunda düşen / yükselen takım sayısı; yükselme elemesine katılan havuz kulübü sayısı |
-| `LIVE` | her 3 dk | Canlı ligin takvimi, taşma payı ve seed tohumu (bkz. [Canlı lig](#canlı-lig-site)) |
+| `LIVE` | 07:00–23:59, 3 dk 15 sn | Canlı ligin takvimi, sezon = gün, sezon uzunluğu (34), havuz (18), taşma payı ve seed tohumu (bkz. [Canlı lig](#canlı-lig-site)) |
 
 ---
 
@@ -416,19 +441,19 @@ index.html          Uygulamanın kendisi (tek dosya, doğrudan açılır)
 build.sh            src/ parçalarını index.html'de birleştirir
 src/
   00_head.html      HTML iskeleti, panel ve stiller
-  01_core.js        CONFIG, takımlar (lig + havuz), seed'li RNG, matematik, sezon fikstürü (tek devreli lig)
+  01_core.js        CONFIG, takımlar (lig + havuz), seed'li RNG, matematik, sezon fikstürü (tek / çift devreli lig)
   02_sim.js         Fizik ve oyun mantığı (saha, top, kaleci, oyuncu, 90 sn'lik maç, altın gol, penaltılar)
   03_fx_audio.js    Temalar, görsel efektler, Web Audio ile sentezlenen sesler ve arka plan müziği (Music)
   04_render.js      Canvas çizimi, üst şerit (hafta · saat · skor), penaltı tablosu, maç öncesi / sonu ekranları
   05_app.js         Lig (puan, sıralama, eleme), kayıt, kontrol paneli, denge testi, ana döngü
   06_offline.js     Ekransız video üretimi (kare kare çizim, WebCodecs H.264, OfflineAudioContext)
-  07_live.js        Canlı lig: maç takvimi, iki lig (lig + yükselme ligi) aynı saatlerde, seed türetme, geçmiş maçları hesaplama, saate senkron oynatma, Canlı listesi ve maç seçimi, geri sayım ekranı, sekmeler (fikstür, tablolar, ⚽), maç bağlantıları (tekrar), ekran okuyucu duyuruları
+  07_live.js        Canlı lig: maç takvimi (07:00–23:59, sezon = gün), iki lig (lig + yükselme ligi) aynı saatlerde, dünün maçları, seed türetme, geçmiş maçları hesaplama, saate senkron oynatma, Canlı listesi ve maç seçimi, geri sayım ekranı, sekmeler (fikstür, tablolar, ⚽), maç bağlantıları (tekrar), ekran okuyucu duyuruları
   08_stats.js       İstatistik sekmesi ve kulüp sayfaları (tüm zamanlar tablosu, rekorlar, seriler, ikili karşılaşma, grafikler)
   09_i18n.js        Diller: sitenin 8 dildeki bütün metinleri (tx), tarih / saat biçimleri, dil seçimi
   types.d.ts        Yalnızca tip denetimi için (sayfaya girmez)
 tools/
   balance.js        Terminalden denge testi (Node.js)
-  live-check.js     Canlı lig testleri: determinizm, takvim, fikstür, maç kuralları, sıralama, taşma kuralı, taban, başlangıç, yükselme ligi ve elemesi, Canlı listesi ve ⚽ işaretleri (--long: 48 saatlik koşu)
+  live-check.js     Canlı lig testleri: determinizm, takvim, fikstür, maç kuralları, sıralama, taşma kuralı, taban, başlangıç, yükselme ligi ve elemesi, Canlı listesi ve ⚽ işaretleri, sezon = gün ve dünün maçlarının tekrarı (--long: 48 saatlik koşu)
   live-start.js     Yeni ligin başlangıcını ilk yayında belirler, sonraki yayınlarda korur; eski ligin arşivini taşır (live-start.json)
   live-state.js     live-state.json checkpoint'ini üretir (Pages iş akışı 15 dakikada bir çalıştırır)
   live-base.js      Kural ya da takvim değişince ligi dondurur: yayındaki checkpoint, yayındaki kodla şu ana ilerletilip → live-base.json (Pages iş akışı her yayında çalıştırır)

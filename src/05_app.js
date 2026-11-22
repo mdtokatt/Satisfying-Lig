@@ -11,8 +11,9 @@ const CUP_SHAPE = [
   { k: '3RD', r: 3, a: 'lSF-1', b: 'lSF-2' }, { k: 'FIN', r: 3, a: 'wSF-1', b: 'wSF-2' },
 ];
 /* the live league's promotion (07_live.js): the pool clubs play their own league (the promotion league, alongside the league,
-   see Live.promoNew). Its top PO_DIRECT clubs go up directly; the next four (3rd–6th) play this single-leg knockout in the
-   season's last slots for the last place: 3rd v 6th, 4th v 5th (the better placed club at home), then the final, whose winner
+   see Live.promoNew). Its top PO_DIRECT clubs go up directly; the next four (3rd–6th) play this single-leg knockout after its
+   league (in the season's last slots, or — 18 clubs, whose double round robin fills every slot — after the league's last match) for
+   the last place: 3rd v 6th, 4th v 5th (the better placed club at home), then the final, whose winner
    goes up. The draw is the table's top PO_SIZE (s0, s1: the clubs that went up directly). Round numbers are CUP_SHAPE's
    (2 = semi-finals, 3 = final), so the names and the screens are the same. */
 const PO_DIRECT = 2, PO_SIZE = 6;
@@ -102,6 +103,7 @@ const cupName = (k) => {
  * @property {number} [liveSeasonStart]
  * @property {number} [liveLastEnd]     live league: when the last match ended (ms)
  * @property {Object[]} [seasons]       live league: the finished seasons' archive (Geçmiş)
+ * @property {{ sim: string, from: number }} [liveSim]  live league: the rules (BUILD_SIM_HASH) the matches from live slot `from` on are played by
  * @property {any} [weekPlan]          a field of older saves (deleted on load)
  */
 const League = {
@@ -111,7 +113,8 @@ const League = {
     return {
       version: 1, teamsVersion: 3,
       teams: DEFAULT_TEAMS.map((t, i) => ({ id: 't' + (i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 })),
-      reserve: RESERVE_TEAMS.map((t, i) => ({ id: 't' + (DEFAULT_TEAMS.length + i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 })),
+      /* the studio's pool: the first CUP_SIZE clubs (its 12-club playoff); the live league tops it up to CONFIG.LIVE.pool (Live.topUpPool) */
+      reserve: RESERVE_TEAMS.slice(0, CONFIG.CUP_SIZE).map((t, i) => ({ id: 't' + (DEFAULT_TEAMS.length + i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 })),
       table: {}, week: 1, weekMatch: 1, matchNo: 1, season: 1, seasonLength: CONFIG.SEASON_LENGTH,
       points: CONFIG.POINTS.slice(), seasonPlan: null, tieOrder: null, cup: null, promo: null,
       history: [], champions: [], settings: {},
@@ -138,7 +141,7 @@ const League = {
     if (Array.isArray(d.reserve)) out.reserve = clean(d.reserve);
     else {
       const have = new Set(out.teams.map(t => t.name));
-      out.reserve = clean(RESERVE_TEAMS.filter(t => !have.has(t.name)).map((t, i) => ({ ...t, id: 't' + (DEFAULT_TEAMS.length + i + 1) })));
+      out.reserve = clean(RESERVE_TEAMS.slice(0, CONFIG.CUP_SIZE).filter(t => !have.has(t.name)).map((t, i) => ({ ...t, id: 't' + (DEFAULT_TEAMS.length + i + 1) })));
     }
     out.table = (d.table && typeof d.table === 'object') ? d.table : {};
     for (const id of Object.keys(out.table)) {
@@ -284,16 +287,25 @@ const League = {
   promoOver() { return this.promoLeagueOver() && (!this.cupOn() || this.cupDone()); },
   /* promotion matches played this season (league + playoff), in playing order */
   promoDone() { const p = this.data.promo, c = this.cup(); return this.promoOn() ? p.history.length + (c ? Object.keys(c.res).length : 0) : 0; },
-  /* the season slot (0 = the season's first) of promotion match i: the league matches spread evenly over the slots before the
-     playoff, the playoff in the season's last po slots — so both leagues end with the same slot */
+  /* the slots the promotion league's matches are spread over (S): the season's slots before the playoff (the playoff in the season's
+     last po slots, so both leagues end with the same slot) — or, when its full double round robin needs every slot of the season
+     (18 clubs: 306 matches = the league's 306), all N of them, and the playoff is played after the league's last match (Live.promoNew) */
+  promoS(p = this.data.promo) { return p.S !== undefined ? p.S : p.N - p.po; },
+  /* the season's slots: the league's N, and the promotion playoff's after them when it does not fit in */
+  seasonSlots() {
+    const d = this.data, N = d.seasonLength * App.perWeek();
+    if (this.promoOn()) return Math.max(N, this.promoS() + d.promo.po);
+    return N + (this.cupOn() ? CUP_SHAPE.length : 0);
+  },
+  /* the season slot (0 = the season's first) of promotion match i: the league matches spread evenly over S slots, then the playoff */
   promoSlot(i) {
-    const p = this.data.promo, S = p.N - p.po;
+    const p = this.data.promo, S = this.promoS(p);
     return i < p.n ? Math.floor(i * S / p.n) : S + (i - p.n);
   },
   /* the promotion match planned for season slot j (its index), or -1 */
   promoIndexAt(j) {
-    const p = this.data.promo, S = p.N - p.po;
     if (!this.promoOn() || j < 0) return -1;
+    const p = this.data.promo, S = this.promoS(p);
     if (j >= S) return j - S < p.po ? p.n + (j - S) : -1;
     const i = Math.floor((j * p.n + S - 1) / S);                // the smallest i with i·S/n ≥ j (integers: exact)
     return i < p.n && Math.floor(i * S / p.n) === j ? i : -1;
@@ -381,7 +393,8 @@ const League = {
       table: this.ranking().map((x, i) => ({ rank: i + 1, id: x.t.id, name: x.t.name, code: x.t.code, ...x.r })),
       points: d.points.slice(),
       history: d.history, cup: cup ? JSON.parse(JSON.stringify(cup)) : null,
-      promo: p ? { table: this.promoRanking().map((x, i) => ({ rank: i + 1, id: x.t.id, name: x.t.name, code: x.t.code, ...x.r })), history: p.history } : null };
+      promo: p ? { table: this.promoRanking().map((x, i) => ({ rank: i + 1, id: x.t.id, name: x.t.name, code: x.t.code, ...x.r })), history: p.history,
+        S: this.promoS(p), per: p.per } : null };
     d.champions.push(Object.assign({}, archive.champion));
     d.teams = d.teams.filter(t => !out.some(o => o.id === t.id)).concat(ch.in);
     d.reserve = d.reserve.filter(t => !ch.in.some(i => i.id === t.id)).concat(out);

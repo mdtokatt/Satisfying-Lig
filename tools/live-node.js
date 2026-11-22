@@ -28,7 +28,8 @@ function loadPage(html) {
   L.Live.adopt(L.Live.baseState());
   return L;
 }
-function loadLive({ simHash, base, start } = {}) {
+/* setup(L): runs before the league is adopted (tests: another timetable / season length / pool from the start) */
+function loadLive({ simHash, base, start, setup } = {}) {
   const env_ = env();
   /* simHash / base: what build.sh writes into the page (BUILD_SIM_HASH, BUILD_BASE = the frozen state of a league that changed rules) */
   /* start: live-start.json (BUILD_START = the league's start chosen at its first deploy, and the old league's archive) */
@@ -37,6 +38,7 @@ function loadLive({ simHash, base, start } = {}) {
     FILES.map(f => fs.readFileSync(path.join(__dirname, '..', 'src', f), 'utf8')).join('\n') +
     '\nreturn { Live, League, App, CONFIG, Game, DT, RNG, planRoundRobin, fixtureStats, DM, LivePages, LiveStats, StatsPages, Music, I18N };';
   const L = new Function(...Object.keys(env_), code)(...Object.values(env_));
+  if (setup) setup(L);
   L.Live.adopt(base && base.data ? L.Live.baseState() : null);
   return L;
 }

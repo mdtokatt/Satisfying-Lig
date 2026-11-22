@@ -14,7 +14,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satisfying Lig</title>
-<meta name="description" content="A live football league that plays itself: every 3 minutes a league match and a promotion league match kick off together and last 90 seconds; everyone watches the same match at the same moment. Fixtures, tables, promotion playoff, history and stats in 8 languages.">
+<meta name="description" content="A live football league that plays itself, a full season every day. From 07:00 to midnight (Istanbul) a league match and a promotion league match kick off together every 3 min 15 s and last 90 seconds; everyone watches the same match at the same moment. Fixtures, tables, promotion playoff, history and stats in 8 languages.">
 <meta name="theme-color" content="#0b0e14">
 <link rel="canonical" href="https://mdtokatt.github.io/Satisfying-Lig/">
 <!-- the same page in every language (?lang=xx; without it: the browser's language, else English) -->
@@ -39,7 +39,7 @@
 <meta property="og:locale:alternate" content="it_IT">
 <meta property="og:locale:alternate" content="ar_AR">
 <meta property="og:title" content="Satisfying Lig · the live football league">
-<meta property="og:description" content="A match from two leagues every 3 minutes, around the clock. Everyone watches the same match at the same moment.">
+<meta property="og:description" content="Two leagues, a full season every day: a match every 3 min 15 s from 07:00 to midnight. Everyone watches the same match at the same moment.">
 <meta property="og:url" content="https://mdtokatt.github.io/Satisfying-Lig/">
 <meta property="og:image" content="https://mdtokatt.github.io/Satisfying-Lig/og.jpg">
 <meta property="og:image:width" content="1200">
@@ -47,7 +47,7 @@
 <meta property="og:image:alt" content="Satisfying Lig: a live match on a vertical football pitch">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Satisfying Lig · the live football league">
-<meta name="twitter:description" content="A match from two leagues every 3 minutes, around the clock. Everyone watches the same match at the same moment.">
+<meta name="twitter:description" content="Two leagues, a full season every day: a match every 3 min 15 s from 07:00 to midnight. Everyone watches the same match at the same moment.">
 <meta name="twitter:image" content="https://mdtokatt.github.io/Satisfying-Lig/og.jpg">
 <!-- simge sayfaya gömülü (yerelde açılan index.html'de de görünür); manifest ve PNG simgeler public/ altında, yalnızca sitede -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E %3Crect width='64' height='64' rx='14' fill='%230b0e14'/%3E %3Crect x='14' y='6' width='36' height='52' rx='3' fill='%231f8a4c'/%3E %3Crect x='14' y='6' width='36' height='52' rx='3' fill='none' stroke='%23fff' stroke-width='2'/%3E %3Cline x1='14' y1='32' x2='50' y2='32' stroke='%23fff' stroke-width='2'/%3E %3Crect x='23' y='6' width='18' height='8' fill='none' stroke='%23fff' stroke-width='2'/%3E %3Crect x='23' y='50' width='18' height='8' fill='none' stroke='%23fff' stroke-width='2'/%3E %3Ccircle cx='32' cy='32' r='9' fill='%23fff' stroke='%230b0e14' stroke-width='1.5'/%3E %3Cpath d='M32 27.2l4.6 3.3-1.8 5.4h-5.6l-1.8-5.4z' fill='%230b0e14'/%3E%3C/svg%3E">
@@ -198,6 +198,8 @@
     position: sticky; top: -10px; z-index: 3;   /* 54px from the top: the offset is counted inside #livePane's 64px padding */ box-shadow: 0 0 0 6px #090c12, 0 6px 14px 4px rgba(9,12,18,.9); }
   .seg button { border: none; background: transparent; border-radius: 99px; padding: 6px 14px; color: var(--muted); font-weight: 600; }
   .seg button.on { background: var(--surface2); color: var(--text); box-shadow: inset 0 0 0 1px var(--accent); }
+  /* the fixture's Today / Yesterday switch: under the sticky Tablo / Fikstür one, scrolls with the page */
+  .seg.day { position: static; box-shadow: none; margin: 2px 0 8px; }
   /* "Canlı": the matches on now and starting soon */
   .lv-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .lv-card { display: flex; flex-direction: column; gap: 8px; text-align: left; width: 100%; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); cursor: pointer; font: inherit; min-width: 0; }
@@ -433,7 +435,7 @@
 </div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 <script>
-const BUILD_SIM_HASH = '0c0a55aa1679';
+const BUILD_SIM_HASH = 'a82cb2eaeace';
 const BUILD_BASE = null;
 const BUILD_START = null;
 /* =====================================================================
@@ -478,8 +480,9 @@ const CONFIG = {
      halves; the second half kicks off from the centre at MATCH_TIME / 2 (first-half added time does not shorten it). */
   MATCH_TIME: 90, GOLDEN_TIME: 20, PEN_P: 0.75, PEN_STEP: 0.9, ADDED_MAX: 10, HALF_BREAK: 6,
   GROUP_SIZE: 2,
-  /* league points: win, draw, loss. A season is a single round robin: every club meets every other club once (17 weeks with
-     18 clubs, 9 matches a week); a longer season repeats it with home and away swapped. */
+  /* league points: win, draw, loss. The studio's season is a single round robin: every club meets every other club once (17 weeks
+     with 18 clubs, 9 matches a week); a longer season repeats it with home and away swapped (the live league: LIVE.seasonLength 34,
+     a double round robin). */
   POINTS: [3, 1, 0], SEASON_LENGTH: 17,
   STORAGE_KEY: 'arenaLeague_v2',
   /* before the match: this week's matches (results / fixtures) → match. After it: one animated league table (held until the video ends) */
@@ -493,7 +496,14 @@ const CONFIG = {
   CUP_SIZE: 12,
   HARD_TIME_LIMIT: 300,
   /* the public site's live league (07_live.js), a league that never stops. Istanbul time (UTC+3 all year).
-     bands: from each `from` until the next band, one match every `every` minutes (one band, every 3 minutes: 480 matches a day).
+     bands: from each `from` (until its own `to`, else until the next band) one match every `every` minutes (fractions allowed:
+     3.25 = 3 min 15 s). No band, no matches: the site shows the table and the countdown to the first match of the next day.
+     A "day" of the timetable starts at the first band's `from`.
+     daily: every season starts with the first match of a day (07:00); the slots left after a season's last match stay empty.
+     The two leagues (seasonLength weeks each, the promotion league's playoff after them) fit one day: 306 + 3 slots of 3:15
+     from 07:00 → the last match (the playoff final) ~23:41.
+     seasonLength: the live league's season (weeks; 34 = a double round robin of 18 clubs). The studio keeps SEASON_LENGTH.
+     pool: the promotion league's clubs (the pool is topped up from RESERVE_TEAMS when a season starts; it never shrinks).
      The first match is at `start`. On the site `start` is set by the first deploy of a new salt (tools/live-start.js →
      BUILD_START): at `start` if that is still ahead at the deploy, otherwise a few minutes after it goes live.
      gap: seconds between a match that ran over and the next one.
@@ -502,7 +512,8 @@ const CONFIG = {
      and the new rules / timetable play on from there (tools/live-base.js). */
   LIVE: {
     start: '2026-11-08T13:00',   // 'YYYY-MM-DD' (that day at the first band's time) or 'YYYY-MM-DDTHH:MM' — overridden by BUILD_START
-    bands: [{ from: '00:00', every: 3 }],
+    bands: [{ from: '07:00', to: '23:59', every: 3.25 }],
+    daily: true, seasonLength: 34, pool: 18,
     utcOffset: 3, gap: 5, salt: 'satisfying-lig-live-3', keepChampions: 50,
   },
 };
@@ -544,6 +555,13 @@ const RESERVE_TEAMS = [
   { name: 'Marseille',     code: 'MAR', c1: '#2FAEE0', c2: '#FFFFFF' },
   { name: 'Sporting CP',   code: 'SCP', c1: '#00804A', c2: '#FFFFFF' },
   { name: 'Trabzonspor',   code: 'TRB', c1: '#7B1E3A', c2: '#00A3E0' },
+  /* the live league's pool grew to 18 clubs (CONFIG.LIVE.pool); the studio's pool stays the first CUP_SIZE (12) */
+  { name: 'RB Leipzig',    code: 'RBL', c1: '#FFFFFF', c2: '#DD0741' },
+  { name: 'Newcastle',     code: 'NEW', c1: '#241F20', c2: '#FFFFFF' },
+  { name: 'Lyon',          code: 'LYO', c1: '#FFFFFF', c2: '#1A3D8F' },
+  { name: 'Lazio',         code: 'LAZ', c1: '#87D8F7', c2: '#FFFFFF' },
+  { name: 'Feyenoord',     code: 'FEY', c1: '#E30613', c2: '#FFFFFF' },
+  { name: 'Celtic',        code: 'CEL', c1: '#018749', c2: '#FFFFFF' },
 ];
 /* uppercase for names and 3-letter codes: Turkish rules (i → İ) only for Turkish-looking names, so
    "Beşiktaş" → "BEŞİKTAŞ" but "Manchester United" → "MANCHESTER UNITED" */
@@ -721,10 +739,33 @@ function planRoundRobin(ids, weeks, rng) {
     }
     base.push(rng.shuffle(wk));                   // the order of a week's matches is drawn too
   }
+  /* the later legs: the same weeks, home and away swapped every other leg. A leg starts `o` weeks into the round robin
+     (week t of the leg = round (t + o) mod R): the smallest o after which no club is on the same side 3 matches in a row
+     across the legs' seam (the circle method's last round and its mirrored first round would give some clubs 3; o = 1 does
+     not) — else the o with the fewest such runs. Every pair still meets once per leg. */
+  const side = new Map(ids.map(id => [id, []]));
+  const put = (wk) => { for (const [h, a] of wk) { side.get(h).push(1); side.get(a).push(0); } };
+  const triples = (extra) => {                   // runs of 3 when the weeks `extra` follow what is in `side`
+    let n = 0;
+    for (const id of ids) {
+      const s = side.get(id).slice(-2);
+      for (const wk of extra) for (const [h, a] of wk) { if (h === id) s.push(1); else if (a === id) s.push(0); }
+      for (let i = 2; i < s.length; i++) if (s[i] === s[i - 1] && s[i] === s[i - 2]) n++;
+    }
+    return n;
+  };
   const out = [];
-  for (let w = 0; w < weeks; w++) {
-    const leg = Math.floor(w / R), wk = base[w % R];
-    out.push(leg % 2 ? wk.map(([h, a]) => [a, h]) : wk.map(m => m.slice()));
+  for (let leg = 0; leg * R < weeks; leg++) {
+    const len = Math.min(R, weeks - leg * R), make = (o) => Array.from({ length: len }, (_, t) => {
+      const wk = base[(t + o) % R];
+      return leg % 2 ? wk.map(([h, a]) => [a, h]) : wk.map(m => m.slice());
+    });
+    let pick = make(0);
+    if (leg > 0) {
+      let best = triples(pick);
+      for (let o = 1; o < R && best > 0; o++) { const c = make(o), n = triples(c); if (n < best) { best = n; pick = c; } }
+    }
+    for (const wk of pick) { put(wk); out.push(wk); }
   }
   return out;
 }
@@ -2823,8 +2864,9 @@ const CUP_SHAPE = [
   { k: '3RD', r: 3, a: 'lSF-1', b: 'lSF-2' }, { k: 'FIN', r: 3, a: 'wSF-1', b: 'wSF-2' },
 ];
 /* the live league's promotion (07_live.js): the pool clubs play their own league (the promotion league, alongside the league,
-   see Live.promoNew). Its top PO_DIRECT clubs go up directly; the next four (3rd–6th) play this single-leg knockout in the
-   season's last slots for the last place: 3rd v 6th, 4th v 5th (the better placed club at home), then the final, whose winner
+   see Live.promoNew). Its top PO_DIRECT clubs go up directly; the next four (3rd–6th) play this single-leg knockout after its
+   league (in the season's last slots, or — 18 clubs, whose double round robin fills every slot — after the league's last match) for
+   the last place: 3rd v 6th, 4th v 5th (the better placed club at home), then the final, whose winner
    goes up. The draw is the table's top PO_SIZE (s0, s1: the clubs that went up directly). Round numbers are CUP_SHAPE's
    (2 = semi-finals, 3 = final), so the names and the screens are the same. */
 const PO_DIRECT = 2, PO_SIZE = 6;
@@ -2914,6 +2956,7 @@ const cupName = (k) => {
  * @property {number} [liveSeasonStart]
  * @property {number} [liveLastEnd]     live league: when the last match ended (ms)
  * @property {Object[]} [seasons]       live league: the finished seasons' archive (Geçmiş)
+ * @property {{ sim: string, from: number }} [liveSim]  live league: the rules (BUILD_SIM_HASH) the matches from live slot `from` on are played by
  * @property {any} [weekPlan]          a field of older saves (deleted on load)
  */
 const League = {
@@ -2923,7 +2966,8 @@ const League = {
     return {
       version: 1, teamsVersion: 3,
       teams: DEFAULT_TEAMS.map((t, i) => ({ id: 't' + (i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 })),
-      reserve: RESERVE_TEAMS.map((t, i) => ({ id: 't' + (DEFAULT_TEAMS.length + i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 })),
+      /* the studio's pool: the first CUP_SIZE clubs (its 12-club playoff); the live league tops it up to CONFIG.LIVE.pool (Live.topUpPool) */
+      reserve: RESERVE_TEAMS.slice(0, CONFIG.CUP_SIZE).map((t, i) => ({ id: 't' + (DEFAULT_TEAMS.length + i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 })),
       table: {}, week: 1, weekMatch: 1, matchNo: 1, season: 1, seasonLength: CONFIG.SEASON_LENGTH,
       points: CONFIG.POINTS.slice(), seasonPlan: null, tieOrder: null, cup: null, promo: null,
       history: [], champions: [], settings: {},
@@ -2950,7 +2994,7 @@ const League = {
     if (Array.isArray(d.reserve)) out.reserve = clean(d.reserve);
     else {
       const have = new Set(out.teams.map(t => t.name));
-      out.reserve = clean(RESERVE_TEAMS.filter(t => !have.has(t.name)).map((t, i) => ({ ...t, id: 't' + (DEFAULT_TEAMS.length + i + 1) })));
+      out.reserve = clean(RESERVE_TEAMS.slice(0, CONFIG.CUP_SIZE).filter(t => !have.has(t.name)).map((t, i) => ({ ...t, id: 't' + (DEFAULT_TEAMS.length + i + 1) })));
     }
     out.table = (d.table && typeof d.table === 'object') ? d.table : {};
     for (const id of Object.keys(out.table)) {
@@ -3096,16 +3140,25 @@ const League = {
   promoOver() { return this.promoLeagueOver() && (!this.cupOn() || this.cupDone()); },
   /* promotion matches played this season (league + playoff), in playing order */
   promoDone() { const p = this.data.promo, c = this.cup(); return this.promoOn() ? p.history.length + (c ? Object.keys(c.res).length : 0) : 0; },
-  /* the season slot (0 = the season's first) of promotion match i: the league matches spread evenly over the slots before the
-     playoff, the playoff in the season's last po slots — so both leagues end with the same slot */
+  /* the slots the promotion league's matches are spread over (S): the season's slots before the playoff (the playoff in the season's
+     last po slots, so both leagues end with the same slot) — or, when its full double round robin needs every slot of the season
+     (18 clubs: 306 matches = the league's 306), all N of them, and the playoff is played after the league's last match (Live.promoNew) */
+  promoS(p = this.data.promo) { return p.S !== undefined ? p.S : p.N - p.po; },
+  /* the season's slots: the league's N, and the promotion playoff's after them when it does not fit in */
+  seasonSlots() {
+    const d = this.data, N = d.seasonLength * App.perWeek();
+    if (this.promoOn()) return Math.max(N, this.promoS() + d.promo.po);
+    return N + (this.cupOn() ? CUP_SHAPE.length : 0);
+  },
+  /* the season slot (0 = the season's first) of promotion match i: the league matches spread evenly over S slots, then the playoff */
   promoSlot(i) {
-    const p = this.data.promo, S = p.N - p.po;
+    const p = this.data.promo, S = this.promoS(p);
     return i < p.n ? Math.floor(i * S / p.n) : S + (i - p.n);
   },
   /* the promotion match planned for season slot j (its index), or -1 */
   promoIndexAt(j) {
-    const p = this.data.promo, S = p.N - p.po;
     if (!this.promoOn() || j < 0) return -1;
+    const p = this.data.promo, S = this.promoS(p);
     if (j >= S) return j - S < p.po ? p.n + (j - S) : -1;
     const i = Math.floor((j * p.n + S - 1) / S);                // the smallest i with i·S/n ≥ j (integers: exact)
     return i < p.n && Math.floor(i * S / p.n) === j ? i : -1;
@@ -3193,7 +3246,8 @@ const League = {
       table: this.ranking().map((x, i) => ({ rank: i + 1, id: x.t.id, name: x.t.name, code: x.t.code, ...x.r })),
       points: d.points.slice(),
       history: d.history, cup: cup ? JSON.parse(JSON.stringify(cup)) : null,
-      promo: p ? { table: this.promoRanking().map((x, i) => ({ rank: i + 1, id: x.t.id, name: x.t.name, code: x.t.code, ...x.r })), history: p.history } : null };
+      promo: p ? { table: this.promoRanking().map((x, i) => ({ rank: i + 1, id: x.t.id, name: x.t.name, code: x.t.code, ...x.r })), history: p.history,
+        S: this.promoS(p), per: p.per } : null };
     d.champions.push(Object.assign({}, archive.champion));
     d.teams = d.teams.filter(t => !out.some(o => o.id === t.id)).concat(ch.in);
     d.reserve = d.reserve.filter(t => !ch.in.some(i => i.id === t.id)).concat(out);
@@ -4205,20 +4259,24 @@ const Offline = {
        refreshed every 15 minutes by the Pages workflow, is a ready-made checkpoint so first visits are quick),
      • the match that is on is fast-forwarded to "now" and then plays in real time,
      • between matches: the league table and a countdown to the next kick-off.
-   Timetable (CONFIG.LIVE.bands, Istanbul time): a slot every 3 minutes, day and night (480 a day). Two leagues play side by
-   side, each on its own "channel", and their matches of a slot kick off together:
-     • main:  the league (18 clubs, 17 weeks × 9 = 153 matches: one in every slot of the season),
-     • promo: the promotion league of the 12 pool clubs (a double round robin, 22 weeks × 6 = 132 matches spread evenly over
-              the season's slots) its top 2 go up directly and 3rd–6th play the playoff (semi-finals, final) in the season's last 3 slots,
-              so both seasons end with the same slot (League.promoSlot). Champion, runner-up and third place go up.
+   Timetable (CONFIG.LIVE.bands, Istanbul time): a slot every 3 min 15 s from 07:00 to 23:59 (314 a day), nothing at night, and a
+   season a day (CONFIG.LIVE.daily: every season starts with the day's first slot, Live.alignSeason). Two leagues play side by side,
+   each on its own "channel", and their matches of a slot kick off together:
+     • main:  the league (18 clubs, a double round robin: 34 weeks × 9 = 306 matches, one in every slot of the season),
+     • promo: the promotion league of the 18 pool clubs (also 34 weeks × 9 = 306: a match in every slot, with the league's); its top 2
+              go up directly and 3rd–6th play the playoff (semi-finals, final) in the 3 slots after the league's last match, one match a
+              slot: the final is the day's last match (~23:41). A smaller pool spreads its double round robin over the season's slots
+              and plays the playoff in the season's last slots instead (League.promoSlot, Live.promoNew).
+   The slots left after a season (23:44–23:57) stay empty; the next season starts at 07:00 the next day (Live.slotN, dayFirst).
    A match: ~5 s that week's matches, the 90 s match with a 6 s half-time break, ~9 s the animated table. A slot starts at
    its time, or GAP seconds after the previous slot's last match ended if that one ran over (a league match is ~108 s on
-   screen, a playoff match with a golden goal and penalties at most ~2.3 min, so it does not happen; it can never jam anyway:
+   screen (~123 s with its screens, at most ~134 s, the slot is 195 s), a playoff match with a golden goal and penalties ~2.5–3 min,
+   so it does not happen; it can never jam anyway:
    the overrun is absorbed by the next slots). A match's length on screen is computed from its own simulation, so every browser
    agrees on it too. A season begun before the promotion league existed (frozen in a base) ends the old way: the 12 pool clubs'
    knockout after the league's matches, one match a slot (League.cupPhase).
    The site opens on the fixture ("Lig tablosu" › "Fikstür": the league's and the promotion league's fixtures are sub-tabs of their
-   tables). "Canlı" lists the matches on now and those starting within 10 minutes; the viewer picks one
+   tables; "Bugün / Dün" switches to the last finished season — yesterday's matches — with a replay link on every match). "Canlı" lists the matches on now and those starting within 10 minutes; the viewer picks one
    and watches it (the canvas follows that channel from then on). A ⚽ next to a match in the fixture or a club in a table
    opens its live match too.
    The league's start comes from the deploy (BUILD_START, tools/live-start.js): a new league starts at CONFIG.LIVE.start
@@ -4246,19 +4304,22 @@ const Live = {
   cfg() {
     const B = this.build();
     if (!B || B.salt !== CONFIG.LIVE.salt || !B.start) return CONFIG.LIVE;
-    if (!this._cfg || this._cfg.src !== CONFIG.LIVE) this._cfg = Object.assign({}, CONFIG.LIVE, { start: B.start, src: CONFIG.LIVE });
+    /* CONFIG.LIVE with the deploy's start on top (the other settings read through, so a change to CONFIG.LIVE shows at once) */
+    if (!this._cfg || this._cfg.src !== CONFIG.LIVE) this._cfg = Object.create(CONFIG.LIVE, { start: { value: B.start }, src: { value: CONFIG.LIVE } });
     return this._cfg;
   },
   build() { return typeof BUILD_START !== 'undefined' && BUILD_START && typeof BUILD_START === 'object' ? BUILD_START : null; },
   /* the previous live league (before the 1v1 format): { champions, seasons } as it stood when this league was deployed */
   legacy() { const B = this.build(); return B && B.legacy && Array.isArray(B.legacy.seasons) ? B.legacy : null; },
   mins(hm) { const [h, m] = hm.split(':').map(Number); return h * 60 + m; },
-  /* the day's slots in minutes after the first band starts (a "day" runs from bands[0].from to the next one) */
+  /* the day's slots in minutes after the first band starts (a "day" runs from bands[0].from to the next one). A band runs until its
+     own `to` (no matches after it until the next band / day), else until the next band */
   slots() {
     if (this._slots) return this._slots;
     const B = this.cfg().bands, b0 = this.mins(B[0].from), out = [];
     B.forEach((b, i) => {
-      const from = (this.mins(b.from) - b0 + 1440) % 1440, to = i + 1 < B.length ? (this.mins(B[i + 1].from) - b0 + 1440) % 1440 : 1440;
+      const from = (this.mins(b.from) - b0 + 1440) % 1440, next = i + 1 < B.length ? (this.mins(B[i + 1].from) - b0 + 1440) % 1440 : 1440;
+      const to = b.to ? Math.min(next, (this.mins(b.to) - b0 + 1440) % 1440 || 1440) : next;
       for (let m = from; m < to; m += b.every) out.push(m);
     });
     return (this._slots = out);
@@ -4286,6 +4347,26 @@ const Live = {
     const { slots: S, base0, n0, firstN } = this.sched(), k = n - firstN + n0, day = Math.floor(k / S.length);
     return base0 + day * 864e5 + S[k - day * S.length] * 60e3;
   },
+  /* the first slot of a day at or after slot n (CONFIG.LIVE.daily: every season starts there) */
+  dayFirst(n) {
+    const { slots: S, n0, firstN } = this.sched(), L = S.length, pos = (((n - firstN + n0) % L) + L) % L;
+    return pos ? n + (L - pos) : n;
+  },
+  /* slot n of the running season, or — once the season's slots are used up (daily timetable) — the next day's first slot, where the
+     next season starts (the slots in between stay empty) */
+  slotN(n) {
+    if (!this.cfg().daily) return n;
+    const d = League.data;
+    return n - (d.liveSeasonStart || 0) >= League.seasonSlots() ? this.dayFirst(n) : n;
+  },
+  /* a season that has not begun starts with the first slot of a day (daily timetable): the live count jumps over the empty slots.
+     Deterministic (it depends only on the state and the timetable), so every browser does the same. */
+  alignSeason(d = League.data) {
+    if (!this.cfg().daily || this.begun(d)) return;
+    const n = this.dayFirst(d.liveCount || 0);
+    if (n !== (d.liveCount || 0)) { d.liveCount = n; d.liveSeasonStart = n; }
+  },
+  begun(d) { return d.history.length > 0 || d.week > 1 || d.weekMatch > 1 || !!d.cup || !!(d.promo && d.promo.history.length); },
   /* actual kick-off of the next slot: its time, or GAP after the previous slot's last match if that one ran over */
   nextStart() { return Math.max(this.slot(this.count()), (League.data.liveLastEnd || 0) + this.cfg().gap * 1000); },
   /* minutes between matches at time t */
@@ -4333,7 +4414,11 @@ const Live = {
   count() { return League.data.liveCount || 0; },
 
   /* --- league state ------------------------------------------------------ */
-  freshLeague() { const d = League.normalize(null); d.liveCount = 0; d.liveSeasonStart = 0; d.liveLastEnd = 0; d.seasons = []; return d; },
+  freshLeague() {
+    const d = League.normalize(null); d.liveCount = 0; d.liveSeasonStart = 0; d.liveLastEnd = 0; d.seasons = [];
+    d.reserve = RESERVE_TEAMS.slice(0, Math.max(2, this.cfg().pool || CONFIG.CUP_SIZE)).map((t, i) => ({ id: 't' + (DEFAULT_TEAMS.length + i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 }));
+    return d;
+  },
   /* The rules a live league plays by always come from CONFIG, never from what a saved state carries (League.normalize keeps a
      saved league's points / speed / season length). So a league frozen before a rule change plays the new rules from
      its next match on; matches already played stay as they were. A season that has begun keeps its length until it ends.
@@ -4342,21 +4427,34 @@ const Live = {
     d.points = CONFIG.POINTS.slice();
     d.settings = League.defaultSettings();
     const begun = d.history.length > 0 || d.week > 1 || d.weekMatch > 1 || !!d.cup;
-    /* the season's promotion league: set up (again: with the season's length) until the season's first slot is played; a season
-       begun without one (the old format) ends the old way */
-    if (!begun) { d.seasonLength = CONFIG.SEASON_LENGTH; d.promo = this.promoNew(d); }
+    /* the season's promotion league: set up (again: with the season's length and the pool topped up) until the season's first slot
+       is played; a season begun without one (the old format) ends the old way */
+    if (!begun) { d.seasonLength = this.cfg().seasonLength || CONFIG.SEASON_LENGTH; this.topUpPool(d); d.promo = this.promoNew(d); }
     else if (!(d.promo && d.promo.season === d.season)) d.promo = null;
   },
-  /* a season's promotion league: the pool clubs' double round robin (as many of its weeks as fit) spread over the league's N slots,
-     the playoff (PO_SHAPE) in the last slots. Its fixture and tie-break draw come from the season's seeds, like the league's. */
+  /* the pool grows to CONFIG.LIVE.pool clubs with the RESERVE_TEAMS clubs that are in neither the league nor the pool (ids as in a
+     fresh league: t<19 + index>); only between seasons, so a running promotion league keeps its clubs */
+  topUpPool(d) {
+    const want = this.cfg().pool || 0, have = new Set(d.teams.concat(d.reserve).map(t => t.id));
+    RESERVE_TEAMS.forEach((t, i) => {
+      const id = 't' + (DEFAULT_TEAMS.length + i + 1);
+      if (d.reserve.length < want && !have.has(id)) { d.reserve.push({ id, name: t.name, code: t.code, c1: t.c1, c2: t.c2 }); have.add(id); }
+    });
+  },
+  /* a season's promotion league: the pool clubs' double round robin spread over the league's N slots (S of them), then the playoff
+     (PO_SHAPE). If the whole double round robin fits before the season's last po slots, the playoff is in those (both leagues end with
+     the same slot); if it needs all N (18 clubs: 34 weeks × 9 = the league's 306 matches, two matches in every slot) the playoff is
+     played after the league's last match (S = N); otherwise as many of its weeks as fit before the last po slots.
+     Its fixture and tie-break draw come from the season's seeds, like the league's. */
   promoNew(d) {
     const ids = d.reserve.map(t => t.id), nP = ids.length;
     if (nP < 2 || nP % 2) return null;
     const per = nP / 2, N = d.seasonLength * Math.max(1, Math.floor(d.teams.length / 2));
-    const po = nP >= PO_SIZE && CONFIG.RELEGATE_COUNT === 3 ? PO_SHAPE.length : 0;
-    const weeks = Math.max(0, Math.min(2 * (nP - 1), Math.floor((N - po) / per)));
+    const po = nP >= PO_SIZE && CONFIG.RELEGATE_COUNT === 3 ? PO_SHAPE.length : 0, full = 2 * (nP - 1);
+    const after = full * per > N - po && full * per <= N;
+    const weeks = after ? full : Math.max(0, Math.min(full, Math.floor((N - po) / per)));
     if (!weeks && !po) return null;
-    return { season: d.season, per, N, po, direct: po ? PO_DIRECT : 0, n: weeks * per, plan: weeks ? planRoundRobin(ids, weeks, new RNG(this.seed(['pplan', d.season]))) : [],
+    return { season: d.season, per, N, po, S: after ? N : N - po, direct: po ? PO_DIRECT : 0, n: weeks * per, plan: weeks ? planRoundRobin(ids, weeks, new RNG(this.seed(['pplan', d.season]))) : [],
       table: {}, history: [], tieOrder: new RNG(this.seed(['ptie', d.season])).shuffle(ids) };
   },
   /* make a saved state the live league (null = a brand-new league) */
@@ -4364,6 +4462,11 @@ const Live = {
     League.data = d ? Object.assign(League.normalize(d), { liveCount: d.liveCount || 0, liveSeasonStart: d.liveSeasonStart || 0, liveLastEnd: d.liveLastEnd || 0 }) : this.freshLeague();
     if (!Array.isArray(League.data.seasons)) League.data.seasons = [];
     this.applyRules();
+    this.alignSeason();
+    /* the rules the matches from slot `from` on are played by (a replay link needs the same rules: matches before a rule change
+       cannot be replayed, LivePages.canReplay) */
+    const ls = League.data.liveSim;
+    if (!ls || ls.sim !== this.sim()) League.data.liveSim = { sim: this.sim(), from: League.data.liveCount || 0 };
   },
   /* live match number of a season's league match */
   matchIndex(week, wm) { return (League.data.liveSeasonStart || 0) + (week - 1) * App.perWeek() + (wm - 1); },
@@ -4436,7 +4539,7 @@ const Live = {
     }
     d.liveCount = (d.liveCount || 0) + 1;
     d.liveLastEnd = m.start + Math.round(m.dur * 1000);
-    if (ended) d.liveSeasonStart = d.liveCount;
+    if (ended) { d.liveSeasonStart = d.liveCount; this.alignSeason(d); }   // daily: the next season starts with the next day's first slot
     this.pending = null;
     this.snapshot();
   },
@@ -4461,12 +4564,15 @@ const Live = {
       return { n: history.length, m: keepM ? history.map(h => b36(ix.get(h.result[0].id)) + b36(ix.get(h.result[1].id)) + b36(h.result[0].score) + b36(h.result[1].score)).join('') : '',
         rows: table.map(x => [x.id, x.played, x.pts, x.w, x.d, x.l, x.gf, x.ga].concat(League.formOf(x.id, history))) };
     };
-    const main = lg(a.table, a.history);
+    const main = lg(a.table, a.history), d = League.data, ls = d.liveSim;
     const rec = { f: 2, season: a.season, champ: a.champion.id, t0: ts.length ? Math.min(...ts) : 0, t1: ts.length ? Math.max(...ts) : 0,
+      /* for the replays of a finished season ("Dün"): its first slot, the promotion league's slot layout and the rules its matches were
+         played by (from slot simFrom on; earlier ones were played by other rules and are not replayed) */
+      n0: d.liveSeasonStart || 0, sim: ls ? ls.sim : '', simFrom: ls ? ls.from : 0,
       n: main.n, p: (a.points || League.data.points).slice(0, 3), m: main.m, rows: main.rows,
       out: a.relegated.map(t => t.id), up: a.promoted.map(t => t.id),
       cup: cup ? { draw: cup.draw.slice(), res: Object.fromEntries(Object.entries(cup.res).map(([k, r]) => [k, cr(r)])) } : null };
-    if (pr) rec.pl = lg(pr.table, pr.history);
+    if (pr) { rec.pl = lg(pr.table, pr.history); if (pr.S !== undefined) { rec.pl.S = pr.S; rec.pl.per = pr.per; } }
     return rec;
   },
   /* a state "after liveCount matches", taken only between matches (cache, checkpoint, resync) */
@@ -4534,9 +4640,9 @@ const Live = {
   /* kick-off of slot n (≥ the slot being played): the actual one for the slot on now / next, the planned one after that */
   kickoffOf(n) {
     if (this.cur && n === this.cur.n) return this.cur.start;
-    if (this.cur && n === this.cur.n + 1) return Math.max(this.slot(n), this.cur.start + Math.round(this.cur.dur * 1000) + this.cfg().gap * 1000);
+    if (this.cur && n === this.cur.n + 1) return Math.max(this.slot(this.slotN(n)), this.cur.start + Math.round(this.cur.dur * 1000) + this.cfg().gap * 1000);
     if (!this.cur && n === this.count()) return this.nextStart();
-    return this.slot(n);
+    return this.slot(this.slotN(n));
   },
   /* the matches being played at time t (kick-off, intro included, up to the final whistle) */
   onNow(t) { return this.cur ? this.cur.ms.filter(M => M.start <= t && t < M.over) : []; },
@@ -4623,7 +4729,7 @@ const Live = {
     const say = (msg) => { this.notice = msg; this.noticeUntil = Date.now() + 15e3; };
     if (!p) return say(tx('rpInvalid'));
     if (p[1] !== this.sim()) return say(tx('rpOld'));
-    const L = League.normalize(null), team = (id) => L.teams.find(t => t.id === id) || L.reserve.find(t => t.id === id);
+    const all = DEFAULT_TEAMS.concat(RESERVE_TEAMS), team = (id) => { const i = +String(id).slice(1) - 1; return /^t\d+$/.test(id) && all[i] ? { id, ...all[i] } : null; };
     const [A, B] = [team(p[3]), team(p[4])], cup = p[9] && CUP_SHAPE.concat(PO_SHAPE, PO_OLD).some(c => c.k === p[9]) ? p[9] : null;
     if (!A || !B || A === B || !THEME_DEFS[p[5]] || (p[9] && !cup)) return say(tx('rpInvalid'));
     const promo = p[6] === 'p', wk = +p[7] || 0, wm = +p[8] || 0;
@@ -4791,6 +4897,7 @@ const Live = {
       /* "Lig tablosu" / "Yükselme ligi": the Tablo / Fikstür switch */
       const sb = /** @type {HTMLElement} */ (el(e).closest('[data-sub]'));
       if (sb) { this.pickSub(sb.dataset.sub); const f = /** @type {HTMLElement} */ (document.querySelector(`#livePane [data-sub="${sb.dataset.sub}"]`)); if (f) f.focus({ preventScroll: true }); return; }
+      const dy = /** @type {HTMLElement} */ (el(e).closest('[data-day]')); if (dy) { this.pickDay(dy.dataset.day); return; }
       const b = /** @type {HTMLButtonElement} */ (el(e).closest('.hist-nav')); if (b && !b.disabled) { this.pickSeason(b.dataset.season); return; }
       const t = /** @type {HTMLElement} */ (el(e).closest('[data-team]')); if (t) { this.openClub(t.dataset.team); return; }
       if (el(e).closest('[data-back]')) this.closeClub();
@@ -4886,7 +4993,7 @@ const Live = {
     const next = this.cur ? this.kickoffOf(this.cur.n + 1) : this.nextStart();
     if (!this.count() && this.phase === 'wait') return tx('infoStarts', { when: I18N.when(next) });
     const on = this.watched(), what = on ? `${LivePages.what(on.ch, on.s.cup ? { cup: on.s.cup } : on.s)} · ` : this.watch ? `${tx(this.watch === 'promo' ? 'promo' : 'league')} · ` : '';
-    return what + tx('infoEvery', { n: this.every(now), t: I18N.time(next) });
+    return what + tx('infoEvery', { n: LivePages.evText(this.every(now)), t: I18N.time(next) });
   },
   /* background music plays on every screen without a match in play: the pages, the "Canlı" list, the countdown table, and a
      match's intro and end screens (it fades out at kick-off and comes back after the final whistle) */
@@ -4904,9 +5011,14 @@ const Live = {
   scrollCur: true,          // scroll the fixture to the current week on its next drawing
   watchFrom: 0,             // the viewer picked a match that starts later: the channel's matches before that slot are not loaded
   histSel: '',              // "Geçmiş": the selected season's key (LivePages.histList; '' = the latest finished one)
+  fxDay: '',                // the fixtures' Today / Yesterday switch ('' today, 'y' yesterday: the last finished season, LivePages.yesterday)
   club: '',                 // a club's page is open over the tab (StatsPages.club)
   clubOpp: '',              // the club page's head-to-head opponent ('' = its next match's, see StatsPages.defaultOpp)
   pickSeason(k) { this.histSel = k; this.paneKey = ''; this.renderPane(); $('livePane').scrollTop = 0; },
+  pickDay(v) {
+    this.fxDay = v === 'y' ? 'y' : ''; this.paneKey = ''; this.scrollCur = !this.fxDay && this.wantsScroll(); $('livePane').scrollTop = 0; this.renderPane();
+    const f = /** @type {HTMLElement} */ (document.querySelector(`#livePane [data-day="${this.fxDay}"]`)); if (f) f.focus({ preventScroll: true });
+  },
   /* the open tab's sub-tab ("Lig tablosu" / "Yükselme ligi": 'table' | 'fixture'; other tabs: '') */
   subOf(tab = this.tab) { return this.sub[tab] || ''; },
   pickSub(v) {
@@ -4977,7 +5089,7 @@ const Live = {
       : this.tab === 'history' ? ['history', this.histSel, (d.seasons || []).length].join('|')
       : this.tab === 'stats' ? ['stats', d.season, d.history.length, pk, (d.seasons || []).length].join('|')
       : this.tab === 'live' ? ['live', this.count(), this.cur ? this.cur.n : -1, lv.sig, this.upcoming(now).map(x => x.n).join()].join('|')
-      : [this.tab, this.subOf(), d.season, d.history.length, pk, ck, this.count(), lv.sig].join('|');
+      : [this.tab, this.subOf(), this.fxDay, (d.seasons || []).length, d.season, d.history.length, pk, ck, this.count(), lv.sig].join('|');
     if (key === this.paneKey) return;
     this.paneKey = key;
     const html = this.club ? StatsPages.club(this.club, this.clubOpp) : this.tab === 'table' || this.tab === 'promo' ? LivePages.division(this.tab, this.subOf(), lv)
@@ -5206,10 +5318,19 @@ const LivePages = {
     const ch = lv && lv.teams.get(id);
     return ch ? `<button type="button" class="lv-ball" data-watch="${ch}" title="${esc(tx('clubLiveT'))}" aria-label="${esc(tx('clubLive', { name: name || '' }))}">⚽</button>` : '';
   },
+  /* minutes between matches as text: 3 → "3 min", 3.25 → "3 min 15 s" */
+  evText(every) {
+    const sec = Math.round(every * 60), m = Math.floor(sec / 60), s = sec % 60;
+    return s ? tx('durMS', { m, s }) : tx('durM', { m });
+  },
   bandsText() {
     const B = Live.cfg().bands;
-    if (B.length === 1) return tx('bands1', { n: B[0].every });
-    return B.map((b, i) => tx('bandsN', { from: b.from, to: B[(i + 1) % B.length].from, n: b.every })).join(' · ') + ' (UTC+' + Live.cfg().utcOffset + ')';
+    if (B.length === 1 && !B[0].to) return tx('bands1', { n: this.evText(B[0].every) });
+    if (B.length === 1) {                                         // one band with an end (07:00–23:59): in the viewer's own time
+      const base = Live.slot(Live.dayFirst(Live.count())), at = (hm) => I18N.time(base + ((Live.mins(hm) - Live.mins(B[0].from) + 1440) % 1440) * 60e3);
+      return tx('bandsN', { from: at(B[0].from), to: at(B[0].to), n: this.evText(B[0].every) });
+    }
+    return B.map((b, i) => tx('bandsN', { from: b.from, to: b.to || B[(i + 1) % B.length].from, n: this.evText(b.every) })).join(' · ') + ' (UTC+' + Live.cfg().utcOffset + ')';
   },
   th(abbr, title, opt) { return `<th scope="col"${opt ? ' class="opt"' : ''} title="${esc(title)}">${abbr}</th>`; },
   /* a 1v1 league table (the running season's and a finished season's): list = [{ t: club, r: { played, pts, w, d, l, gf, ga }, form: ['W', …], rel, po }]
@@ -5255,8 +5376,10 @@ const LivePages = {
     if (n === Live.count()) { const t = Live.nextStart(); return { t, late: t - Live.slot(n) > 1000 }; }
     return { t: Live.slot(n), late: false };
   },
-  /* "▶ Watch": the link that replays a finished match (Live.replayLink) */
-  replayA(m) { return `<a class="fx-rp" href="${esc(Live.replayLink(m))}" title="${esc(tx('replayT'))}">${tx('replayBtn')}</a>`; },
+  /* "▶ Watch": the link that replays a finished match (Live.replayLink); none for a match of slot m.n played by other rules (rp false) */
+  replayA(m) { return m.rp === false || (m.n !== undefined && !this.canReplay(m.n)) ? '' : `<a class="fx-rp" href="${esc(Live.replayLink(m))}" title="${esc(tx('replayT'))}">${tx('replayBtn')}</a>`; },
+  /* a match of the running season (live slot n) is replayed by the rules it was played by: those of this build from liveSim.from on */
+  canReplay(n) { const ls = League.data.liveSim; return !ls || (ls.sim === Live.sim() && n >= ls.from); },
   /* one 1v1 match as two lines (home first), with the goals once played */
   pairHtml(a, b, sa, sb, done, win, ph) {
     const nm = (t, p) => (t ? `<li>${this.dot(t)}<span class="nm">${this.tlink(t)}</span>` : `<li class="tbd"><span class="nm">${p}</span>`);
@@ -5264,7 +5387,7 @@ const LivePages = {
     return `<ol class="res pair">${side(a, sa, win === 'a', ph ? ph[0] : '—')}${side(b, sb, win === 'b', ph ? ph[1] : '—')}</ol>`;
   },
   /* a kick-off time, "· delayed" when it is after its slot */
-  kickText(K) { return `${I18N.time(K.t)}${K.late ? ' · ' + tx('late') : ''}`; },
+  kickText(K) { return K.t ? `${I18N.time(K.t)}${K.late ? ' · ' + tx('late') : ''}` : ''; },
   /* the bracket's rounds as HTML (the running playoff and a finished season's).
      o: { team(id) → club or null, kick(match) → { t: ms, late }, lv: the matches on now (Live.liveMap), ch: their channel,
      seed(ref) → "Promotion league #3" for the promotion league's places } */
@@ -5278,7 +5401,7 @@ const LivePages = {
       const body = list.map(m => {
         const K = o.kick(m), isLive = !!o.lv && o.lv.keys.has('c-' + m.k), def = m.def, R = m.res;
         const badge = (R ? `<span class="b done">${tx('done')}</span>` : isLive ? this.liveBtn(o.ch || 'main') : '')
-          + (R && R.seed !== undefined && R.date ? this.replayA({ seed: R.seed, ids: [m.a, m.b], theme: R.theme, cup: m.k, start: Date.parse(R.date) }) : '');
+          + (o.rp ? (R ? this.replayA(o.rp(m)) : '') : R && R.seed !== undefined && R.date ? this.replayA({ seed: R.seed, ids: [m.a, m.b], theme: R.theme, cup: m.k, start: Date.parse(R.date), n: o.slot ? o.slot(m) : undefined }) : '');
         const aWin = !!R && R.winner === m.a, sc = (w) => (w ? R.sw : R.sl);
         const note = R ? (R.pw !== undefined ? `<div class="fx-note">${tx('pens', { a: aWin ? R.pw : R.pl, b: aWin ? R.pl : R.pw })}</div>` : R.gg ? `<div class="fx-note">${tx('gg')}</div>` : '') : '';
         return `<div class="fx-match${R ? ' done' : ''}${isLive ? ' live' : ''}"><div class="fx-head"><b>${cupName(m.k)[1]}</b><span>${K.t ? this.kickText(K) : ''}</span>${badge}</div>`
@@ -5300,7 +5423,7 @@ const LivePages = {
       return `${head}<div class="lp-sub">${tx('cupWait', { s: d.season, p: this.playedText(d.history.length, d.seasonLength * App.perWeek()) })}</div>${this.champ()}${guide}`
         + `<h3 class="lp-h3">${tx('poolClubs')}</h3><ul class="lp-pool">${d.reserve.map(t => `<li>${this.dot(t)}${this.tlink(t)}</li>`).join('')}</ul>`;
     }
-    const rounds = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'main' });
+    const rounds = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'main', slot: (m) => Live.cupIndex(m.i) });
     const top = League.cupTop3();
     const done = top ? `<div class="lp-note">${tx('promoted')}<b>${top.map(t => esc(t.name)).join(', ')}</b></div>` : '';
     return `${head}<div class="lp-sub">${tx('season', { s: d.season })} · ${this.playedText(ms.filter(m => m.res).length, ms.length)}</div>${this.champ()}${done}${guide}${rounds}`;
@@ -5362,7 +5485,46 @@ const LivePages = {
     const fx = sub === 'fixture', promo = tab === 'promo';
     const seg = `<div class="seg" role="group" aria-label="${esc(tx('segAria', { x: tx(promo ? 'promo' : 'league') }))}">`
       + [['table', tx('segTable')], ['fixture', tx('segFixture')]].map(([k, l]) => `<button type="button" data-sub="${k}" aria-pressed="${String((k === 'fixture') === fx)}"${(k === 'fixture') === fx ? ' class="on"' : ''}>${l}</button>`).join('') + '</div>';
-    return seg + (promo ? (fx ? this.promoFixture(lv) : this.promo(lv)) : (fx ? this.mainFixture(lv) : this.table(lv)));
+    /* the fixture's Today / Yesterday switch (once a season of this league is finished): yesterday = the last finished season */
+    const days = fx && this.lastSeason() ? `<div class="seg day" role="group" aria-label="${esc(tx('dayAria'))}">`
+      + [['', tx('dayToday')], ['y', tx('dayYest')]].map(([k, l]) => `<button type="button" data-day="${k}" aria-pressed="${String(k === Live.fxDay)}"${k === Live.fxDay ? ' class="on"' : ''}>${l}</button>`).join('') + '</div>' : '';
+    if (days && Live.fxDay === 'y') return seg + days + this.yesterday(promo ? 'promo' : 'main');
+    return seg + days + (promo ? (fx ? this.promoFixture(lv) : this.promo(lv)) : (fx ? this.mainFixture(lv) : this.table(lv)));
+  },
+  /* the last finished season of this league (its archive record), or null */
+  lastSeason() { const z = League.data.seasons || [], r = z[z.length - 1]; return r && r.f === 2 ? r : null; },
+  /* "Dün": the last finished season's fixture (with the daily timetable: yesterday's matches), the league's ('main') or the promotion
+     league's with its playoff ('promo'). Every match has its replay link: the seed and the theme come from the season / week / match like
+     when it was played (Live.seed, App.buildSetup), the clubs and the score from the archive (`m`), the kick-off from the season's first
+     slot (n0). Only matches played by this build's rules are replayed (rec.sim, from slot rec.simFrom on). */
+  yesterday(div) {
+    const rec = this.lastSeason();
+    if (!rec) return `<h2>${tx('dayYest')}</h2><div class="lp-sub">${tx('ydNone')}</div>`;
+    const promo = div === 'promo', lg = promo ? rec.pl : rec, team = (id) => this.anyTeam(id) || { id, name: id, c1: '#888888', c2: '#ffffff' };
+    const ok = rec.n0 !== undefined && !!rec.sim && rec.sim === Live.sim(), n0 = rec.n0 || 0;
+    const ms = !lg ? [] : promo ? LiveStats.decodePl(rec) : LiveStats.decode(rec), per = lg ? Math.max(1, lg.per || lg.rows.length >> 1) : 1;
+    const S = promo && lg && lg.S !== undefined ? lg.S : lg ? lg.n : 0;
+    const slotOf = (i) => n0 + (promo ? Math.floor(i * S / Math.max(1, lg.n)) : i);
+    const themeOf = (seed) => new RNG((seed ^ 0x5BD1E995) >>> 0).pick(THEME_IDS);
+    const weeks = [];
+    for (const m of ms) {
+      const w = m.w, wm = m.i % per + 1, t = ok ? Live.slot(slotOf(m.i)) : 0, seed = Live.seed([promo ? 'pmatch' : 'match', rec.season, w, wm]);
+      const h = { result: [{ id: m.h, score: m.hs }, { id: m.a, score: m.as }], date: t ? new Date(t).toISOString() : '', seed, teams: [m.h, m.a], theme: themeOf(seed) };
+      (weeks[w - 1] = weeks[w - 1] || []).push({ wm, t, html: this.fxMatch(wm, { t, late: false }, h, [m.h, m.a], team, false, div,
+        { week: w, weekMatch: wm, div: promo ? 'promo' : 'main', rp: ok && slotOf(m.i) >= (rec.simFrom || 0) }) });
+    }
+    const body = weeks.map((list, wi) => list ? `<section class="fx-week">${list[0].t ? this.weekHead(wi + 1, list[0].t, list[list.length - 1].t) : `<h3>${tx('week', { w: wi + 1 })}</h3>`}`
+      + `<div class="fx-grid">${list.map(x => x.html).join('')}</div></section>` : '').join('');
+    let cup = '', nc = 0;
+    if (promo && rec.cup) {
+      const c = this.cupOf(rec), cm = League.cupMatchesOf(c);
+      nc = cm.filter(m => m.res).length;
+      cup = `<h3 class="lp-h3">${tx('promoPlayoff')}</h3>` + this.cupRounds(cm, c, { team: (id) => this.anyTeam(id), kick: (m) => ({ t: m.res ? m.res.t : 0, late: false }),
+        rp: (m) => { const seed = Live.seed(['cupmatch', rec.season, m.k]); return { seed, ids: [m.a, m.b], theme: themeOf(seed), cup: m.k, start: m.res.t, rp: ok && n0 + S + m.i >= (rec.simFrom || 0) }; } });
+    }
+    const date = rec.t0 ? this.day(rec.t0 * 60000) : '';
+    return `<h2>${tx('ydTitle', { s: rec.season })}</h2><div class="lp-sub">${tx('ydSub', { date, n: ms.length + nc })}</div>`
+      + (ok ? '' : `<div class="lp-note">${tx('ydOld')}</div>`) + body + cup;
   },
   /* a division's fixture: 'main' (the league) or 'promo' (the promotion league) */
   fixture(lv, div = 'main') { return div === 'promo' ? this.promoFixture(lv) : this.mainFixture(lv); },
@@ -5388,12 +5550,13 @@ const LivePages = {
       const k0 = this.kickoff(w, 1).t, k1 = this.kickoff(w, Math.min(per, pairs.length)).t;
       const matches = pairs.slice(0, per).map((ids, mi) => {
         const m = mi + 1, h = d.history.find(x => x.week === w && x.weekMatch === m);
-        return this.fxMatch(m, this.kickoff(w, m), h, ids, team, !!lv && lv.keys.has(`m-${w}-${m}`), 'main', { week: w, weekMatch: m });
+        return this.fxMatch(m, this.kickoff(w, m), h, ids, team, !!lv && lv.keys.has(`m-${w}-${m}`), 'main', { week: w, weekMatch: m, n: Live.matchIndex(w, m) });
       }).join('');
       return `<section class="fx-week${cur ? ' cur' : ''}">${this.weekHead(w, k0, k1)}<div class="fx-grid">${matches}</div></section>`;
     }).join('');
     const extra = League.promoOn() ? tx('fxExtraPromo') : League.cupOn() ? tx('fxExtraCup') : '';
-    return `<h2>${tx('fxTitle', { s: d.season })}</h2><div class="lp-sub">${tx('fxSub', { w: d.seasonLength, t: CONFIG.MATCH_TIME, bands: this.bandsText(), extra })}</div>${this.champ()}${weeks}`;
+    const legs = tx(d.seasonLength >= 2 * (d.teams.length - 1) ? 'fxLeg2' : 'fxLeg1');
+    return `<h2>${tx('fxTitle', { s: d.season })}</h2><div class="lp-sub">${tx('fxSub', { w: d.seasonLength, legs, t: CONFIG.MATCH_TIME, bands: this.bandsText(), extra })}</div>${this.champ()}${weeks}`;
   },
   /* the promotion league's season: its weeks (each match at the same time as a league match) and then its playoff */
   promoFixture(lv) {
@@ -5404,18 +5567,19 @@ const LivePages = {
       const w = wi + 1, i0 = wi * p.per, k0 = this.promoKickoff(i0).t, k1 = this.promoKickoff(i0 + pairs.length - 1).t;
       const matches = pairs.map((ids, mi) => {
         const m = mi + 1, i = i0 + mi, h = p.history[i] && p.history[i].week === w && p.history[i].weekMatch === m ? p.history[i] : null;
-        return this.fxMatch(m, this.promoKickoff(i), h, ids, team, !!lv && lv.keys.has(`p-${w}-${m}`), 'promo', { week: w, weekMatch: m, div: 'promo' });
+        return this.fxMatch(m, this.promoKickoff(i), h, ids, team, !!lv && lv.keys.has(`p-${w}-${m}`), 'promo', { week: w, weekMatch: m, div: 'promo', n: Live.promoIndex(i) });
       }).join('');
       return `<section class="fx-week${w === curW && !League.promoLeagueOver() ? ' cur' : ''}">${this.weekHead(w, k0, k1)}<div class="fx-grid">${matches}</div></section>`;
     }).join('');
-    const po = p.po ? (League.poDirect() ? tx('pfxPoDirect', { a: League.poDirect() + 1, b: League.poSize(), k: p.po }) : tx('pfxPoTop', { b: League.poSize(), k: p.po })) : '';
+    const after = League.promoS(p) >= p.N;                         // the playoff after the league's last match
+    const po = p.po ? (League.poDirect() ? tx(after ? 'pfxPoDirectA' : 'pfxPoDirect', { a: League.poDirect() + 1, b: League.poSize(), k: p.po }) : tx('pfxPoTop', { b: League.poSize(), k: p.po })) : '';
     return `<h2>${tx('pfxTitle', { s: d.season })}</h2><div class="lp-sub">${tx('pfxSub', { w: p.plan.length, n: d.reserve.length, p: p.per, po })}</div>`
       + weeks + (p.po ? `<h3 class="lp-h3">${tx('promoPlayoff')}</h3>${this.promoBracket(lv)}` : '');
   },
   /* the promotion league's playoff: its rounds (the clubs once the league is over, else "Promotion league #3" …) */
   promoBracket(lv) {
     const c = League.cup() || { season: League.data.season, draw: new Array(League.poSize()).fill(null), res: {} }, ms = League.cupMatchesOf(c);
-    const r = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'promo', seed: (i) => tx('seedName', { n: i + 1 }) });
+    const r = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'promo', seed: (i) => tx('seedName', { n: i + 1 }), slot: (m) => Live.cupIndex(m.i) });
     return League.promoLeagueOver() ? r : r.replace(/fx-week cur/g, 'fx-week');   // the current week is the promotion league's until it is over
   },
   /* the "Promotion league" tab: the promotion league's table (top 2: up directly, 3rd–6th: playoff), its playoff; a season of the old format: its knockout */
@@ -5430,7 +5594,7 @@ const LivePages = {
     const guide = `<div class="lp-legend">${tx('promoGuide', { n: d.reserve.length, legs })}`
       + (PD ? tx('promoGDirect', { d: PD, a: PD + 1, b: PS, a2: PD + 2, b2: PS - 1, g: CONFIG.GOLDEN_TIME, r: CONFIG.RELEGATE_COUNT, k: p.po })
         : p.po ? tx('promoGPo', { p: PS, g: CONFIG.GOLDEN_TIME, r: CONFIG.RELEGATE_COUNT, k: p.po })
-        : tx('promoGTop', { r: CONFIG.RELEGATE_COUNT })) + tx('promoGBall') + '</div>';
+        : tx('promoGTop', { r: CONFIG.RELEGATE_COUNT })) + (p.po ? tx(League.promoS(p) >= p.N ? 'poAfter' : 'poIn', { k: p.po }) : '') + tx('promoGBall') + '</div>';
     return `<h2>${tx('promo')}</h2><div class="lp-sub">${tx('season', { s: d.season })} · ${this.playedText(p.history.length, p.n)}${c ? tx('promoSubPo', { x: Object.keys(c.res).length, y: p.po }) : ''}</div>${done}`
       + this.tableHtml(list, lv) + `<div class="lp-legend">${this.pointsText(d.points)} · ${PD ? tx('promoLegDirect', { d: PD, a: PD + 1, b: PS }) : tx('promoLegPo', { p: PS })}.</div>${guide}`
       + (p.po ? `<h3 class="lp-h3">${tx('promoPlayoff')}</h3>${this.promoBracket(lv)}` : '');
@@ -5452,7 +5616,7 @@ const LivePages = {
       if (!x.ms.length) { newSeason = newSeason || x.at; continue; }
       for (const m of x.ms) soon.push(card(m.ch, this.what(m.ch, m), m.ids, `<span class="lv-st">${tx('inCd', { t: I18N.time(x.at), cd: `<span data-at="${x.at}"></span>` })}</span>`, x.n, false));
     }
-    const head = `<h2>${tx('liveTitle')}</h2><div class="lp-sub">${tx('liveSub', { n: Live.every(now) })}</div>`;
+    const head = `<h2>${tx('liveTitle')}</h2><div class="lp-sub">${tx('liveSub', { n: this.evText(Live.every(now)) })}</div>`;
     const empty = (t) => `<div class="st-empty">${t}</div>`;
     return head + `<h3 class="lp-h3">${tx('liveNow')}</h3>` + (on.length ? `<div class="lv-list">${on.join('')}</div>` : empty(tx('liveNone')))
       + `<h3 class="lp-h3">${tx('liveSoon', { n: Math.round(Live.SOON / 60e3) })}</h3>` + (soon.length ? `<div class="lv-list">${soon.join('')}</div>` : empty(newSeason ? '' : tx('liveNoneSoon')))
@@ -5565,12 +5729,14 @@ const LiveStats = {
     const byLen = (x, y) => y.len - x.len || (y.on ? 1 : 0) - (x.on ? 1 : 0) || order(y.to, x.to);
     streaks.w.sort(byLen); streaks.u.sort(byLen);
     /* season records (the league's finished seasons only) and goals per season (league + promotion league) */
+    /* only seasons as long as the latest finished one (a 34-match season's points are not compared with a 17-match season's) */
+    const recLen = recs.length ? recs[recs.length - 1].rows[0][1] : 0, sameLen = recs.filter(r => r.rows[0] && r.rows[0][1] === recLen);
     const seasonRec = (f, better) => {
       let best = null;
-      for (const r of recs) for (const x of r.rows) { const v = f(x); if (best === null || better(v, best.v)) best = { id: x[0], season: r.season, v }; }
+      for (const r of sameLen) for (const x of r.rows) { const v = f(x); if (best === null || better(v, best.v)) best = { id: x[0], season: r.season, v }; }
       return best;
     };
-    const seasonRecs = recs.length ? [
+    const seasonRecs = sameLen.length ? [
       { label: 'srMostPts', r: seasonRec(x => x[2], (a, b) => a > b), unit: 'uPts' },
       { label: 'srLeastPts', r: seasonRec(x => x[2], (a, b) => a < b), unit: 'uPts' },
       { label: 'srMostW', r: seasonRec(x => x[3], (a, b) => a > b), unit: 'uWins' },
@@ -5583,7 +5749,7 @@ const LiveStats = {
       const n = a.n + b.n, g = a.g + b.g, dr = a.dr + b.dr;
       return { season: r.season, cur: !!r.cur, n, pn: b.n, goals: g, avg: n ? g / n : 0, draws: n ? dr / n : 0 };
     }).filter(x => x.n > 0);
-    return { recs, cur, since, first: recs.length ? recs[0].season : d.season, lost: blocks.some(b => b.lost), ms, allTime, titles: titleList, big, goals, streaks, seasonRecs, perSeason };
+    return { recs, cur, since, first: recs.length ? recs[0].season : d.season, lost: blocks.some(b => b.lost), ms, allTime, titles: titleList, big, goals, streaks, seasonRecs, recLen, perSeason };
   },
   /* the matches between two clubs (oldest first; league and promotion league) */
   h2h(a, b) { return this.get().ms.filter(m => (m.h === a && m.a === b) || (m.h === b && m.a === a)); },
@@ -5677,7 +5843,7 @@ const StatsPages = {
       + this.card(tx('stGoals'), this.list(top(S.goals).map(m => `${this.score(m)} <span class="mut">${tx('goalsN', { n: m.hs + m.as })} · ${this.when(m)}</span>`), tx('stGoalsNone')))
       + this.card(tx('stW'), this.list(top(S.streaks.w).map(s => this.streakTxt(s)), tx('stWNone')))
       + this.card(tx('stU'), this.list(top(S.streaks.u).map(s => this.streakTxt(s)), tx('stUNone')))
-      + (S.seasonRecs.length ? this.card(tx('stSeasonRecs'), `<ol class="st-list">${S.seasonRecs.filter(x => x.r).map(x => `<li><span class="mut">${tx(x.label)}:</span> ${this.name(x.r.id)} <b class="sc">${x.r.v} ${tx(x.unit)}</b> <span class="mut">${tx('season', { s: x.r.season })}</span></li>`).join('')}</ol>`) : '')
+      + (S.seasonRecs.length ? this.card(tx('stSeasonRecs'), `<div class="mut">${tx('srLen', { n: S.recLen })}</div><ol class="st-list">${S.seasonRecs.filter(x => x.r).map(x => `<li><span class="mut">${tx(x.label)}:</span> ${this.name(x.r.id)} <b class="sc">${x.r.v} ${tx(x.unit)}</b> <span class="mut">${tx('season', { s: x.r.season })}</span></li>`).join('')}</ol>`) : '')
       + '</div>';
     return `${head}${sub}${note}${table}${titles}${recs}${this.goalsSection(S)}`;
   },
@@ -5984,7 +6150,7 @@ const I18N = {
     replay: ['Replay', 'Tekrar', 'Repetición', 'Replay', 'Rediffusion', 'Wiederholung', 'Replay', 'إعادة'],
     LIVE: ['LIVE', 'CANLI', 'EN VIVO', 'AO VIVO', 'DIRECT', 'LIVE', 'LIVE', 'مباشر'],
     infoStarts: ['The league starts {when}', "Lig {when}'te başlıyor", 'La liga empieza el {when}', 'A liga começa em {when}', 'La ligue commence le {when}', 'Die Liga beginnt am {when}', 'Il campionato inizia il {when}', 'يبدأ الدوري في {when}'],
-    infoEvery: ['Every {n} min · next {t}', "Her {n} dk'da maç · sıradaki {t}", 'Cada {n} min · próximo {t}', 'A cada {n} min · próximo {t}', 'Toutes les {n} min · prochain {t}', 'Alle {n} Min. · nächstes {t}', 'Ogni {n} min · prossima {t}', 'كل {n} دقائق · التالية {t}'],
+    infoEvery: ['Every {n} · next {t}', '{n} arayla maç · sıradaki {t}', 'Cada {n} · próximo {t}', 'A cada {n} · próximo {t}', 'Toutes les {n} · prochain {t}', 'Alle {n} · nächstes {t}', 'Ogni {n} · prossima {t}', 'كل {n} · التالية {t}'],
     rpInvalid: ['Invalid match link', 'Maç bağlantısı geçersiz', 'Enlace de partido no válido', 'Link de jogo inválido', 'Lien de match invalide', 'Ungültiger Spiel-Link', 'Link della partita non valido', 'رابط المباراة غير صالح'],
     rpOld: ['This match was played under old rules, its replay cannot be shown', 'Bu maç eski kurallarla oynandı, tekrarı gösterilemiyor', 'Este partido se jugó con reglas antiguas, no se puede mostrar', 'Este jogo foi disputado com regras antigas, o replay não pode ser exibido', 'Ce match a été joué avec d’anciennes règles, impossible de le revoir', 'Dieses Spiel lief nach alten Regeln, die Wiederholung ist nicht möglich', 'Questa partita è stata giocata con vecchie regole, il replay non è disponibile', 'لُعبت هذه المباراة بقواعد قديمة، لا يمكن عرض إعادتها'],
     rpNotOver: ['This match is not over yet: you are watching live', 'Bu maç henüz bitmedi: canlı yayındasınız', 'Este partido aún no terminó: estás en directo', 'Este jogo ainda não terminou: você está ao vivo', 'Ce match n’est pas terminé : vous êtes en direct', 'Dieses Spiel läuft noch: du bist live dabei', 'Questa partita non è ancora finita: sei in diretta', 'لم تنتهِ هذه المباراة بعد: أنت في البث المباشر'],
@@ -6011,8 +6177,10 @@ const I18N = {
     liveWatch: ['LIVE · Watch', 'CANLI · İzle', 'EN VIVO · Ver', 'AO VIVO · Ver', 'DIRECT · Voir', 'LIVE · Ansehen', 'LIVE · Guarda', 'مباشر · شاهد'],
     clubLiveT: ['Watch its live match', 'Canlı maçını izle', 'Ver su partido en vivo', 'Assistir ao jogo ao vivo', 'Voir son match en direct', 'Live-Spiel ansehen', 'Guarda la sua partita in diretta', 'شاهد مباراته مباشرة'],
     clubLive: ['{name} is playing now: watch live', '{name} şu an oynuyor: canlı maçı izle', '{name} juega ahora: ver en vivo', '{name} está jogando agora: assistir ao vivo', '{name} joue en ce moment : voir en direct', '{name} spielt gerade: live ansehen', '{name} sta giocando: guarda in diretta', '{name} يلعب الآن: شاهد مباشرة'],
-    bands1: ['every {n} min, around the clock', "günün her saatinde her {n} dk'da bir", 'cada {n} min, a toda hora', 'a cada {n} min, 24 horas por dia', 'toutes les {n} min, jour et nuit', 'alle {n} Min., rund um die Uhr', 'ogni {n} min, 24 ore su 24', 'كل {n} دقائق على مدار الساعة'],
-    bandsN: ['{from}–{to} every {n} min', '{from}–{to} her {n} dk', '{from}–{to} cada {n} min', '{from}–{to} a cada {n} min', '{from}–{to} toutes les {n} min', '{from}–{to} alle {n} Min.', '{from}–{to} ogni {n} min', '{from}–{to} كل {n} دقائق'],
+    bands1: ['every {n}, around the clock', 'günün her saatinde {n} arayla', 'cada {n}, a toda hora', 'a cada {n}, 24 horas por dia', 'toutes les {n}, jour et nuit', 'alle {n}, rund um die Uhr', 'ogni {n}, 24 ore su 24', 'كل {n} على مدار الساعة'],
+    bandsN: ['{from}–{to} every {n}', '{from}–{to} arası {n} arayla', '{from}–{to} cada {n}', '{from}–{to} a cada {n}', '{from}–{to} toutes les {n}', '{from}–{to} alle {n}', '{from}–{to} ogni {n}', '{from}–{to} كل {n}'],
+    durMS: ['{m} min {s} s', '{m} dk {s} sn', '{m} min {s} s', '{m} min {s} s', '{m} min {s} s', '{m} Min. {s} s', '{m} min {s} s', '{m} د {s} ث'],
+    durM: ['{m} min', '{m} dk', '{m} min', '{m} min', '{m} min', '{m} Min.', '{m} min', '{m} دقائق'],
     thTeam: ['Club', 'Takım', 'Equipo', 'Clube', 'Club', 'Verein', 'Squadra', 'الفريق'],
     thP: ['P', 'O', 'PJ', 'J', 'J', 'Sp', 'G', 'ل'],
     thPT: ['Played', 'Oynanan', 'Partidos jugados', 'Jogos', 'Joués', 'Spiele', 'Giocate', 'لعب'],
@@ -6044,6 +6212,13 @@ const I18N = {
     upCup: ['; they are replaced by the top 3 of the playoff of the {n} pool clubs (Promotion tab)', "; yerlerine havuzdaki {n} takımın eleme maçlarında ilk 3'e girenler çıkar (Yükselme sekmesi)", '; los reemplazan los 3 primeros del playoff de los {n} equipos de reserva (pestaña Ascenso)', '; são substituídos pelos 3 primeiros do playoff dos {n} clubes da reserva (aba Acesso)', ' ; ils sont remplacés par les 3 premiers des barrages des {n} clubs de réserve (onglet Promotion)', '; für sie kommen die ersten 3 des Playoffs der {n} Pool-Vereine (Tab Aufstieg)', '; le sostituiscono le prime 3 del playoff delle {n} squadre di riserva (scheda Promozione)', '؛ ويحل محلها أول 3 في ملحق فرق الاحتياط الـ{n} (تبويب الصعود)'],
     replayT: ['Watch this match from the start (you can share the link)', 'Bu maçı baştan izle (bağlantıyı paylaşabilirsiniz)', 'Ver este partido desde el principio (puedes compartir el enlace)', 'Assistir a este jogo desde o início (você pode compartilhar o link)', 'Revoir ce match depuis le début (lien partageable)', 'Dieses Spiel von Anfang an ansehen (Link teilbar)', 'Guarda questa partita dall’inizio (puoi condividere il link)', 'شاهد هذه المباراة من البداية (يمكنك مشاركة الرابط)'],
     replayBtn: ['▶ Watch', '▶ İzle', '▶ Ver', '▶ Ver', '▶ Voir', '▶ Ansehen', '▶ Guarda', '▶ شاهد'],
+    dayToday: ['Today', 'Bugün', 'Hoy', 'Hoje', 'Aujourd’hui', 'Heute', 'Oggi', 'اليوم'],
+    dayYest: ['Yesterday', 'Dün', 'Ayer', 'Ontem', 'Hier', 'Gestern', 'Ieri', 'أمس'],
+    dayAria: ['Fixtures: today or yesterday', 'Fikstür: bugün ya da dün', 'Calendario: hoy o ayer', 'Calendário: hoje ou ontem', 'Calendrier : aujourd’hui ou hier', 'Spielplan: heute oder gestern', 'Calendario: oggi o ieri', 'جدول المباريات: اليوم أو أمس'],
+    ydTitle: ['Yesterday’s matches · Season {s}', 'Dünün maçları · Sezon {s}', 'Partidos de ayer · Temporada {s}', 'Jogos de ontem · Temporada {s}', 'Matchs d’hier · Saison {s}', 'Spiele von gestern · Saison {s}', 'Partite di ieri · Stagione {s}', 'مباريات أمس · الموسم {s}'],
+    ydSub: ['{date} · {n} matches · every match can be watched again from kick-off', '{date} · {n} maç · her maç baştan izlenebilir', '{date} · {n} partidos · cada partido se puede volver a ver desde el inicio', '{date} · {n} jogos · cada jogo pode ser revisto desde o início', '{date} · {n} matchs · chaque match peut être revu depuis le coup d’envoi', '{date} · {n} Spiele · jedes Spiel lässt sich vom Anstoß an noch einmal ansehen', '{date} · {n} partite · ogni partita si può rivedere dal calcio d’inizio', '{date} · {n} مباراة · يمكن إعادة مشاهدة كل مباراة من البداية'],
+    ydOld: ['These matches were played under earlier rules and cannot be watched again.', 'Bu maçlar eski kurallarla oynandı, tekrar izlenemez.', 'Estos partidos se jugaron con reglas anteriores y no se pueden volver a ver.', 'Estes jogos foram disputados com regras anteriores e não podem ser revistos.', 'Ces matchs ont été joués avec d’anciennes règles et ne peuvent pas être revus.', 'Diese Spiele liefen nach früheren Regeln und lassen sich nicht noch einmal ansehen.', 'Queste partite sono state giocate con regole precedenti e non si possono rivedere.', 'لُعبت هذه المباريات بقواعد سابقة ولا يمكن إعادة مشاهدتها.'],
+    ydNone: ['No finished season to show yet.', 'Henüz gösterilecek biten sezon yok.', 'Todavía no hay ninguna temporada terminada.', 'Ainda não há nenhuma temporada terminada.', 'Aucune saison terminée pour l’instant.', 'Noch keine beendete Saison.', 'Ancora nessuna stagione conclusa.', 'لا يوجد موسم منتهٍ بعد.'],
     cupTitle: ['Promotion playoff matches', 'Yükselme eleme maçları', 'Partidos del playoff de ascenso', 'Jogos do playoff de acesso', 'Matchs des barrages de promotion', 'Spiele des Aufstiegs-Playoffs', 'Partite del playoff promozione', 'مباريات ملحق الصعود'],
     cupNone: ['No playoff in this league: the pool does not have {n} clubs, so at the end of the season the next pool clubs swap places with the league’s.', 'Bu ligde eleme maçı yok: havuz {n} takım değil, sezon sonunda havuzun sıradaki takımları ligdekilerle yer değiştirir.', 'No hay playoff en esta liga: la reserva no tiene {n} equipos; al final de la temporada los siguientes equipos de reserva cambian de lugar con los de la liga.', 'Não há playoff nesta liga: a reserva não tem {n} clubes; no fim da temporada os próximos clubes da reserva trocam de lugar com os da liga.', 'Pas de barrages dans cette ligue : la réserve ne compte pas {n} clubs ; en fin de saison, les clubs suivants de la réserve échangent leur place avec ceux de la ligue.', 'Kein Playoff in dieser Liga: Der Pool hat keine {n} Vereine; am Saisonende tauschen die nächsten Pool-Vereine mit denen der Liga.', 'Nessun playoff in questo campionato: la riserva non ha {n} squadre; a fine stagione le successive squadre di riserva prendono il posto di quelle del campionato.', 'لا ملحق في هذا الدوري: الاحتياط ليس {n} فريقًا، وفي نهاية الموسم تتبادل فرق الاحتياط التالية أماكنها مع فرق الدوري.'],
     cupGuide: ['After the season’s league matches the {n} pool clubs are drawn and play a single-leg knockout ({t} s, no second leg; a draw goes to at most {g} s of golden goal, then penalties). The first 4 drawn get a bye in round 1. <b>The winner, the runner-up and the third-place winner</b> go up; the league’s bottom {r} go down to the pool.', 'Sezonun lig maçları bittikten sonra havuzdaki {n} takım kura ile eşleşir ve tek maçlık eleme oynar ({t} sn, rövanş yok; berabere biterse en fazla {g} sn altın gol, yine berabereyse penaltılar). Kurada ilk 4 takım 1. turu bay geçer. <b>Final galibi, finalist ve 3.lük maçının galibi</b> ligi yükselir; ligin son {r} takımı havuza düşer.', 'Tras los partidos de liga de la temporada, los {n} equipos de reserva se sortean y juegan una eliminatoria a partido único ({t} s; si hay empate, hasta {g} s de gol de oro y luego penaltis). Los 4 primeros del sorteo pasan la primera ronda sin jugar. <b>El campeón, el finalista y el ganador del tercer puesto</b> ascienden; los últimos {r} de la liga bajan a la reserva.', 'Depois dos jogos da liga, os {n} clubes da reserva são sorteados e disputam um mata-mata em jogo único ({t} s; em caso de empate, até {g} s de gol de ouro e depois pênaltis). Os 4 primeiros sorteados folgam na primeira fase. <b>O campeão, o vice e o vencedor da disputa de 3.º lugar</b> sobem; os {r} últimos da liga caem para a reserva.', 'Après les matchs de la saison, les {n} clubs de réserve sont tirés au sort et jouent une élimination directe sur un match ({t} s ; en cas d’égalité, au plus {g} s de but en or, puis tirs au but). Les 4 premiers tirés sont exemptés du premier tour. <b>Le vainqueur, le finaliste et le vainqueur du match pour la 3e place</b> montent ; les {r} derniers de la ligue descendent dans la réserve.', 'Nach den Ligaspielen werden die {n} Pool-Vereine gelost und spielen ein K.-o.-Turnier mit einem Spiel ({t} s; bei Gleichstand höchstens {g} s Golden Goal, dann Elfmeterschießen). Die ersten 4 Gelosten haben in Runde 1 ein Freilos. <b>Sieger, Finalist und Sieger des Spiels um Platz 3</b> steigen auf; die letzten {r} der Liga steigen in den Pool ab.', 'Dopo le partite di campionato, le {n} squadre di riserva vengono sorteggiate e giocano un’eliminazione diretta in gara unica ({t} s; in caso di pareggio al massimo {g} s di golden gol, poi rigori). Le prime 4 sorteggiate saltano il primo turno. <b>Vincente, finalista e vincente della finale 3º posto</b> salgono; le ultime {r} del campionato scendono in riserva.', 'بعد مباريات الدوري تُجرى قرعة لفرق الاحتياط الـ{n} وتلعب أدوارًا إقصائية من مباراة واحدة ({t} ثانية؛ عند التعادل هدف ذهبي حتى {g} ثانية ثم ركلات الترجيح). أول 4 فرق في القرعة تُعفى من الدور الأول. <b>البطل والوصيف والفائز بالمركز الثالث</b> يصعدون، وآخر {r} فرق في الدوري تهبط إلى الاحتياط.'],
@@ -6070,20 +6245,25 @@ const I18N = {
     segTable: ['Table', 'Tablo', 'Tabla', 'Tabela', 'Classement', 'Tabelle', 'Classifica', 'الترتيب'],
     segFixture: ['Fixtures', 'Fikstür', 'Calendario', 'Calendário', 'Calendrier', 'Spielplan', 'Calendario', 'المباريات'],
     fxTitle: ['Season {s} fixtures', 'Sezon {s} fikstürü', 'Calendario de la temporada {s}', 'Calendário da temporada {s}', 'Calendrier de la saison {s}', 'Spielplan Saison {s}', 'Calendario della stagione {s}', 'جدول مباريات الموسم {s}'],
-    fxSub: ['{w} weeks · every club plays every other club once, one match a week (the club on top is at home) · matches last {t} s · kick-offs in your time zone: {bands}{extra} · ⚽: match on now (tap to watch live)', '{w} hafta · her takım her takımla bir kez, haftada bir maç oynar (üstteki takım ev sahibi) · maçlar {t} sn · maç saatleri (sizin saatinizle): {bands}{extra} · ⚽: şu an oynanan maç (dokunun: canlı izleyin)', '{w} jornadas · cada equipo juega una vez contra cada rival, un partido por jornada (el de arriba es local) · partidos de {t} s · horarios en tu zona horaria: {bands}{extra} · ⚽: partido en juego (toca para verlo en vivo)', '{w} rodadas · cada clube enfrenta todos os outros uma vez, um jogo por rodada (o de cima é mandante) · jogos de {t} s · horários no seu fuso: {bands}{extra} · ⚽: jogo em andamento (toque para assistir ao vivo)', '{w} journées · chaque club affronte tous les autres une fois, un match par journée (le club du haut reçoit) · matchs de {t} s · horaires dans votre fuseau : {bands}{extra} · ⚽ : match en cours (touchez pour le regarder)', '{w} Spieltage · jeder spielt einmal gegen jeden, ein Spiel pro Spieltag (oben steht der Gastgeber) · Spiele dauern {t} s · Anstoßzeiten in deiner Zeitzone: {bands}{extra} · ⚽: laufendes Spiel (tippen: live ansehen)', '{w} giornate · ogni squadra affronta tutte le altre una volta, una partita a giornata (quella in alto gioca in casa) · partite da {t} s · orari nel tuo fuso: {bands}{extra} · ⚽: partita in corso (tocca per guardarla)', '{w} جولات · يلعب كل فريق مع كل فريق مرة واحدة، مباراة في كل جولة (الفريق في الأعلى مضيف) · مدة المباراة {t} ثانية · المواعيد بتوقيتك: {bands}{extra} · ⚽: مباراة جارية (اضغط للمشاهدة مباشرة)'],
+    fxSub: ['{w} weeks · {legs}, one match a week (the club on top is at home) · matches last {t} s · kick-offs in your time zone: {bands}{extra} · ⚽: match on now (tap to watch live)', '{w} hafta · {legs}, haftada bir maç oynar (üstteki takım ev sahibi) · maçlar {t} sn · maç saatleri (sizin saatinizle): {bands}{extra} · ⚽: şu an oynanan maç (dokunun: canlı izleyin)', '{w} jornadas · {legs}, un partido por jornada (el de arriba es local) · partidos de {t} s · horarios en tu zona horaria: {bands}{extra} · ⚽: partido en juego (toca para verlo en vivo)', '{w} rodadas · {legs}, um jogo por rodada (o de cima é mandante) · jogos de {t} s · horários no seu fuso: {bands}{extra} · ⚽: jogo em andamento (toque para assistir ao vivo)', '{w} journées · {legs}, un match par journée (le club du haut reçoit) · matchs de {t} s · horaires dans votre fuseau : {bands}{extra} · ⚽ : match en cours (touchez pour le regarder)', '{w} Spieltage · {legs}, ein Spiel pro Spieltag (oben steht der Gastgeber) · Spiele dauern {t} s · Anstoßzeiten in deiner Zeitzone: {bands}{extra} · ⚽: laufendes Spiel (tippen: live ansehen)', '{w} giornate · {legs}, una partita a giornata (quella in alto gioca in casa) · partite da {t} s · orari nel tuo fuso: {bands}{extra} · ⚽: partita in corso (tocca per guardarla)', '{w} جولات · {legs}، مباراة في كل جولة (الفريق في الأعلى مضيف) · مدة المباراة {t} ثانية · المواعيد بتوقيتك: {bands}{extra} · ⚽: مباراة جارية (اضغط للمشاهدة مباشرة)'],
+    fxLeg1: ['every club plays every other club once', 'her takım her takımla bir kez', 'cada equipo juega una vez contra cada rival', 'cada clube enfrenta todos os outros uma vez', 'chaque club affronte tous les autres une fois', 'jeder spielt einmal gegen jeden', 'ogni squadra affronta tutte le altre una volta', 'يلعب كل فريق مع كل فريق مرة واحدة'],
+    fxLeg2: ['every club plays every other club twice (home and away)', 'her takım her takımla iki kez (bir iç saha, bir deplasman)', 'cada equipo juega dos veces contra cada rival (ida y vuelta)', 'cada clube enfrenta todos os outros duas vezes (turno e returno)', 'chaque club affronte tous les autres deux fois (aller et retour)', 'jeder spielt zweimal gegen jeden (Hin- und Rückspiel)', 'ogni squadra affronta tutte le altre due volte (andata e ritorno)', 'يلعب كل فريق مع كل فريق مرتين (ذهابًا وإيابًا)'],
     fxExtraPromo: [' · promotion league matches at the same times (Promotion league › Fixtures)', ' · yükselme ligi maçları aynı saatlerde (Yükselme ligi › Fikstür)', ' · partidos de la liga de ascenso a la misma hora (Liga de ascenso › Calendario)', ' · jogos da liga de acesso nos mesmos horários (Liga de acesso › Calendário)', ' · matchs de la ligue de promotion aux mêmes heures (Ligue de promotion › Calendrier)', ' · Spiele der Aufstiegsliga zur selben Zeit (Aufstiegsliga › Spielplan)', ' · partite della lega promozione agli stessi orari (Lega promozione › Calendario)', ' · مباريات دوري الصعود في المواعيد نفسها (دوري الصعود › المباريات)'],
     fxExtraCup: [' · after the league matches the pool clubs play the promotion playoff (Promotion league tab)', ' · lig maçlarından sonra havuz kulüplerinin yükselme eleme maçları var (Yükselme ligi sekmesi)', ' · tras la liga, los equipos de reserva juegan el playoff de ascenso (pestaña Liga de ascenso)', ' · depois da liga, os clubes da reserva disputam o playoff de acesso (aba Liga de acesso)', ' · après la ligue, les clubs de réserve jouent les barrages (onglet Ligue de promotion)', ' · nach der Liga spielen die Pool-Vereine das Aufstiegs-Playoff (Tab Aufstiegsliga)', ' · dopo il campionato le squadre di riserva giocano il playoff promozione (scheda Lega promozione)', ' · بعد مباريات الدوري تلعب فرق الاحتياط ملحق الصعود (تبويب دوري الصعود)'],
     pfxNone: ['No promotion league this season: the season began in the old format, the {n} pool clubs play a playoff after the league’s matches (Promotion league › Table). The promotion league starts with the new season.', 'Bu sezon yükselme ligi yok: sezon eski formatla başladı, havuzdaki {n} kulüp lig maçlarından sonra eleme oynar (Yükselme ligi › Tablo). Yükselme ligi yeni sezonla başlar.', 'No hay liga de ascenso esta temporada: empezó con el formato antiguo y los {n} equipos de reserva juegan un playoff tras la liga (Liga de ascenso › Tabla). La liga de ascenso empieza con la nueva temporada.', 'Não há liga de acesso nesta temporada: ela começou no formato antigo e os {n} clubes da reserva disputam um playoff depois da liga (Liga de acesso › Tabela). A liga de acesso começa na nova temporada.', 'Pas de ligue de promotion cette saison : elle a commencé avec l’ancien format, les {n} clubs de réserve jouent des barrages après la ligue (Ligue de promotion › Classement). La ligue de promotion commence avec la nouvelle saison.', 'In dieser Saison keine Aufstiegsliga: Sie begann im alten Format, die {n} Pool-Vereine spielen nach der Liga ein Playoff (Aufstiegsliga › Tabelle). Die Aufstiegsliga beginnt mit der neuen Saison.', 'Nessuna lega promozione in questa stagione: è iniziata col vecchio formato, le {n} squadre di riserva giocano un playoff dopo il campionato (Lega promozione › Classifica). La lega promozione parte con la nuova stagione.', 'لا يوجد دوري صعود هذا الموسم: بدأ الموسم بالنظام القديم، وتلعب فرق الاحتياط الـ{n} ملحقًا بعد مباريات الدوري (دوري الصعود › الترتيب). يبدأ دوري الصعود مع الموسم الجديد.'],
     pfxTitle: ['Season {s} · promotion league fixtures', 'Sezon {s} · yükselme ligi fikstürü', 'Temporada {s} · calendario de la liga de ascenso', 'Temporada {s} · calendário da liga de acesso', 'Saison {s} · calendrier de la ligue de promotion', 'Saison {s} · Spielplan der Aufstiegsliga', 'Stagione {s} · calendario della lega promozione', 'الموسم {s} · جدول مباريات دوري الصعود'],
     pfxSub: ['{w} weeks · the {n} pool clubs, {p} matches a week · every match kicks off together with a league match · {po}⚽: match on now', '{w} hafta · havuzdaki {n} kulüp, haftada {p} maç · her maç bir lig maçıyla aynı saatte başlar · {po}⚽: şu an oynanan maç', '{w} jornadas · los {n} equipos de reserva, {p} partidos por jornada · cada partido empieza a la vez que uno de liga · {po}⚽: partido en juego', '{w} rodadas · os {n} clubes da reserva, {p} jogos por rodada · cada jogo começa junto com um jogo da liga · {po}⚽: jogo em andamento', '{w} journées · les {n} clubs de réserve, {p} matchs par journée · chaque match commence en même temps qu’un match de ligue · {po}⚽ : match en cours', '{w} Spieltage · die {n} Pool-Vereine, {p} Spiele pro Spieltag · jedes Spiel beginnt zusammen mit einem Ligaspiel · {po}⚽: laufendes Spiel', '{w} giornate · le {n} squadre di riserva, {p} partite a giornata · ogni partita inizia insieme a una di campionato · {po}⚽: partita in corso', '{w} جولات · فرق الاحتياط الـ{n}، {p} مباريات في الجولة · تبدأ كل مباراة مع مباراة في الدوري · {po}⚽: مباراة جارية'],
     pfxPoDirect: ['the playoff of places {a}–{b} in the season’s last {k} slots · ', 'sezonun son {k} maç saatinde {a}.–{b}. takımların yükselme elemesi · ', 'el playoff de los puestos {a}–{b} en los últimos {k} turnos de la temporada · ', 'o playoff do {a}.º ao {b}.º nos últimos {k} horários da temporada · ', 'les barrages des places {a} à {b} sur les {k} derniers créneaux de la saison · ', 'das Playoff der Plätze {a}–{b} in den letzten {k} Terminen der Saison · ', 'il playoff tra {a}ª e {b}ª negli ultimi {k} turni della stagione · ', 'ملحق المراكز {a}–{b} في آخر {k} مواعيد من الموسم · '],
+    pfxPoDirectA: ['the playoff of places {a}–{b} after the league’s last match ({k} matches, the final last) · ', 'ligin son maçından sonra {a}.–{b}. takımların yükselme elemesi ({k} maç, en son final) · ', 'el playoff de los puestos {a}–{b} después del último partido de liga ({k} partidos, la final al final) · ', 'o playoff do {a}.º ao {b}.º depois do último jogo da liga ({k} jogos, a final por último) · ', 'les barrages des places {a} à {b} après le dernier match de ligue ({k} matchs, la finale en dernier) · ', 'das Playoff der Plätze {a}–{b} nach dem letzten Ligaspiel ({k} Spiele, das Finale zuletzt) · ', 'il playoff tra {a}ª e {b}ª dopo l’ultima partita di campionato ({k} partite, la finale per ultima) · ', 'ملحق المراكز {a}–{b} بعد آخر مباراة في الدوري ({k} مباريات، النهائي في الأخير) · '],
     pfxPoTop: ['the playoff of the top {b} in the season’s last {k} slots · ', 'sezonun son {k} maç saatinde ilk {b} takımın yükselme elemesi · ', 'el playoff de los {b} primeros en los últimos {k} turnos de la temporada · ', 'o playoff dos {b} primeiros nos últimos {k} horários da temporada · ', 'les barrages des {b} premiers sur les {k} derniers créneaux de la saison · ', 'das Playoff der ersten {b} in den letzten {k} Terminen der Saison · ', 'il playoff delle prime {b} negli ultimi {k} turni della stagione · ', 'ملحق أول {b} فرق في آخر {k} مواعيد من الموسم · '],
     promoOldNote: ['This season began in the old format: the pool clubs play a playoff after the league’s matches. The <b>promotion league</b> (a double round robin the pool clubs play alongside the league) starts with the new season.', 'Bu sezon eski formatla başladı: havuzdaki kulüpler lig maçlarından sonra eleme oynar. <b>Yükselme ligi</b> (havuz kulüplerinin ligle aynı anda oynadığı çift devreli lig) yeni sezonla başlar.', 'Esta temporada empezó con el formato antiguo: los equipos de reserva juegan un playoff tras la liga. La <b>liga de ascenso</b> (ida y vuelta, en paralelo a la liga) empieza con la nueva temporada.', 'Esta temporada começou no formato antigo: os clubes da reserva disputam um playoff depois da liga. A <b>liga de acesso</b> (turno e returno, em paralelo à liga) começa na nova temporada.', 'Cette saison a commencé avec l’ancien format : les clubs de réserve jouent des barrages après la ligue. La <b>ligue de promotion</b> (aller-retour, en parallèle de la ligue) commence avec la nouvelle saison.', 'Diese Saison begann im alten Format: Die Pool-Vereine spielen nach der Liga ein Playoff. Die <b>Aufstiegsliga</b> (Hin- und Rückrunde parallel zur Liga) beginnt mit der neuen Saison.', 'Questa stagione è iniziata col vecchio formato: le squadre di riserva giocano un playoff dopo il campionato. La <b>lega promozione</b> (andata e ritorno, in parallelo al campionato) parte con la nuova stagione.', 'بدأ هذا الموسم بالنظام القديم: تلعب فرق الاحتياط ملحقًا بعد مباريات الدوري. يبدأ <b>دوري الصعود</b> (ذهابًا وإيابًا بالتوازي مع الدوري) مع الموسم الجديد.'],
     promoDouble: ['double round-robin (each pair twice: home and away)', 'çift devreli (her takımla iki kez: bir iç saha, bir deplasman)', 'a ida y vuelta (cada pareja dos veces: local y visitante)', 'em turno e returno (cada dupla duas vezes: em casa e fora)', 'aller-retour (chaque paire deux fois : domicile et extérieur)', 'mit Hin- und Rückrunde (jedes Paar zweimal: heim und auswärts)', 'andata e ritorno (ogni coppia due volte: in casa e fuori)', 'ذهابًا وإيابًا (كل فريقين مرتين: على أرضه وخارجها)'],
     promoWeeks: ['{n}-week', '{n} haftalık', 'de {n} jornadas', 'de {n} rodadas', 'de {n} journées', 'mit {n} Spieltagen', 'di {n} giornate', 'من {n} جولات'],
-    promoGuide: ['The {n} pool clubs play their own {legs} league alongside the league; every match kicks off together with a league match and both seasons end together. ', 'Havuzdaki {n} kulüp, ligle aynı anda kendi aralarında {legs} bir lig oynar; her maç bir lig maçıyla aynı saatte başlar ve iki sezon aynı anda biter. ', 'Los {n} equipos de reserva juegan su propia liga {legs} en paralelo a la liga; cada partido empieza con uno de liga y ambas temporadas terminan a la vez. ', 'Os {n} clubes da reserva disputam a sua própria liga {legs} em paralelo à liga; cada jogo começa junto com um da liga e as duas temporadas terminam juntas. ', 'Les {n} clubs de réserve jouent leur propre ligue {legs} en parallèle ; chaque match commence avec un match de ligue et les deux saisons finissent ensemble. ', 'Die {n} Pool-Vereine spielen parallel zur Liga ihre eigene Liga {legs}; jedes Spiel beginnt mit einem Ligaspiel und beide Saisons enden zusammen. ', 'Le {n} squadre di riserva giocano un proprio campionato {legs} in parallelo; ogni partita inizia con una di campionato e le due stagioni finiscono insieme. ', 'تلعب فرق الاحتياط الـ{n} دوريها الخاص {legs} بالتوازي مع الدوري؛ تبدأ كل مباراة مع مباراة في الدوري وينتهي الموسمان معًا. '],
-    promoGDirect: ['At the end of the season <b>the top {d} go up directly</b>. Places {a}–{b} play the <b>promotion playoff</b> for the last place: semi-finals {a} v {b} and {a2} v {b2} (the higher-placed club at home), then the final (single match; a draw goes to at most {g} s of golden goal, then penalties). <b>The final’s winner</b> goes up too; the league’s bottom {r} go down to the pool. The playoff is in the season’s last {k} slots: the final kicks off with the league’s last match.', 'Sezon sonunda <b>ilk {d} takım doğrudan lige yükselir</b>. {a}.–{b}. takımlar son yer için <b>yükselme elemesi</b> oynar: yarı finaller {a}.–{b}. ve {a2}.–{b2}. (ev sahibi üst sıradaki), sonra final (tek maç; berabere biterse en fazla {g} sn altın gol, sonra penaltılar). <b>Final galibi</b> de lige yükselir; ligin son {r} takımı havuza düşer. Eleme sezonun son {k} maç saatindedir: final, ligin son maçıyla aynı anda.', 'Al final de la temporada <b>los {d} primeros ascienden directamente</b>. Los puestos {a}–{b} juegan el <b>playoff de ascenso</b> por la última plaza: semifinales {a}.º–{b}.º y {a2}.º–{b2}.º (local el mejor clasificado), luego la final (partido único; si hay empate, hasta {g} s de gol de oro y luego penaltis). <b>El ganador de la final</b> también asciende; los últimos {r} de la liga bajan a la reserva. El playoff se juega en los últimos {k} turnos: la final empieza con el último partido de liga.', 'No fim da temporada <b>os {d} primeiros sobem direto</b>. Do {a}.º ao {b}.º disputam o <b>playoff de acesso</b> pela última vaga: semifinais {a}.º x {b}.º e {a2}.º x {b2}.º (mandante o mais bem colocado), depois a final (jogo único; em caso de empate, até {g} s de gol de ouro e depois pênaltis). <b>O vencedor da final</b> também sobe; os {r} últimos da liga caem para a reserva. O playoff é nos últimos {k} horários: a final começa junto com o último jogo da liga.', 'En fin de saison, <b>les {d} premiers montent directement</b>. Les places {a} à {b} jouent les <b>barrages</b> pour la dernière place : demi-finales {a}e–{b}e et {a2}e–{b2}e (le mieux classé reçoit), puis la finale (match unique ; en cas d’égalité, au plus {g} s de but en or, puis tirs au but). <b>Le vainqueur de la finale</b> monte aussi ; les {r} derniers de la ligue descendent dans la réserve. Les barrages ont lieu sur les {k} derniers créneaux : la finale commence avec le dernier match de ligue.', 'Am Saisonende <b>steigen die ersten {d} direkt auf</b>. Die Plätze {a}–{b} spielen das <b>Aufstiegs-Playoff</b> um den letzten Platz: Halbfinale {a}.–{b}. und {a2}.–{b2}. (der Besserplatzierte hat Heimrecht), dann das Finale (ein Spiel; bei Gleichstand höchstens {g} s Golden Goal, dann Elfmeterschießen). <b>Der Finalsieger</b> steigt ebenfalls auf; die letzten {r} der Liga steigen in den Pool ab. Das Playoff liegt auf den letzten {k} Terminen: Das Finale beginnt mit dem letzten Ligaspiel.', 'A fine stagione <b>le prime {d} salgono direttamente</b>. Dalla {a}ª alla {b}ª giocano il <b>playoff promozione</b> per l’ultimo posto: semifinali {a}ª–{b}ª e {a2}ª–{b2}ª (in casa la meglio piazzata), poi la finale (gara unica; in caso di pareggio al massimo {g} s di golden gol, poi rigori). <b>La vincente della finale</b> sale anch’essa; le ultime {r} del campionato scendono in riserva. Il playoff si gioca negli ultimi {k} turni: la finale inizia con l’ultima partita di campionato.', 'في نهاية الموسم <b>يصعد أول {d} فرق مباشرة</b>. تلعب المراكز {a}–{b} <b>ملحق الصعود</b> على المقعد الأخير: نصف النهائي {a}–{b} و{a2}–{b2} (الأعلى ترتيبًا مضيف)، ثم النهائي (مباراة واحدة؛ عند التعادل هدف ذهبي حتى {g} ثانية ثم ركلات الترجيح). <b>الفائز بالنهائي</b> يصعد أيضًا، وآخر {r} فرق في الدوري تهبط إلى الاحتياط. يُلعب الملحق في آخر {k} مواعيد: يبدأ النهائي مع آخر مباراة في الدوري.'],
-    promoGPo: ['At the end of the season the top {p} play the <b>promotion playoff</b>: semi-finals 1 v 4 and 2 v 3 (the higher-placed club at home), then the third-place match and the final (single match; a draw goes to at most {g} s of golden goal, then penalties). <b>The winner, the runner-up and the third-place winner</b> go up; the league’s bottom {r} go down to the pool. The playoff is in the season’s last {k} slots: the final kicks off with the league’s last match.', 'Sezon sonunda ilk {p} takım <b>yükselme elemesi</b> oynar: yarı finaller 1.–4. ve 2.–3. (ev sahibi üst sıradaki), sonra 3.lük maçı ve final (tek maç; berabere biterse en fazla {g} sn altın gol, sonra penaltılar). <b>Final galibi, finalist ve 3.lük maçının galibi</b> lige yükselir; ligin son {r} takımı havuza düşer. Eleme sezonun son {k} maç saatindedir: final, ligin son maçıyla aynı anda.', 'Al final de la temporada los {p} primeros juegan el <b>playoff de ascenso</b>: semifinales 1.º–4.º y 2.º–3.º (local el mejor clasificado), luego el tercer puesto y la final (partido único; si hay empate, hasta {g} s de gol de oro y luego penaltis). <b>El campeón, el finalista y el ganador del tercer puesto</b> ascienden; los últimos {r} de la liga bajan a la reserva. El playoff se juega en los últimos {k} turnos: la final empieza con el último partido de liga.', 'No fim da temporada os {p} primeiros disputam o <b>playoff de acesso</b>: semifinais 1.º x 4.º e 2.º x 3.º (mandante o mais bem colocado), depois a disputa de 3.º lugar e a final (jogo único; em caso de empate, até {g} s de gol de ouro e depois pênaltis). <b>O campeão, o vice e o vencedor do 3.º lugar</b> sobem; os {r} últimos da liga caem para a reserva. O playoff é nos últimos {k} horários: a final começa junto com o último jogo da liga.', 'En fin de saison, les {p} premiers jouent les <b>barrages</b> : demi-finales 1er–4e et 2e–3e (le mieux classé reçoit), puis le match pour la 3e place et la finale (match unique ; en cas d’égalité, au plus {g} s de but en or, puis tirs au but). <b>Le vainqueur, le finaliste et le vainqueur du match pour la 3e place</b> montent ; les {r} derniers de la ligue descendent dans la réserve. Les barrages ont lieu sur les {k} derniers créneaux : la finale commence avec le dernier match de ligue.', 'Am Saisonende spielen die ersten {p} das <b>Aufstiegs-Playoff</b>: Halbfinale 1.–4. und 2.–3. (der Besserplatzierte hat Heimrecht), dann das Spiel um Platz 3 und das Finale (ein Spiel; bei Gleichstand höchstens {g} s Golden Goal, dann Elfmeterschießen). <b>Sieger, Finalist und Sieger des Spiels um Platz 3</b> steigen auf; die letzten {r} der Liga steigen in den Pool ab. Das Playoff liegt auf den letzten {k} Terminen: Das Finale beginnt mit dem letzten Ligaspiel.', 'A fine stagione le prime {p} giocano il <b>playoff promozione</b>: semifinali 1ª–4ª e 2ª–3ª (in casa la meglio piazzata), poi la finale 3º posto e la finale (gara unica; in caso di pareggio al massimo {g} s di golden gol, poi rigori). <b>Vincente, finalista e vincente della finale 3º posto</b> salgono; le ultime {r} del campionato scendono in riserva. Il playoff si gioca negli ultimi {k} turni: la finale inizia con l’ultima partita di campionato.', 'في نهاية الموسم يلعب أول {p} فرق <b>ملحق الصعود</b>: نصف النهائي 1–4 و2–3 (الأعلى ترتيبًا مضيف)، ثم مباراة المركز الثالث والنهائي (مباراة واحدة؛ عند التعادل هدف ذهبي حتى {g} ثانية ثم ركلات الترجيح). <b>البطل والوصيف والفائز بالمركز الثالث</b> يصعدون، وآخر {r} فرق في الدوري تهبط إلى الاحتياط. يُلعب الملحق في آخر {k} مواعيد: يبدأ النهائي مع آخر مباراة في الدوري.'],
+    promoGuide: ['The {n} pool clubs play their own {legs} league alongside the league; every match kicks off together with a league match. ', 'Havuzdaki {n} kulüp, ligle aynı anda kendi aralarında {legs} bir lig oynar; her maç bir lig maçıyla aynı saatte başlar. ', 'Los {n} equipos de reserva juegan su propia liga {legs} en paralelo a la liga; cada partido empieza con uno de liga. ', 'Os {n} clubes da reserva disputam a sua própria liga {legs} em paralelo à liga; cada jogo começa junto com um da liga. ', 'Les {n} clubs de réserve jouent leur propre ligue {legs} en parallèle ; chaque match commence avec un match de ligue. ', 'Die {n} Pool-Vereine spielen parallel zur Liga ihre eigene Liga {legs}; jedes Spiel beginnt mit einem Ligaspiel. ', 'Le {n} squadre di riserva giocano un proprio campionato {legs} in parallelo; ogni partita inizia con una di campionato. ', 'تلعب فرق الاحتياط الـ{n} دوريها الخاص {legs} بالتوازي مع الدوري؛ تبدأ كل مباراة مع مباراة في الدوري. '],
+    promoGDirect: ['At the end of the season <b>the top {d} go up directly</b>. Places {a}–{b} play the <b>promotion playoff</b> for the last place: semi-finals {a} v {b} and {a2} v {b2} (the higher-placed club at home), then the final (single match; a draw goes to at most {g} s of golden goal, then penalties). <b>The final’s winner</b> goes up too; the league’s bottom {r} go down to the pool.', 'Sezon sonunda <b>ilk {d} takım doğrudan lige yükselir</b>. {a}.–{b}. takımlar son yer için <b>yükselme elemesi</b> oynar: yarı finaller {a}.–{b}. ve {a2}.–{b2}. (ev sahibi üst sıradaki), sonra final (tek maç; berabere biterse en fazla {g} sn altın gol, sonra penaltılar). <b>Final galibi</b> de lige yükselir; ligin son {r} takımı havuza düşer.', 'Al final de la temporada <b>los {d} primeros ascienden directamente</b>. Los puestos {a}–{b} juegan el <b>playoff de ascenso</b> por la última plaza: semifinales {a}.º–{b}.º y {a2}.º–{b2}.º (local el mejor clasificado), luego la final (partido único; si hay empate, hasta {g} s de gol de oro y luego penaltis). <b>El ganador de la final</b> también asciende; los últimos {r} de la liga bajan a la reserva.', 'No fim da temporada <b>os {d} primeiros sobem direto</b>. Do {a}.º ao {b}.º disputam o <b>playoff de acesso</b> pela última vaga: semifinais {a}.º x {b}.º e {a2}.º x {b2}.º (mandante o mais bem colocado), depois a final (jogo único; em caso de empate, até {g} s de gol de ouro e depois pênaltis). <b>O vencedor da final</b> também sobe; os {r} últimos da liga caem para a reserva.', 'En fin de saison, <b>les {d} premiers montent directement</b>. Les places {a} à {b} jouent les <b>barrages</b> pour la dernière place : demi-finales {a}e–{b}e et {a2}e–{b2}e (le mieux classé reçoit), puis la finale (match unique ; en cas d’égalité, au plus {g} s de but en or, puis tirs au but). <b>Le vainqueur de la finale</b> monte aussi ; les {r} derniers de la ligue descendent dans la réserve.', 'Am Saisonende <b>steigen die ersten {d} direkt auf</b>. Die Plätze {a}–{b} spielen das <b>Aufstiegs-Playoff</b> um den letzten Platz: Halbfinale {a}.–{b}. und {a2}.–{b2}. (der Besserplatzierte hat Heimrecht), dann das Finale (ein Spiel; bei Gleichstand höchstens {g} s Golden Goal, dann Elfmeterschießen). <b>Der Finalsieger</b> steigt ebenfalls auf; die letzten {r} der Liga steigen in den Pool ab.', 'A fine stagione <b>le prime {d} salgono direttamente</b>. Dalla {a}ª alla {b}ª giocano il <b>playoff promozione</b> per l’ultimo posto: semifinali {a}ª–{b}ª e {a2}ª–{b2}ª (in casa la meglio piazzata), poi la finale (gara unica; in caso di pareggio al massimo {g} s di golden gol, poi rigori). <b>La vincente della finale</b> sale anch’essa; le ultime {r} del campionato scendono in riserva.', 'في نهاية الموسم <b>يصعد أول {d} فرق مباشرة</b>. تلعب المراكز {a}–{b} <b>ملحق الصعود</b> على المقعد الأخير: نصف النهائي {a}–{b} و{a2}–{b2} (الأعلى ترتيبًا مضيف)، ثم النهائي (مباراة واحدة؛ عند التعادل هدف ذهبي حتى {g} ثانية ثم ركلات الترجيح). <b>الفائز بالنهائي</b> يصعد أيضًا، وآخر {r} فرق في الدوري تهبط إلى الاحتياط.'],
+    promoGPo: ['At the end of the season the top {p} play the <b>promotion playoff</b>: semi-finals 1 v 4 and 2 v 3 (the higher-placed club at home), then the third-place match and the final (single match; a draw goes to at most {g} s of golden goal, then penalties). <b>The winner, the runner-up and the third-place winner</b> go up; the league’s bottom {r} go down to the pool.', 'Sezon sonunda ilk {p} takım <b>yükselme elemesi</b> oynar: yarı finaller 1.–4. ve 2.–3. (ev sahibi üst sıradaki), sonra 3.lük maçı ve final (tek maç; berabere biterse en fazla {g} sn altın gol, sonra penaltılar). <b>Final galibi, finalist ve 3.lük maçının galibi</b> lige yükselir; ligin son {r} takımı havuza düşer.', 'Al final de la temporada los {p} primeros juegan el <b>playoff de ascenso</b>: semifinales 1.º–4.º y 2.º–3.º (local el mejor clasificado), luego el tercer puesto y la final (partido único; si hay empate, hasta {g} s de gol de oro y luego penaltis). <b>El campeón, el finalista y el ganador del tercer puesto</b> ascienden; los últimos {r} de la liga bajan a la reserva.', 'No fim da temporada os {p} primeiros disputam o <b>playoff de acesso</b>: semifinais 1.º x 4.º e 2.º x 3.º (mandante o mais bem colocado), depois a disputa de 3.º lugar e a final (jogo único; em caso de empate, até {g} s de gol de ouro e depois pênaltis). <b>O campeão, o vice e o vencedor do 3.º lugar</b> sobem; os {r} últimos da liga caem para a reserva.', 'En fin de saison, les {p} premiers jouent les <b>barrages</b> : demi-finales 1er–4e et 2e–3e (le mieux classé reçoit), puis le match pour la 3e place et la finale (match unique ; en cas d’égalité, au plus {g} s de but en or, puis tirs au but). <b>Le vainqueur, le finaliste et le vainqueur du match pour la 3e place</b> montent ; les {r} derniers de la ligue descendent dans la réserve.', 'Am Saisonende spielen die ersten {p} das <b>Aufstiegs-Playoff</b>: Halbfinale 1.–4. und 2.–3. (der Besserplatzierte hat Heimrecht), dann das Spiel um Platz 3 und das Finale (ein Spiel; bei Gleichstand höchstens {g} s Golden Goal, dann Elfmeterschießen). <b>Sieger, Finalist und Sieger des Spiels um Platz 3</b> steigen auf; die letzten {r} der Liga steigen in den Pool ab.', 'A fine stagione le prime {p} giocano il <b>playoff promozione</b>: semifinali 1ª–4ª e 2ª–3ª (in casa la meglio piazzata), poi la finale 3º posto e la finale (gara unica; in caso di pareggio al massimo {g} s di golden gol, poi rigori). <b>Vincente, finalista e vincente della finale 3º posto</b> salgono; le ultime {r} del campionato scendono in riserva.', 'في نهاية الموسم يلعب أول {p} فرق <b>ملحق الصعود</b>: نصف النهائي 1–4 و2–3 (الأعلى ترتيبًا مضيف)، ثم مباراة المركز الثالث والنهائي (مباراة واحدة؛ عند التعادل هدف ذهبي حتى {g} ثانية ثم ركلات الترجيح). <b>البطل والوصيف والفائز بالمركز الثالث</b> يصعدون، وآخر {r} فرق في الدوري تهبط إلى الاحتياط.'],
+    poIn: [' The playoff is in the season’s last {k} slots: the final kicks off with the league’s last match.', ' Eleme sezonun son {k} maç saatindedir: final, ligin son maçıyla aynı anda.', ' El playoff se juega en los últimos {k} turnos: la final empieza con el último partido de liga.', ' O playoff é nos últimos {k} horários: a final começa junto com o último jogo da liga.', ' Les barrages ont lieu sur les {k} derniers créneaux : la finale commence avec le dernier match de ligue.', ' Das Playoff liegt auf den letzten {k} Terminen: Das Finale beginnt mit dem letzten Ligaspiel.', ' Il playoff si gioca negli ultimi {k} turni: la finale inizia con l’ultima partita di campionato.', ' يُلعب الملحق في آخر {k} مواعيد: يبدأ النهائي مع آخر مباراة في الدوري.'],
+    poAfter: [' The playoff ({k} matches) is played after the league’s last match, one match at a time: the final is the day’s last match.', ' Eleme ({k} maç) ligin son maçından sonra, tek tek oynanır: final günün son maçıdır.', ' El playoff ({k} partidos) se juega después del último partido de liga, de uno en uno: la final es el último partido del día.', ' O playoff ({k} jogos) é disputado depois do último jogo da liga, um de cada vez: a final é o último jogo do dia.', ' Les barrages ({k} matchs) se jouent après le dernier match de ligue, un par un : la finale est le dernier match de la journée.', ' Das Playoff ({k} Spiele) folgt nach dem letzten Ligaspiel, ein Spiel nach dem anderen: Das Finale ist das letzte Spiel des Tages.', ' Il playoff ({k} partite) si gioca dopo l’ultima partita di campionato, una alla volta: la finale è l’ultima partita del giorno.', ' يُلعب الملحق ({k} مباريات) بعد آخر مباراة في الدوري، مباراة تلو الأخرى: النهائي هو آخر مباراة في اليوم.'],
     promoGTop: ['At the end of the season the top {r} go up to the league.', 'Sezon sonunda ilk {r} takım lige yükselir.', 'Al final de la temporada los {r} primeros ascienden a la liga.', 'No fim da temporada os {r} primeiros sobem para a liga.', 'En fin de saison, les {r} premiers montent en ligue.', 'Am Saisonende steigen die ersten {r} in die Liga auf.', 'A fine stagione le prime {r} salgono in campionato.', 'في نهاية الموسم يصعد أول {r} فرق إلى الدوري.'],
     promoGBall: [' ⚽: club playing now.', ' ⚽: şu an maçı olan takım.', ' ⚽: equipo que juega ahora.', ' ⚽: clube jogando agora.', ' ⚽ : club qui joue en ce moment.', ' ⚽: Verein, der gerade spielt.', ' ⚽: squadra in campo ora.', ' ⚽: فريق يلعب الآن.'],
     promoSubPo: [' · playoff {x} / {y} matches', ' · eleme {x} / {y} maç', ' · playoff {x} / {y} partidos', ' · playoff {x} / {y} jogos', ' · barrages {x} / {y} matchs', ' · Playoff {x} / {y} Spiele', ' · playoff {x} / {y} partite', ' · الملحق {x} / {y} مباريات'],
@@ -6094,7 +6274,7 @@ const I18N = {
     kickoffAt: ['kick-off {t}', 'başlama {t}', 'inicio {t}', 'início {t}', 'coup d’envoi {t}', 'Anstoß {t}', 'inizio {t}', 'البداية {t}'],
     inCd: ['{t} · in {cd}', '{t} · {cd} sonra', '{t} · en {cd}', '{t} · em {cd}', '{t} · dans {cd}', '{t} · in {cd}', '{t} · tra {cd}', '{t} · بعد {cd}'],
     liveTitle: ['Live', 'Canlı', 'En vivo', 'Ao vivo', 'Direct', 'Live', 'Live', 'مباشر'],
-    liveSub: ['League and promotion league matches kick off together (every {n} min). Tap the match you want to watch: when it ends, that league’s next match starts on the same screen.', "Lig ve yükselme ligi maçları aynı anda başlar (her {n} dk'da bir). İzlemek istediğiniz maça dokunun: maç bitince aynı ligin sıradaki maçı aynı ekranda başlar.", 'Los partidos de la liga y de la liga de ascenso empiezan a la vez (cada {n} min). Toca el partido que quieras ver: al terminar, el siguiente de esa liga empieza en la misma pantalla.', 'Os jogos da liga e da liga de acesso começam juntos (a cada {n} min). Toque no jogo que quer assistir: quando acabar, o próximo daquela liga começa na mesma tela.', 'Les matchs de la ligue et de la ligue de promotion commencent ensemble (toutes les {n} min). Touchez le match à regarder : à la fin, le suivant de cette ligue démarre sur le même écran.', 'Liga- und Aufstiegsliga-Spiele beginnen gleichzeitig (alle {n} Min.). Tippe auf das Spiel, das du sehen willst: danach startet das nächste Spiel dieser Liga auf demselben Bildschirm.', 'Le partite del campionato e della lega promozione iniziano insieme (ogni {n} min). Tocca la partita da guardare: alla fine, la successiva dello stesso campionato parte sulla stessa schermata.', 'تبدأ مباريات الدوري ودوري الصعود معًا (كل {n} دقائق). اضغط على المباراة التي تريد مشاهدتها: عند انتهائها تبدأ المباراة التالية من الدوري نفسه على الشاشة نفسها.'],
+    liveSub: ['League and promotion league matches kick off together (every {n}). Tap the match you want to watch: when it ends, that league’s next match starts on the same screen.', 'Lig ve yükselme ligi maçları aynı anda başlar ({n} arayla). İzlemek istediğiniz maça dokunun: maç bitince aynı ligin sıradaki maçı aynı ekranda başlar.', 'Los partidos de la liga y de la liga de ascenso empiezan a la vez (cada {n}). Toca el partido que quieras ver: al terminar, el siguiente de esa liga empieza en la misma pantalla.', 'Os jogos da liga e da liga de acesso começam juntos (a cada {n}). Toque no jogo que quer assistir: quando acabar, o próximo daquela liga começa na mesma tela.', 'Les matchs de la ligue et de la ligue de promotion commencent ensemble (toutes les {n}). Touchez le match à regarder : à la fin, le suivant de cette ligue démarre sur le même écran.', 'Liga- und Aufstiegsliga-Spiele beginnen gleichzeitig (alle {n}). Tippe auf das Spiel, das du sehen willst: danach startet das nächste Spiel dieser Liga auf demselben Bildschirm.', 'Le partite del campionato e della lega promozione iniziano insieme (ogni {n}). Tocca la partita da guardare: alla fine, la successiva dello stesso campionato parte sulla stessa schermata.', 'تبدأ مباريات الدوري ودوري الصعود معًا (كل {n}). اضغط على المباراة التي تريد مشاهدتها: عند انتهائها تبدأ المباراة التالية من الدوري نفسه على الشاشة نفسها.'],
     liveNow: ['Playing now', 'Şimdi oynanıyor', 'Jugándose ahora', 'Acontecendo agora', 'En cours', 'Läuft gerade', 'In corso', 'تُلعب الآن'],
     liveNone: ['No match on right now.', 'Şu an oynanan maç yok.', 'Ahora no hay partidos.', 'Nenhum jogo agora.', 'Aucun match en ce moment.', 'Gerade läuft kein Spiel.', 'Nessuna partita in corso.', 'لا توجد مباراة الآن.'],
     liveSoon: ['Starting within {n} min', '{n} dk içinde başlayacak', 'Empiezan en menos de {n} min', 'Começam em até {n} min', 'Dans moins de {n} min', 'Beginnen in den nächsten {n} Min.', 'Iniziano entro {n} min', 'تبدأ خلال {n} دقائق'],
@@ -6141,6 +6321,7 @@ const I18N = {
     stU: ['Longest unbeaten streaks', 'En uzun yenilmezlik serileri', 'Rachas invictas más largas', 'Maiores invencibilidades', 'Plus longues séries d’invincibilité', 'Längste Serien ohne Niederlage', 'Serie di imbattibilità più lunghe', 'أطول سلاسل اللاهزيمة'],
     stUNone: ['No streak yet.', 'Henüz seri yok.', 'Aún no hay rachas.', 'Ainda não há sequências.', 'Pas encore de série.', 'Noch keine Serie.', 'Ancora nessuna serie.', 'لا سلاسل بعد.'],
     stSeasonRecs: ['Season records (league)', 'Sezon rekorları (lig)', 'Récords de temporada (liga)', 'Recordes de temporada (liga)', 'Records de saison (ligue)', 'Saisonrekorde (Liga)', 'Record stagionali (campionato)', 'أرقام الموسم (الدوري)'],
+    srLen: ['Seasons of {n} matches per club', 'Takım başına {n} maçlık sezonlar', 'Temporadas de {n} partidos por equipo', 'Temporadas de {n} jogos por clube', 'Saisons de {n} matchs par club', 'Saisons mit {n} Spielen pro Verein', 'Stagioni da {n} partite per squadra', 'مواسم من {n} مباراة لكل فريق'],
     srMostPts: ['Most points', 'En çok puan', 'Más puntos', 'Mais pontos', 'Plus de points', 'Meiste Punkte', 'Più punti', 'أكثر النقاط'],
     srLeastPts: ['Fewest points', 'En az puan', 'Menos puntos', 'Menos pontos', 'Moins de points', 'Wenigste Punkte', 'Meno punti', 'أقل النقاط'],
     srMostW: ['Most wins', 'En çok galibiyet', 'Más victorias', 'Mais vitórias', 'Plus de victoires', 'Meiste Siege', 'Più vittorie', 'أكثر الانتصارات'],

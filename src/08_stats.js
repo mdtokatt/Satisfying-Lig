@@ -103,12 +103,14 @@ const LiveStats = {
     const byLen = (x, y) => y.len - x.len || (y.on ? 1 : 0) - (x.on ? 1 : 0) || order(y.to, x.to);
     streaks.w.sort(byLen); streaks.u.sort(byLen);
     /* season records (the league's finished seasons only) and goals per season (league + promotion league) */
+    /* only seasons as long as the latest finished one (a 34-match season's points are not compared with a 17-match season's) */
+    const recLen = recs.length ? recs[recs.length - 1].rows[0][1] : 0, sameLen = recs.filter(r => r.rows[0] && r.rows[0][1] === recLen);
     const seasonRec = (f, better) => {
       let best = null;
-      for (const r of recs) for (const x of r.rows) { const v = f(x); if (best === null || better(v, best.v)) best = { id: x[0], season: r.season, v }; }
+      for (const r of sameLen) for (const x of r.rows) { const v = f(x); if (best === null || better(v, best.v)) best = { id: x[0], season: r.season, v }; }
       return best;
     };
-    const seasonRecs = recs.length ? [
+    const seasonRecs = sameLen.length ? [
       { label: 'srMostPts', r: seasonRec(x => x[2], (a, b) => a > b), unit: 'uPts' },
       { label: 'srLeastPts', r: seasonRec(x => x[2], (a, b) => a < b), unit: 'uPts' },
       { label: 'srMostW', r: seasonRec(x => x[3], (a, b) => a > b), unit: 'uWins' },
@@ -121,7 +123,7 @@ const LiveStats = {
       const n = a.n + b.n, g = a.g + b.g, dr = a.dr + b.dr;
       return { season: r.season, cur: !!r.cur, n, pn: b.n, goals: g, avg: n ? g / n : 0, draws: n ? dr / n : 0 };
     }).filter(x => x.n > 0);
-    return { recs, cur, since, first: recs.length ? recs[0].season : d.season, lost: blocks.some(b => b.lost), ms, allTime, titles: titleList, big, goals, streaks, seasonRecs, perSeason };
+    return { recs, cur, since, first: recs.length ? recs[0].season : d.season, lost: blocks.some(b => b.lost), ms, allTime, titles: titleList, big, goals, streaks, seasonRecs, recLen, perSeason };
   },
   /* the matches between two clubs (oldest first; league and promotion league) */
   h2h(a, b) { return this.get().ms.filter(m => (m.h === a && m.a === b) || (m.h === b && m.a === a)); },
@@ -215,7 +217,7 @@ const StatsPages = {
       + this.card(tx('stGoals'), this.list(top(S.goals).map(m => `${this.score(m)} <span class="mut">${tx('goalsN', { n: m.hs + m.as })} · ${this.when(m)}</span>`), tx('stGoalsNone')))
       + this.card(tx('stW'), this.list(top(S.streaks.w).map(s => this.streakTxt(s)), tx('stWNone')))
       + this.card(tx('stU'), this.list(top(S.streaks.u).map(s => this.streakTxt(s)), tx('stUNone')))
-      + (S.seasonRecs.length ? this.card(tx('stSeasonRecs'), `<ol class="st-list">${S.seasonRecs.filter(x => x.r).map(x => `<li><span class="mut">${tx(x.label)}:</span> ${this.name(x.r.id)} <b class="sc">${x.r.v} ${tx(x.unit)}</b> <span class="mut">${tx('season', { s: x.r.season })}</span></li>`).join('')}</ol>`) : '')
+      + (S.seasonRecs.length ? this.card(tx('stSeasonRecs'), `<div class="mut">${tx('srLen', { n: S.recLen })}</div><ol class="st-list">${S.seasonRecs.filter(x => x.r).map(x => `<li><span class="mut">${tx(x.label)}:</span> ${this.name(x.r.id)} <b class="sc">${x.r.v} ${tx(x.unit)}</b> <span class="mut">${tx('season', { s: x.r.season })}</span></li>`).join('')}</ol>`) : '')
       + '</div>';
     return `${head}${sub}${note}${table}${titles}${recs}${this.goalsSection(S)}`;
   },
