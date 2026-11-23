@@ -5,7 +5,7 @@ Talimatı değiştirmek için bu dosyayı düzenleyin. Zamanlanmış görevin ke
 
 ## Amaç
 
-Canlı ligin **bir önceki gününden** (İstanbul saatiyle 00:00–24:00) kritik öneme sahip maçları seçip kullanıcıya göndermek:
+Canlı ligin **bir önceki gününden** (İstanbul saatiyle 00:00–24:00; maçlar 07:00–23:44 arası, her gün tam bir sezon) kritik öneme sahip maçları seçip kullanıcıya göndermek:
 
 - **2 Reels videosu:** tam maç, yaklaşık 105 sn. İlk 3 saniyede maçın neden kritik olduğunu söyleyen bir yazı, ardından maç ve animasyonlu lig tablosu.
 - **3 Story videosu:** aynı biçimde, en fazla ~50 sn'lik kesit. Kanca yazısı, önemli goller, son düdük ve tablo.

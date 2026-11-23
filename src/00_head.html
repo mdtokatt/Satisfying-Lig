@@ -14,7 +14,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Satisfying Lig</title>
-<meta name="description" content="A live football league that plays itself: every 3 minutes a league match and a promotion league match kick off together and last 90 seconds; everyone watches the same match at the same moment. Fixtures, tables, promotion playoff, history and stats in 8 languages.">
+<meta name="description" content="A live football league that plays itself, a full season every day. From 07:00 to midnight (Istanbul) a league match and a promotion league match kick off together every 3 min 15 s and last 90 seconds; everyone watches the same match at the same moment. Fixtures, tables, promotion playoff, history and stats in 8 languages.">
 <meta name="theme-color" content="#0b0e14">
 <link rel="canonical" href="__SITE_URL__">
 <!-- the same page in every language (?lang=xx; without it: the browser's language, else English) -->
@@ -39,7 +39,7 @@
 <meta property="og:locale:alternate" content="it_IT">
 <meta property="og:locale:alternate" content="ar_AR">
 <meta property="og:title" content="Satisfying Lig · the live football league">
-<meta property="og:description" content="A match from two leagues every 3 minutes, around the clock. Everyone watches the same match at the same moment.">
+<meta property="og:description" content="Two leagues, a full season every day: a match every 3 min 15 s from 07:00 to midnight. Everyone watches the same match at the same moment.">
 <meta property="og:url" content="__SITE_URL__">
 <meta property="og:image" content="__SITE_URL__og.jpg">
 <meta property="og:image:width" content="1200">
@@ -47,7 +47,7 @@
 <meta property="og:image:alt" content="Satisfying Lig: a live match on a vertical football pitch">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Satisfying Lig · the live football league">
-<meta name="twitter:description" content="A match from two leagues every 3 minutes, around the clock. Everyone watches the same match at the same moment.">
+<meta name="twitter:description" content="Two leagues, a full season every day: a match every 3 min 15 s from 07:00 to midnight. Everyone watches the same match at the same moment.">
 <meta name="twitter:image" content="__SITE_URL__og.jpg">
 <!-- simge sayfaya gömülü (yerelde açılan index.html'de de görünür); manifest ve PNG simgeler public/ altında, yalnızca sitede -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,__ICON_SVG__">
@@ -198,6 +198,8 @@
     position: sticky; top: -10px; z-index: 3;   /* 54px from the top: the offset is counted inside #livePane's 64px padding */ box-shadow: 0 0 0 6px #090c12, 0 6px 14px 4px rgba(9,12,18,.9); }
   .seg button { border: none; background: transparent; border-radius: 99px; padding: 6px 14px; color: var(--muted); font-weight: 600; }
   .seg button.on { background: var(--surface2); color: var(--text); box-shadow: inset 0 0 0 1px var(--accent); }
+  /* the fixture's Today / Yesterday switch: under the sticky Tablo / Fikstür one, scrolls with the page */
+  .seg.day { position: static; box-shadow: none; margin: 2px 0 8px; }
   /* "Canlı": the matches on now and starting soon */
   .lv-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .lv-card { display: flex; flex-direction: column; gap: 8px; text-align: left; width: 100%; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; color: var(--text); cursor: pointer; font: inherit; min-width: 0; }

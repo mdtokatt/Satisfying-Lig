@@ -40,8 +40,9 @@ const CONFIG = {
      halves; the second half kicks off from the centre at MATCH_TIME / 2 (first-half added time does not shorten it). */
   MATCH_TIME: 90, GOLDEN_TIME: 20, PEN_P: 0.75, PEN_STEP: 0.9, ADDED_MAX: 10, HALF_BREAK: 6,
   GROUP_SIZE: 2,
-  /* league points: win, draw, loss. A season is a single round robin: every club meets every other club once (17 weeks with
-     18 clubs, 9 matches a week); a longer season repeats it with home and away swapped. */
+  /* league points: win, draw, loss. The studio's season is a single round robin: every club meets every other club once (17 weeks
+     with 18 clubs, 9 matches a week); a longer season repeats it with home and away swapped (the live league: LIVE.seasonLength 34,
+     a double round robin). */
   POINTS: [3, 1, 0], SEASON_LENGTH: 17,
   STORAGE_KEY: 'arenaLeague_v2',
   /* before the match: this week's matches (results / fixtures) → match. After it: one animated league table (held until the video ends) */
@@ -55,7 +56,14 @@ const CONFIG = {
   CUP_SIZE: 12,
   HARD_TIME_LIMIT: 300,
   /* the public site's live league (07_live.js), a league that never stops. Istanbul time (UTC+3 all year).
-     bands: from each `from` until the next band, one match every `every` minutes (one band, every 3 minutes: 480 matches a day).
+     bands: from each `from` (until its own `to`, else until the next band) one match every `every` minutes (fractions allowed:
+     3.25 = 3 min 15 s). No band, no matches: the site shows the table and the countdown to the first match of the next day.
+     A "day" of the timetable starts at the first band's `from`.
+     daily: every season starts with the first match of a day (07:00); the slots left after a season's last match stay empty.
+     The two leagues (seasonLength weeks each, the promotion league's playoff after them) fit one day: 306 + 3 slots of 3:15
+     from 07:00 → the last match (the playoff final) ~23:41.
+     seasonLength: the live league's season (weeks; 34 = a double round robin of 18 clubs). The studio keeps SEASON_LENGTH.
+     pool: the promotion league's clubs (the pool is topped up from RESERVE_TEAMS when a season starts; it never shrinks).
      The first match is at `start`. On the site `start` is set by the first deploy of a new salt (tools/live-start.js →
      BUILD_START): at `start` if that is still ahead at the deploy, otherwise a few minutes after it goes live.
      gap: seconds between a match that ran over and the next one.
@@ -64,7 +72,8 @@ const CONFIG = {
      and the new rules / timetable play on from there (tools/live-base.js). */
   LIVE: {
     start: '2026-11-08T13:00',   // 'YYYY-MM-DD' (that day at the first band's time) or 'YYYY-MM-DDTHH:MM' — overridden by BUILD_START
-    bands: [{ from: '00:00', every: 3 }],
+    bands: [{ from: '07:00', to: '23:59', every: 3.25 }],
+    daily: true, seasonLength: 34, pool: 18,
     utcOffset: 3, gap: 5, salt: 'satisfying-lig-live-3', keepChampions: 50,
   },
 };
@@ -106,6 +115,13 @@ const RESERVE_TEAMS = [
   { name: 'Marseille',     code: 'MAR', c1: '#2FAEE0', c2: '#FFFFFF' },
   { name: 'Sporting CP',   code: 'SCP', c1: '#00804A', c2: '#FFFFFF' },
   { name: 'Trabzonspor',   code: 'TRB', c1: '#7B1E3A', c2: '#00A3E0' },
+  /* the live league's pool grew to 18 clubs (CONFIG.LIVE.pool); the studio's pool stays the first CUP_SIZE (12) */
+  { name: 'RB Leipzig',    code: 'RBL', c1: '#FFFFFF', c2: '#DD0741' },
+  { name: 'Newcastle',     code: 'NEW', c1: '#241F20', c2: '#FFFFFF' },
+  { name: 'Lyon',          code: 'LYO', c1: '#FFFFFF', c2: '#1A3D8F' },
+  { name: 'Lazio',         code: 'LAZ', c1: '#87D8F7', c2: '#FFFFFF' },
+  { name: 'Feyenoord',     code: 'FEY', c1: '#E30613', c2: '#FFFFFF' },
+  { name: 'Celtic',        code: 'CEL', c1: '#018749', c2: '#FFFFFF' },
 ];
 /* uppercase for names and 3-letter codes: Turkish rules (i → İ) only for Turkish-looking names, so
    "Beşiktaş" → "BEŞİKTAŞ" but "Manchester United" → "MANCHESTER UNITED" */
@@ -283,10 +299,33 @@ function planRoundRobin(ids, weeks, rng) {
     }
     base.push(rng.shuffle(wk));                   // the order of a week's matches is drawn too
   }
+  /* the later legs: the same weeks, home and away swapped every other leg. A leg starts `o` weeks into the round robin
+     (week t of the leg = round (t + o) mod R): the smallest o after which no club is on the same side 3 matches in a row
+     across the legs' seam (the circle method's last round and its mirrored first round would give some clubs 3; o = 1 does
+     not) — else the o with the fewest such runs. Every pair still meets once per leg. */
+  const side = new Map(ids.map(id => [id, []]));
+  const put = (wk) => { for (const [h, a] of wk) { side.get(h).push(1); side.get(a).push(0); } };
+  const triples = (extra) => {                   // runs of 3 when the weeks `extra` follow what is in `side`
+    let n = 0;
+    for (const id of ids) {
+      const s = side.get(id).slice(-2);
+      for (const wk of extra) for (const [h, a] of wk) { if (h === id) s.push(1); else if (a === id) s.push(0); }
+      for (let i = 2; i < s.length; i++) if (s[i] === s[i - 1] && s[i] === s[i - 2]) n++;
+    }
+    return n;
+  };
   const out = [];
-  for (let w = 0; w < weeks; w++) {
-    const leg = Math.floor(w / R), wk = base[w % R];
-    out.push(leg % 2 ? wk.map(([h, a]) => [a, h]) : wk.map(m => m.slice()));
+  for (let leg = 0; leg * R < weeks; leg++) {
+    const len = Math.min(R, weeks - leg * R), make = (o) => Array.from({ length: len }, (_, t) => {
+      const wk = base[(t + o) % R];
+      return leg % 2 ? wk.map(([h, a]) => [a, h]) : wk.map(m => m.slice());
+    });
+    let pick = make(0);
+    if (leg > 0) {
+      let best = triples(pick);
+      for (let o = 1; o < R && best > 0; o++) { const c = make(o), n = triples(c); if (n < best) { best = n; pick = c; } }
+    }
+    for (const wk of pick) { put(wk); out.push(wk); }
   }
   return out;
 }

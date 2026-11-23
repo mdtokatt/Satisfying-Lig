@@ -265,7 +265,7 @@ function caption(r, lang) {
     if (s) lines.push(s);
   }
   lines.push('', en ? `▶ Watch this match again: ${replayLinkOf(r)}` : `▶ Maçı yeniden izle: ${replayLinkOf(r)}`,
-    en ? '⚽ A new match every 3 minutes, 24/7 — link in bio. Comment your team 👇' : '⚽ Her 3 dakikada yeni maç, 7/24 — bağlantı profilde. Takımını yaz 👇', '',
+    en ? '⚽ A full season every day: a new match every 3 min 15 s, 07:00–24:00 (Istanbul) — link in bio. Comment your team 👇' : '⚽ Her gün bir sezon: 07:00–24:00 arası 3 dk 15 sn\'de bir yeni maç — bağlantı profilde. Takımını yaz 👇', '',
     ['#satisfyinglig', '#football', '#soccer', '#satisfying', '#futbol', '#oddlysatisfying', '#footballshorts', tag(H), tag(A)].join(' '));
   return lines.join('\n');
 }

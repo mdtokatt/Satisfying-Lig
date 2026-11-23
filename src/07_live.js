@@ -7,20 +7,24 @@
        refreshed every 15 minutes by the Pages workflow, is a ready-made checkpoint so first visits are quick),
      • the match that is on is fast-forwarded to "now" and then plays in real time,
      • between matches: the league table and a countdown to the next kick-off.
-   Timetable (CONFIG.LIVE.bands, Istanbul time): a slot every 3 minutes, day and night (480 a day). Two leagues play side by
-   side, each on its own "channel", and their matches of a slot kick off together:
-     • main:  the league (18 clubs, 17 weeks × 9 = 153 matches: one in every slot of the season),
-     • promo: the promotion league of the 12 pool clubs (a double round robin, 22 weeks × 6 = 132 matches spread evenly over
-              the season's slots) its top 2 go up directly and 3rd–6th play the playoff (semi-finals, final) in the season's last 3 slots,
-              so both seasons end with the same slot (League.promoSlot). Champion, runner-up and third place go up.
+   Timetable (CONFIG.LIVE.bands, Istanbul time): a slot every 3 min 15 s from 07:00 to 23:59 (314 a day), nothing at night, and a
+   season a day (CONFIG.LIVE.daily: every season starts with the day's first slot, Live.alignSeason). Two leagues play side by side,
+   each on its own "channel", and their matches of a slot kick off together:
+     • main:  the league (18 clubs, a double round robin: 34 weeks × 9 = 306 matches, one in every slot of the season),
+     • promo: the promotion league of the 18 pool clubs (also 34 weeks × 9 = 306: a match in every slot, with the league's); its top 2
+              go up directly and 3rd–6th play the playoff (semi-finals, final) in the 3 slots after the league's last match, one match a
+              slot: the final is the day's last match (~23:41). A smaller pool spreads its double round robin over the season's slots
+              and plays the playoff in the season's last slots instead (League.promoSlot, Live.promoNew).
+   The slots left after a season (23:44–23:57) stay empty; the next season starts at 07:00 the next day (Live.slotN, dayFirst).
    A match: ~5 s that week's matches, the 90 s match with a 6 s half-time break, ~9 s the animated table. A slot starts at
    its time, or GAP seconds after the previous slot's last match ended if that one ran over (a league match is ~108 s on
-   screen, a playoff match with a golden goal and penalties at most ~2.3 min, so it does not happen; it can never jam anyway:
+   screen (~123 s with its screens, at most ~134 s, the slot is 195 s), a playoff match with a golden goal and penalties ~2.5–3 min,
+   so it does not happen; it can never jam anyway:
    the overrun is absorbed by the next slots). A match's length on screen is computed from its own simulation, so every browser
    agrees on it too. A season begun before the promotion league existed (frozen in a base) ends the old way: the 12 pool clubs'
    knockout after the league's matches, one match a slot (League.cupPhase).
    The site opens on the fixture ("Lig tablosu" › "Fikstür": the league's and the promotion league's fixtures are sub-tabs of their
-   tables). "Canlı" lists the matches on now and those starting within 10 minutes; the viewer picks one
+   tables; "Bugün / Dün" switches to the last finished season — yesterday's matches — with a replay link on every match). "Canlı" lists the matches on now and those starting within 10 minutes; the viewer picks one
    and watches it (the canvas follows that channel from then on). A ⚽ next to a match in the fixture or a club in a table
    opens its live match too.
    The league's start comes from the deploy (BUILD_START, tools/live-start.js): a new league starts at CONFIG.LIVE.start
@@ -48,19 +52,22 @@ const Live = {
   cfg() {
     const B = this.build();
     if (!B || B.salt !== CONFIG.LIVE.salt || !B.start) return CONFIG.LIVE;
-    if (!this._cfg || this._cfg.src !== CONFIG.LIVE) this._cfg = Object.assign({}, CONFIG.LIVE, { start: B.start, src: CONFIG.LIVE });
+    /* CONFIG.LIVE with the deploy's start on top (the other settings read through, so a change to CONFIG.LIVE shows at once) */
+    if (!this._cfg || this._cfg.src !== CONFIG.LIVE) this._cfg = Object.create(CONFIG.LIVE, { start: { value: B.start }, src: { value: CONFIG.LIVE } });
     return this._cfg;
   },
   build() { return typeof BUILD_START !== 'undefined' && BUILD_START && typeof BUILD_START === 'object' ? BUILD_START : null; },
   /* the previous live league (before the 1v1 format): { champions, seasons } as it stood when this league was deployed */
   legacy() { const B = this.build(); return B && B.legacy && Array.isArray(B.legacy.seasons) ? B.legacy : null; },
   mins(hm) { const [h, m] = hm.split(':').map(Number); return h * 60 + m; },
-  /* the day's slots in minutes after the first band starts (a "day" runs from bands[0].from to the next one) */
+  /* the day's slots in minutes after the first band starts (a "day" runs from bands[0].from to the next one). A band runs until its
+     own `to` (no matches after it until the next band / day), else until the next band */
   slots() {
     if (this._slots) return this._slots;
     const B = this.cfg().bands, b0 = this.mins(B[0].from), out = [];
     B.forEach((b, i) => {
-      const from = (this.mins(b.from) - b0 + 1440) % 1440, to = i + 1 < B.length ? (this.mins(B[i + 1].from) - b0 + 1440) % 1440 : 1440;
+      const from = (this.mins(b.from) - b0 + 1440) % 1440, next = i + 1 < B.length ? (this.mins(B[i + 1].from) - b0 + 1440) % 1440 : 1440;
+      const to = b.to ? Math.min(next, (this.mins(b.to) - b0 + 1440) % 1440 || 1440) : next;
       for (let m = from; m < to; m += b.every) out.push(m);
     });
     return (this._slots = out);
@@ -88,6 +95,26 @@ const Live = {
     const { slots: S, base0, n0, firstN } = this.sched(), k = n - firstN + n0, day = Math.floor(k / S.length);
     return base0 + day * 864e5 + S[k - day * S.length] * 60e3;
   },
+  /* the first slot of a day at or after slot n (CONFIG.LIVE.daily: every season starts there) */
+  dayFirst(n) {
+    const { slots: S, n0, firstN } = this.sched(), L = S.length, pos = (((n - firstN + n0) % L) + L) % L;
+    return pos ? n + (L - pos) : n;
+  },
+  /* slot n of the running season, or — once the season's slots are used up (daily timetable) — the next day's first slot, where the
+     next season starts (the slots in between stay empty) */
+  slotN(n) {
+    if (!this.cfg().daily) return n;
+    const d = League.data;
+    return n - (d.liveSeasonStart || 0) >= League.seasonSlots() ? this.dayFirst(n) : n;
+  },
+  /* a season that has not begun starts with the first slot of a day (daily timetable): the live count jumps over the empty slots.
+     Deterministic (it depends only on the state and the timetable), so every browser does the same. */
+  alignSeason(d = League.data) {
+    if (!this.cfg().daily || this.begun(d)) return;
+    const n = this.dayFirst(d.liveCount || 0);
+    if (n !== (d.liveCount || 0)) { d.liveCount = n; d.liveSeasonStart = n; }
+  },
+  begun(d) { return d.history.length > 0 || d.week > 1 || d.weekMatch > 1 || !!d.cup || !!(d.promo && d.promo.history.length); },
   /* actual kick-off of the next slot: its time, or GAP after the previous slot's last match if that one ran over */
   nextStart() { return Math.max(this.slot(this.count()), (League.data.liveLastEnd || 0) + this.cfg().gap * 1000); },
   /* minutes between matches at time t */
@@ -135,7 +162,11 @@ const Live = {
   count() { return League.data.liveCount || 0; },
 
   /* --- league state ------------------------------------------------------ */
-  freshLeague() { const d = League.normalize(null); d.liveCount = 0; d.liveSeasonStart = 0; d.liveLastEnd = 0; d.seasons = []; return d; },
+  freshLeague() {
+    const d = League.normalize(null); d.liveCount = 0; d.liveSeasonStart = 0; d.liveLastEnd = 0; d.seasons = [];
+    d.reserve = RESERVE_TEAMS.slice(0, Math.max(2, this.cfg().pool || CONFIG.CUP_SIZE)).map((t, i) => ({ id: 't' + (DEFAULT_TEAMS.length + i + 1), name: t.name, code: t.code, c1: t.c1, c2: t.c2 }));
+    return d;
+  },
   /* The rules a live league plays by always come from CONFIG, never from what a saved state carries (League.normalize keeps a
      saved league's points / speed / season length). So a league frozen before a rule change plays the new rules from
      its next match on; matches already played stay as they were. A season that has begun keeps its length until it ends.
@@ -144,21 +175,34 @@ const Live = {
     d.points = CONFIG.POINTS.slice();
     d.settings = League.defaultSettings();
     const begun = d.history.length > 0 || d.week > 1 || d.weekMatch > 1 || !!d.cup;
-    /* the season's promotion league: set up (again: with the season's length) until the season's first slot is played; a season
-       begun without one (the old format) ends the old way */
-    if (!begun) { d.seasonLength = CONFIG.SEASON_LENGTH; d.promo = this.promoNew(d); }
+    /* the season's promotion league: set up (again: with the season's length and the pool topped up) until the season's first slot
+       is played; a season begun without one (the old format) ends the old way */
+    if (!begun) { d.seasonLength = this.cfg().seasonLength || CONFIG.SEASON_LENGTH; this.topUpPool(d); d.promo = this.promoNew(d); }
     else if (!(d.promo && d.promo.season === d.season)) d.promo = null;
   },
-  /* a season's promotion league: the pool clubs' double round robin (as many of its weeks as fit) spread over the league's N slots,
-     the playoff (PO_SHAPE) in the last slots. Its fixture and tie-break draw come from the season's seeds, like the league's. */
+  /* the pool grows to CONFIG.LIVE.pool clubs with the RESERVE_TEAMS clubs that are in neither the league nor the pool (ids as in a
+     fresh league: t<19 + index>); only between seasons, so a running promotion league keeps its clubs */
+  topUpPool(d) {
+    const want = this.cfg().pool || 0, have = new Set(d.teams.concat(d.reserve).map(t => t.id));
+    RESERVE_TEAMS.forEach((t, i) => {
+      const id = 't' + (DEFAULT_TEAMS.length + i + 1);
+      if (d.reserve.length < want && !have.has(id)) { d.reserve.push({ id, name: t.name, code: t.code, c1: t.c1, c2: t.c2 }); have.add(id); }
+    });
+  },
+  /* a season's promotion league: the pool clubs' double round robin spread over the league's N slots (S of them), then the playoff
+     (PO_SHAPE). If the whole double round robin fits before the season's last po slots, the playoff is in those (both leagues end with
+     the same slot); if it needs all N (18 clubs: 34 weeks × 9 = the league's 306 matches, two matches in every slot) the playoff is
+     played after the league's last match (S = N); otherwise as many of its weeks as fit before the last po slots.
+     Its fixture and tie-break draw come from the season's seeds, like the league's. */
   promoNew(d) {
     const ids = d.reserve.map(t => t.id), nP = ids.length;
     if (nP < 2 || nP % 2) return null;
     const per = nP / 2, N = d.seasonLength * Math.max(1, Math.floor(d.teams.length / 2));
-    const po = nP >= PO_SIZE && CONFIG.RELEGATE_COUNT === 3 ? PO_SHAPE.length : 0;
-    const weeks = Math.max(0, Math.min(2 * (nP - 1), Math.floor((N - po) / per)));
+    const po = nP >= PO_SIZE && CONFIG.RELEGATE_COUNT === 3 ? PO_SHAPE.length : 0, full = 2 * (nP - 1);
+    const after = full * per > N - po && full * per <= N;
+    const weeks = after ? full : Math.max(0, Math.min(full, Math.floor((N - po) / per)));
     if (!weeks && !po) return null;
-    return { season: d.season, per, N, po, direct: po ? PO_DIRECT : 0, n: weeks * per, plan: weeks ? planRoundRobin(ids, weeks, new RNG(this.seed(['pplan', d.season]))) : [],
+    return { season: d.season, per, N, po, S: after ? N : N - po, direct: po ? PO_DIRECT : 0, n: weeks * per, plan: weeks ? planRoundRobin(ids, weeks, new RNG(this.seed(['pplan', d.season]))) : [],
       table: {}, history: [], tieOrder: new RNG(this.seed(['ptie', d.season])).shuffle(ids) };
   },
   /* make a saved state the live league (null = a brand-new league) */
@@ -166,6 +210,11 @@ const Live = {
     League.data = d ? Object.assign(League.normalize(d), { liveCount: d.liveCount || 0, liveSeasonStart: d.liveSeasonStart || 0, liveLastEnd: d.liveLastEnd || 0 }) : this.freshLeague();
     if (!Array.isArray(League.data.seasons)) League.data.seasons = [];
     this.applyRules();
+    this.alignSeason();
+    /* the rules the matches from slot `from` on are played by (a replay link needs the same rules: matches before a rule change
+       cannot be replayed, LivePages.canReplay) */
+    const ls = League.data.liveSim;
+    if (!ls || ls.sim !== this.sim()) League.data.liveSim = { sim: this.sim(), from: League.data.liveCount || 0 };
   },
   /* live match number of a season's league match */
   matchIndex(week, wm) { return (League.data.liveSeasonStart || 0) + (week - 1) * App.perWeek() + (wm - 1); },
@@ -238,7 +287,7 @@ const Live = {
     }
     d.liveCount = (d.liveCount || 0) + 1;
     d.liveLastEnd = m.start + Math.round(m.dur * 1000);
-    if (ended) d.liveSeasonStart = d.liveCount;
+    if (ended) { d.liveSeasonStart = d.liveCount; this.alignSeason(d); }   // daily: the next season starts with the next day's first slot
     this.pending = null;
     this.snapshot();
   },
@@ -263,12 +312,15 @@ const Live = {
       return { n: history.length, m: keepM ? history.map(h => b36(ix.get(h.result[0].id)) + b36(ix.get(h.result[1].id)) + b36(h.result[0].score) + b36(h.result[1].score)).join('') : '',
         rows: table.map(x => [x.id, x.played, x.pts, x.w, x.d, x.l, x.gf, x.ga].concat(League.formOf(x.id, history))) };
     };
-    const main = lg(a.table, a.history);
+    const main = lg(a.table, a.history), d = League.data, ls = d.liveSim;
     const rec = { f: 2, season: a.season, champ: a.champion.id, t0: ts.length ? Math.min(...ts) : 0, t1: ts.length ? Math.max(...ts) : 0,
+      /* for the replays of a finished season ("Dün"): its first slot, the promotion league's slot layout and the rules its matches were
+         played by (from slot simFrom on; earlier ones were played by other rules and are not replayed) */
+      n0: d.liveSeasonStart || 0, sim: ls ? ls.sim : '', simFrom: ls ? ls.from : 0,
       n: main.n, p: (a.points || League.data.points).slice(0, 3), m: main.m, rows: main.rows,
       out: a.relegated.map(t => t.id), up: a.promoted.map(t => t.id),
       cup: cup ? { draw: cup.draw.slice(), res: Object.fromEntries(Object.entries(cup.res).map(([k, r]) => [k, cr(r)])) } : null };
-    if (pr) rec.pl = lg(pr.table, pr.history);
+    if (pr) { rec.pl = lg(pr.table, pr.history); if (pr.S !== undefined) { rec.pl.S = pr.S; rec.pl.per = pr.per; } }
     return rec;
   },
   /* a state "after liveCount matches", taken only between matches (cache, checkpoint, resync) */
@@ -336,9 +388,9 @@ const Live = {
   /* kick-off of slot n (≥ the slot being played): the actual one for the slot on now / next, the planned one after that */
   kickoffOf(n) {
     if (this.cur && n === this.cur.n) return this.cur.start;
-    if (this.cur && n === this.cur.n + 1) return Math.max(this.slot(n), this.cur.start + Math.round(this.cur.dur * 1000) + this.cfg().gap * 1000);
+    if (this.cur && n === this.cur.n + 1) return Math.max(this.slot(this.slotN(n)), this.cur.start + Math.round(this.cur.dur * 1000) + this.cfg().gap * 1000);
     if (!this.cur && n === this.count()) return this.nextStart();
-    return this.slot(n);
+    return this.slot(this.slotN(n));
   },
   /* the matches being played at time t (kick-off, intro included, up to the final whistle) */
   onNow(t) { return this.cur ? this.cur.ms.filter(M => M.start <= t && t < M.over) : []; },
@@ -425,7 +477,7 @@ const Live = {
     const say = (msg) => { this.notice = msg; this.noticeUntil = Date.now() + 15e3; };
     if (!p) return say(tx('rpInvalid'));
     if (p[1] !== this.sim()) return say(tx('rpOld'));
-    const L = League.normalize(null), team = (id) => L.teams.find(t => t.id === id) || L.reserve.find(t => t.id === id);
+    const all = DEFAULT_TEAMS.concat(RESERVE_TEAMS), team = (id) => { const i = +String(id).slice(1) - 1; return /^t\d+$/.test(id) && all[i] ? { id, ...all[i] } : null; };
     const [A, B] = [team(p[3]), team(p[4])], cup = p[9] && CUP_SHAPE.concat(PO_SHAPE, PO_OLD).some(c => c.k === p[9]) ? p[9] : null;
     if (!A || !B || A === B || !THEME_DEFS[p[5]] || (p[9] && !cup)) return say(tx('rpInvalid'));
     const promo = p[6] === 'p', wk = +p[7] || 0, wm = +p[8] || 0;
@@ -593,6 +645,7 @@ const Live = {
       /* "Lig tablosu" / "Yükselme ligi": the Tablo / Fikstür switch */
       const sb = /** @type {HTMLElement} */ (el(e).closest('[data-sub]'));
       if (sb) { this.pickSub(sb.dataset.sub); const f = /** @type {HTMLElement} */ (document.querySelector(`#livePane [data-sub="${sb.dataset.sub}"]`)); if (f) f.focus({ preventScroll: true }); return; }
+      const dy = /** @type {HTMLElement} */ (el(e).closest('[data-day]')); if (dy) { this.pickDay(dy.dataset.day); return; }
       const b = /** @type {HTMLButtonElement} */ (el(e).closest('.hist-nav')); if (b && !b.disabled) { this.pickSeason(b.dataset.season); return; }
       const t = /** @type {HTMLElement} */ (el(e).closest('[data-team]')); if (t) { this.openClub(t.dataset.team); return; }
       if (el(e).closest('[data-back]')) this.closeClub();
@@ -688,7 +741,7 @@ const Live = {
     const next = this.cur ? this.kickoffOf(this.cur.n + 1) : this.nextStart();
     if (!this.count() && this.phase === 'wait') return tx('infoStarts', { when: I18N.when(next) });
     const on = this.watched(), what = on ? `${LivePages.what(on.ch, on.s.cup ? { cup: on.s.cup } : on.s)} · ` : this.watch ? `${tx(this.watch === 'promo' ? 'promo' : 'league')} · ` : '';
-    return what + tx('infoEvery', { n: this.every(now), t: I18N.time(next) });
+    return what + tx('infoEvery', { n: LivePages.evText(this.every(now)), t: I18N.time(next) });
   },
   /* background music plays on every screen without a match in play: the pages, the "Canlı" list, the countdown table, and a
      match's intro and end screens (it fades out at kick-off and comes back after the final whistle) */
@@ -706,9 +759,14 @@ const Live = {
   scrollCur: true,          // scroll the fixture to the current week on its next drawing
   watchFrom: 0,             // the viewer picked a match that starts later: the channel's matches before that slot are not loaded
   histSel: '',              // "Geçmiş": the selected season's key (LivePages.histList; '' = the latest finished one)
+  fxDay: '',                // the fixtures' Today / Yesterday switch ('' today, 'y' yesterday: the last finished season, LivePages.yesterday)
   club: '',                 // a club's page is open over the tab (StatsPages.club)
   clubOpp: '',              // the club page's head-to-head opponent ('' = its next match's, see StatsPages.defaultOpp)
   pickSeason(k) { this.histSel = k; this.paneKey = ''; this.renderPane(); $('livePane').scrollTop = 0; },
+  pickDay(v) {
+    this.fxDay = v === 'y' ? 'y' : ''; this.paneKey = ''; this.scrollCur = !this.fxDay && this.wantsScroll(); $('livePane').scrollTop = 0; this.renderPane();
+    const f = /** @type {HTMLElement} */ (document.querySelector(`#livePane [data-day="${this.fxDay}"]`)); if (f) f.focus({ preventScroll: true });
+  },
   /* the open tab's sub-tab ("Lig tablosu" / "Yükselme ligi": 'table' | 'fixture'; other tabs: '') */
   subOf(tab = this.tab) { return this.sub[tab] || ''; },
   pickSub(v) {
@@ -779,7 +837,7 @@ const Live = {
       : this.tab === 'history' ? ['history', this.histSel, (d.seasons || []).length].join('|')
       : this.tab === 'stats' ? ['stats', d.season, d.history.length, pk, (d.seasons || []).length].join('|')
       : this.tab === 'live' ? ['live', this.count(), this.cur ? this.cur.n : -1, lv.sig, this.upcoming(now).map(x => x.n).join()].join('|')
-      : [this.tab, this.subOf(), d.season, d.history.length, pk, ck, this.count(), lv.sig].join('|');
+      : [this.tab, this.subOf(), this.fxDay, (d.seasons || []).length, d.season, d.history.length, pk, ck, this.count(), lv.sig].join('|');
     if (key === this.paneKey) return;
     this.paneKey = key;
     const html = this.club ? StatsPages.club(this.club, this.clubOpp) : this.tab === 'table' || this.tab === 'promo' ? LivePages.division(this.tab, this.subOf(), lv)
@@ -1008,10 +1066,19 @@ const LivePages = {
     const ch = lv && lv.teams.get(id);
     return ch ? `<button type="button" class="lv-ball" data-watch="${ch}" title="${esc(tx('clubLiveT'))}" aria-label="${esc(tx('clubLive', { name: name || '' }))}">⚽</button>` : '';
   },
+  /* minutes between matches as text: 3 → "3 min", 3.25 → "3 min 15 s" */
+  evText(every) {
+    const sec = Math.round(every * 60), m = Math.floor(sec / 60), s = sec % 60;
+    return s ? tx('durMS', { m, s }) : tx('durM', { m });
+  },
   bandsText() {
     const B = Live.cfg().bands;
-    if (B.length === 1) return tx('bands1', { n: B[0].every });
-    return B.map((b, i) => tx('bandsN', { from: b.from, to: B[(i + 1) % B.length].from, n: b.every })).join(' · ') + ' (UTC+' + Live.cfg().utcOffset + ')';
+    if (B.length === 1 && !B[0].to) return tx('bands1', { n: this.evText(B[0].every) });
+    if (B.length === 1) {                                         // one band with an end (07:00–23:59): in the viewer's own time
+      const base = Live.slot(Live.dayFirst(Live.count())), at = (hm) => I18N.time(base + ((Live.mins(hm) - Live.mins(B[0].from) + 1440) % 1440) * 60e3);
+      return tx('bandsN', { from: at(B[0].from), to: at(B[0].to), n: this.evText(B[0].every) });
+    }
+    return B.map((b, i) => tx('bandsN', { from: b.from, to: b.to || B[(i + 1) % B.length].from, n: this.evText(b.every) })).join(' · ') + ' (UTC+' + Live.cfg().utcOffset + ')';
   },
   th(abbr, title, opt) { return `<th scope="col"${opt ? ' class="opt"' : ''} title="${esc(title)}">${abbr}</th>`; },
   /* a 1v1 league table (the running season's and a finished season's): list = [{ t: club, r: { played, pts, w, d, l, gf, ga }, form: ['W', …], rel, po }]
@@ -1057,8 +1124,10 @@ const LivePages = {
     if (n === Live.count()) { const t = Live.nextStart(); return { t, late: t - Live.slot(n) > 1000 }; }
     return { t: Live.slot(n), late: false };
   },
-  /* "▶ Watch": the link that replays a finished match (Live.replayLink) */
-  replayA(m) { return `<a class="fx-rp" href="${esc(Live.replayLink(m))}" title="${esc(tx('replayT'))}">${tx('replayBtn')}</a>`; },
+  /* "▶ Watch": the link that replays a finished match (Live.replayLink); none for a match of slot m.n played by other rules (rp false) */
+  replayA(m) { return m.rp === false || (m.n !== undefined && !this.canReplay(m.n)) ? '' : `<a class="fx-rp" href="${esc(Live.replayLink(m))}" title="${esc(tx('replayT'))}">${tx('replayBtn')}</a>`; },
+  /* a match of the running season (live slot n) is replayed by the rules it was played by: those of this build from liveSim.from on */
+  canReplay(n) { const ls = League.data.liveSim; return !ls || (ls.sim === Live.sim() && n >= ls.from); },
   /* one 1v1 match as two lines (home first), with the goals once played */
   pairHtml(a, b, sa, sb, done, win, ph) {
     const nm = (t, p) => (t ? `<li>${this.dot(t)}<span class="nm">${this.tlink(t)}</span>` : `<li class="tbd"><span class="nm">${p}</span>`);
@@ -1066,7 +1135,7 @@ const LivePages = {
     return `<ol class="res pair">${side(a, sa, win === 'a', ph ? ph[0] : '—')}${side(b, sb, win === 'b', ph ? ph[1] : '—')}</ol>`;
   },
   /* a kick-off time, "· delayed" when it is after its slot */
-  kickText(K) { return `${I18N.time(K.t)}${K.late ? ' · ' + tx('late') : ''}`; },
+  kickText(K) { return K.t ? `${I18N.time(K.t)}${K.late ? ' · ' + tx('late') : ''}` : ''; },
   /* the bracket's rounds as HTML (the running playoff and a finished season's).
      o: { team(id) → club or null, kick(match) → { t: ms, late }, lv: the matches on now (Live.liveMap), ch: their channel,
      seed(ref) → "Promotion league #3" for the promotion league's places } */
@@ -1080,7 +1149,7 @@ const LivePages = {
       const body = list.map(m => {
         const K = o.kick(m), isLive = !!o.lv && o.lv.keys.has('c-' + m.k), def = m.def, R = m.res;
         const badge = (R ? `<span class="b done">${tx('done')}</span>` : isLive ? this.liveBtn(o.ch || 'main') : '')
-          + (R && R.seed !== undefined && R.date ? this.replayA({ seed: R.seed, ids: [m.a, m.b], theme: R.theme, cup: m.k, start: Date.parse(R.date) }) : '');
+          + (o.rp ? (R ? this.replayA(o.rp(m)) : '') : R && R.seed !== undefined && R.date ? this.replayA({ seed: R.seed, ids: [m.a, m.b], theme: R.theme, cup: m.k, start: Date.parse(R.date), n: o.slot ? o.slot(m) : undefined }) : '');
         const aWin = !!R && R.winner === m.a, sc = (w) => (w ? R.sw : R.sl);
         const note = R ? (R.pw !== undefined ? `<div class="fx-note">${tx('pens', { a: aWin ? R.pw : R.pl, b: aWin ? R.pl : R.pw })}</div>` : R.gg ? `<div class="fx-note">${tx('gg')}</div>` : '') : '';
         return `<div class="fx-match${R ? ' done' : ''}${isLive ? ' live' : ''}"><div class="fx-head"><b>${cupName(m.k)[1]}</b><span>${K.t ? this.kickText(K) : ''}</span>${badge}</div>`
@@ -1102,7 +1171,7 @@ const LivePages = {
       return `${head}<div class="lp-sub">${tx('cupWait', { s: d.season, p: this.playedText(d.history.length, d.seasonLength * App.perWeek()) })}</div>${this.champ()}${guide}`
         + `<h3 class="lp-h3">${tx('poolClubs')}</h3><ul class="lp-pool">${d.reserve.map(t => `<li>${this.dot(t)}${this.tlink(t)}</li>`).join('')}</ul>`;
     }
-    const rounds = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'main' });
+    const rounds = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'main', slot: (m) => Live.cupIndex(m.i) });
     const top = League.cupTop3();
     const done = top ? `<div class="lp-note">${tx('promoted')}<b>${top.map(t => esc(t.name)).join(', ')}</b></div>` : '';
     return `${head}<div class="lp-sub">${tx('season', { s: d.season })} · ${this.playedText(ms.filter(m => m.res).length, ms.length)}</div>${this.champ()}${done}${guide}${rounds}`;
@@ -1164,7 +1233,46 @@ const LivePages = {
     const fx = sub === 'fixture', promo = tab === 'promo';
     const seg = `<div class="seg" role="group" aria-label="${esc(tx('segAria', { x: tx(promo ? 'promo' : 'league') }))}">`
       + [['table', tx('segTable')], ['fixture', tx('segFixture')]].map(([k, l]) => `<button type="button" data-sub="${k}" aria-pressed="${String((k === 'fixture') === fx)}"${(k === 'fixture') === fx ? ' class="on"' : ''}>${l}</button>`).join('') + '</div>';
-    return seg + (promo ? (fx ? this.promoFixture(lv) : this.promo(lv)) : (fx ? this.mainFixture(lv) : this.table(lv)));
+    /* the fixture's Today / Yesterday switch (once a season of this league is finished): yesterday = the last finished season */
+    const days = fx && this.lastSeason() ? `<div class="seg day" role="group" aria-label="${esc(tx('dayAria'))}">`
+      + [['', tx('dayToday')], ['y', tx('dayYest')]].map(([k, l]) => `<button type="button" data-day="${k}" aria-pressed="${String(k === Live.fxDay)}"${k === Live.fxDay ? ' class="on"' : ''}>${l}</button>`).join('') + '</div>' : '';
+    if (days && Live.fxDay === 'y') return seg + days + this.yesterday(promo ? 'promo' : 'main');
+    return seg + days + (promo ? (fx ? this.promoFixture(lv) : this.promo(lv)) : (fx ? this.mainFixture(lv) : this.table(lv)));
+  },
+  /* the last finished season of this league (its archive record), or null */
+  lastSeason() { const z = League.data.seasons || [], r = z[z.length - 1]; return r && r.f === 2 ? r : null; },
+  /* "Dün": the last finished season's fixture (with the daily timetable: yesterday's matches), the league's ('main') or the promotion
+     league's with its playoff ('promo'). Every match has its replay link: the seed and the theme come from the season / week / match like
+     when it was played (Live.seed, App.buildSetup), the clubs and the score from the archive (`m`), the kick-off from the season's first
+     slot (n0). Only matches played by this build's rules are replayed (rec.sim, from slot rec.simFrom on). */
+  yesterday(div) {
+    const rec = this.lastSeason();
+    if (!rec) return `<h2>${tx('dayYest')}</h2><div class="lp-sub">${tx('ydNone')}</div>`;
+    const promo = div === 'promo', lg = promo ? rec.pl : rec, team = (id) => this.anyTeam(id) || { id, name: id, c1: '#888888', c2: '#ffffff' };
+    const ok = rec.n0 !== undefined && !!rec.sim && rec.sim === Live.sim(), n0 = rec.n0 || 0;
+    const ms = !lg ? [] : promo ? LiveStats.decodePl(rec) : LiveStats.decode(rec), per = lg ? Math.max(1, lg.per || lg.rows.length >> 1) : 1;
+    const S = promo && lg && lg.S !== undefined ? lg.S : lg ? lg.n : 0;
+    const slotOf = (i) => n0 + (promo ? Math.floor(i * S / Math.max(1, lg.n)) : i);
+    const themeOf = (seed) => new RNG((seed ^ 0x5BD1E995) >>> 0).pick(THEME_IDS);
+    const weeks = [];
+    for (const m of ms) {
+      const w = m.w, wm = m.i % per + 1, t = ok ? Live.slot(slotOf(m.i)) : 0, seed = Live.seed([promo ? 'pmatch' : 'match', rec.season, w, wm]);
+      const h = { result: [{ id: m.h, score: m.hs }, { id: m.a, score: m.as }], date: t ? new Date(t).toISOString() : '', seed, teams: [m.h, m.a], theme: themeOf(seed) };
+      (weeks[w - 1] = weeks[w - 1] || []).push({ wm, t, html: this.fxMatch(wm, { t, late: false }, h, [m.h, m.a], team, false, div,
+        { week: w, weekMatch: wm, div: promo ? 'promo' : 'main', rp: ok && slotOf(m.i) >= (rec.simFrom || 0) }) });
+    }
+    const body = weeks.map((list, wi) => list ? `<section class="fx-week">${list[0].t ? this.weekHead(wi + 1, list[0].t, list[list.length - 1].t) : `<h3>${tx('week', { w: wi + 1 })}</h3>`}`
+      + `<div class="fx-grid">${list.map(x => x.html).join('')}</div></section>` : '').join('');
+    let cup = '', nc = 0;
+    if (promo && rec.cup) {
+      const c = this.cupOf(rec), cm = League.cupMatchesOf(c);
+      nc = cm.filter(m => m.res).length;
+      cup = `<h3 class="lp-h3">${tx('promoPlayoff')}</h3>` + this.cupRounds(cm, c, { team: (id) => this.anyTeam(id), kick: (m) => ({ t: m.res ? m.res.t : 0, late: false }),
+        rp: (m) => { const seed = Live.seed(['cupmatch', rec.season, m.k]); return { seed, ids: [m.a, m.b], theme: themeOf(seed), cup: m.k, start: m.res.t, rp: ok && n0 + S + m.i >= (rec.simFrom || 0) }; } });
+    }
+    const date = rec.t0 ? this.day(rec.t0 * 60000) : '';
+    return `<h2>${tx('ydTitle', { s: rec.season })}</h2><div class="lp-sub">${tx('ydSub', { date, n: ms.length + nc })}</div>`
+      + (ok ? '' : `<div class="lp-note">${tx('ydOld')}</div>`) + body + cup;
   },
   /* a division's fixture: 'main' (the league) or 'promo' (the promotion league) */
   fixture(lv, div = 'main') { return div === 'promo' ? this.promoFixture(lv) : this.mainFixture(lv); },
@@ -1190,12 +1298,13 @@ const LivePages = {
       const k0 = this.kickoff(w, 1).t, k1 = this.kickoff(w, Math.min(per, pairs.length)).t;
       const matches = pairs.slice(0, per).map((ids, mi) => {
         const m = mi + 1, h = d.history.find(x => x.week === w && x.weekMatch === m);
-        return this.fxMatch(m, this.kickoff(w, m), h, ids, team, !!lv && lv.keys.has(`m-${w}-${m}`), 'main', { week: w, weekMatch: m });
+        return this.fxMatch(m, this.kickoff(w, m), h, ids, team, !!lv && lv.keys.has(`m-${w}-${m}`), 'main', { week: w, weekMatch: m, n: Live.matchIndex(w, m) });
       }).join('');
       return `<section class="fx-week${cur ? ' cur' : ''}">${this.weekHead(w, k0, k1)}<div class="fx-grid">${matches}</div></section>`;
     }).join('');
     const extra = League.promoOn() ? tx('fxExtraPromo') : League.cupOn() ? tx('fxExtraCup') : '';
-    return `<h2>${tx('fxTitle', { s: d.season })}</h2><div class="lp-sub">${tx('fxSub', { w: d.seasonLength, t: CONFIG.MATCH_TIME, bands: this.bandsText(), extra })}</div>${this.champ()}${weeks}`;
+    const legs = tx(d.seasonLength >= 2 * (d.teams.length - 1) ? 'fxLeg2' : 'fxLeg1');
+    return `<h2>${tx('fxTitle', { s: d.season })}</h2><div class="lp-sub">${tx('fxSub', { w: d.seasonLength, legs, t: CONFIG.MATCH_TIME, bands: this.bandsText(), extra })}</div>${this.champ()}${weeks}`;
   },
   /* the promotion league's season: its weeks (each match at the same time as a league match) and then its playoff */
   promoFixture(lv) {
@@ -1206,18 +1315,19 @@ const LivePages = {
       const w = wi + 1, i0 = wi * p.per, k0 = this.promoKickoff(i0).t, k1 = this.promoKickoff(i0 + pairs.length - 1).t;
       const matches = pairs.map((ids, mi) => {
         const m = mi + 1, i = i0 + mi, h = p.history[i] && p.history[i].week === w && p.history[i].weekMatch === m ? p.history[i] : null;
-        return this.fxMatch(m, this.promoKickoff(i), h, ids, team, !!lv && lv.keys.has(`p-${w}-${m}`), 'promo', { week: w, weekMatch: m, div: 'promo' });
+        return this.fxMatch(m, this.promoKickoff(i), h, ids, team, !!lv && lv.keys.has(`p-${w}-${m}`), 'promo', { week: w, weekMatch: m, div: 'promo', n: Live.promoIndex(i) });
       }).join('');
       return `<section class="fx-week${w === curW && !League.promoLeagueOver() ? ' cur' : ''}">${this.weekHead(w, k0, k1)}<div class="fx-grid">${matches}</div></section>`;
     }).join('');
-    const po = p.po ? (League.poDirect() ? tx('pfxPoDirect', { a: League.poDirect() + 1, b: League.poSize(), k: p.po }) : tx('pfxPoTop', { b: League.poSize(), k: p.po })) : '';
+    const after = League.promoS(p) >= p.N;                         // the playoff after the league's last match
+    const po = p.po ? (League.poDirect() ? tx(after ? 'pfxPoDirectA' : 'pfxPoDirect', { a: League.poDirect() + 1, b: League.poSize(), k: p.po }) : tx('pfxPoTop', { b: League.poSize(), k: p.po })) : '';
     return `<h2>${tx('pfxTitle', { s: d.season })}</h2><div class="lp-sub">${tx('pfxSub', { w: p.plan.length, n: d.reserve.length, p: p.per, po })}</div>`
       + weeks + (p.po ? `<h3 class="lp-h3">${tx('promoPlayoff')}</h3>${this.promoBracket(lv)}` : '');
   },
   /* the promotion league's playoff: its rounds (the clubs once the league is over, else "Promotion league #3" …) */
   promoBracket(lv) {
     const c = League.cup() || { season: League.data.season, draw: new Array(League.poSize()).fill(null), res: {} }, ms = League.cupMatchesOf(c);
-    const r = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'promo', seed: (i) => tx('seedName', { n: i + 1 }) });
+    const r = this.cupRounds(ms, c, { team: (id) => League.poolTeam(id), kick: (m) => this.cupKickoff(m.i, m), lv, ch: 'promo', seed: (i) => tx('seedName', { n: i + 1 }), slot: (m) => Live.cupIndex(m.i) });
     return League.promoLeagueOver() ? r : r.replace(/fx-week cur/g, 'fx-week');   // the current week is the promotion league's until it is over
   },
   /* the "Promotion league" tab: the promotion league's table (top 2: up directly, 3rd–6th: playoff), its playoff; a season of the old format: its knockout */
@@ -1232,7 +1342,7 @@ const LivePages = {
     const guide = `<div class="lp-legend">${tx('promoGuide', { n: d.reserve.length, legs })}`
       + (PD ? tx('promoGDirect', { d: PD, a: PD + 1, b: PS, a2: PD + 2, b2: PS - 1, g: CONFIG.GOLDEN_TIME, r: CONFIG.RELEGATE_COUNT, k: p.po })
         : p.po ? tx('promoGPo', { p: PS, g: CONFIG.GOLDEN_TIME, r: CONFIG.RELEGATE_COUNT, k: p.po })
-        : tx('promoGTop', { r: CONFIG.RELEGATE_COUNT })) + tx('promoGBall') + '</div>';
+        : tx('promoGTop', { r: CONFIG.RELEGATE_COUNT })) + (p.po ? tx(League.promoS(p) >= p.N ? 'poAfter' : 'poIn', { k: p.po }) : '') + tx('promoGBall') + '</div>';
     return `<h2>${tx('promo')}</h2><div class="lp-sub">${tx('season', { s: d.season })} · ${this.playedText(p.history.length, p.n)}${c ? tx('promoSubPo', { x: Object.keys(c.res).length, y: p.po }) : ''}</div>${done}`
       + this.tableHtml(list, lv) + `<div class="lp-legend">${this.pointsText(d.points)} · ${PD ? tx('promoLegDirect', { d: PD, a: PD + 1, b: PS }) : tx('promoLegPo', { p: PS })}.</div>${guide}`
       + (p.po ? `<h3 class="lp-h3">${tx('promoPlayoff')}</h3>${this.promoBracket(lv)}` : '');
@@ -1254,7 +1364,7 @@ const LivePages = {
       if (!x.ms.length) { newSeason = newSeason || x.at; continue; }
       for (const m of x.ms) soon.push(card(m.ch, this.what(m.ch, m), m.ids, `<span class="lv-st">${tx('inCd', { t: I18N.time(x.at), cd: `<span data-at="${x.at}"></span>` })}</span>`, x.n, false));
     }
-    const head = `<h2>${tx('liveTitle')}</h2><div class="lp-sub">${tx('liveSub', { n: Live.every(now) })}</div>`;
+    const head = `<h2>${tx('liveTitle')}</h2><div class="lp-sub">${tx('liveSub', { n: this.evText(Live.every(now)) })}</div>`;
     const empty = (t) => `<div class="st-empty">${t}</div>`;
     return head + `<h3 class="lp-h3">${tx('liveNow')}</h3>` + (on.length ? `<div class="lv-list">${on.join('')}</div>` : empty(tx('liveNone')))
       + `<h3 class="lp-h3">${tx('liveSoon', { n: Math.round(Live.SOON / 60e3) })}</h3>` + (soon.length ? `<div class="lv-list">${soon.join('')}</div>` : empty(newSeason ? '' : tx('liveNoneSoon')))
